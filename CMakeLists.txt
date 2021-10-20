@@ -1,16 +1,18 @@
 ## Cmake config
 cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
-project(SpaceShooter)
 
 if(NOT "${CMAKE_CXX_STANDARD}")
   set(CMAKE_CXX_STANDARD 14)
 endif()
-
 set(CMAKE_SUPPRESS_REGENERATION true)
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT SpaceShooter)
-set_property(DIRECTORY PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "debug:SpaceShooter" VS_DEBUGGER_COMMAND "debug:SpaceShooter")
-set(TEMP_FILES_DIR "" CACHE PATH "assimp and freetype2 download path")
+
+
+project(SpaceShooter)
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "SpaceShooter")
+
+## User properties
+set(TEMP_DIR ${CMAKE_CURRENT_BINARY_DIR}/Temp)
 set(LIB_GLFW_DIR "${CMAKE_SOURCE_DIR}/dependencies/glfw" CACHE PATH "glfw library")
 set(LIB_GLAD_DIR "${CMAKE_SOURCE_DIR}/dependencies/glad" CACHE PATH "glad library")
 set(LIB_STB_DIR "${CMAKE_SOURCE_DIR}/dependencies/stb_image" CACHE PATH "stb_image library")
@@ -28,7 +30,7 @@ option(DOWNLOAD_FREETYPE "Download freetype to project" OFF)
 option(CONFIGURE_WITH_FREETYPE "Add freetype to project" OFF)
 option(MOVE_SCRIPT_AUTO_CLOSE "Auto close file moving script" ON)
 
-
+## append source files to executable
 file(GLOB FILES_SOURCES 
 "src/*.cpp"
 "src/*.h"
@@ -36,7 +38,7 @@ file(GLOB FILES_SOURCES
 "${LIB_STB_DIR}/stb_image.h"
 "src/shaders/*.vs"
 "src/shaders/*.fs")
-
+    
 
 add_executable(SpaceShooter ${FILES_SOURCES})
 
@@ -55,16 +57,6 @@ target_link_libraries(SpaceShooter
 glfw3.lib
 opengl32.lib
 )
-
-if(NOT ${CONFIGURE_WITH_ASSIMP})
-message("Configuring without assimp!")
-else()
-file(GLOB ASSIMP_LIB RELATIVE "${LIB_ASSIMP_BINARY_DIR}" "${LIB_ASSIMP_BINARY_DIR}/*.lib")
-message("Assimp found: ${ASSIMP_LIB}")
-file(GLOB ASSIMP_DLL "${LIB_ASSIMP_BINARY_DIR}/*.dll" )
-target_link_libraries(SpaceShooter ${ASSIMP_LIB})
-file(COPY ${ASSIMP_DLL} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-endif()
 
 make_directory(${CMAKE_CURRENT_BINARY_DIR}/lib/glm)
 if(LIB_GLM_DIR STREQUAL "")
@@ -89,8 +81,8 @@ if(${DOWNLOAD_FREETYPE})
 ##FreeType2
 include(ExternalProject)
 ExternalProject_Add(FreeType2 
-	URL https://download.savannah.gnu.org/releases/freetype/freetype-2.11.0.tar.bz2
-	PREFIX  ${DOWNLOAD_DIR}/FreeType2
+	URL https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.bz2
+	PREFIX  ${TEMP_DIR}/FreeType2
 	INSTALL_DIR  ${CMAKE_CURRENT_BINARY_DIR}/lib/ft2
 	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
@@ -107,9 +99,11 @@ target_link_libraries(SpaceShooter ${LIB_FREETYPE_BINARY_DIR}/freetype.lib)
 endif()
 
 if(${DOWNLOAD_ASSIMP})
+##Assimp
+include(ExternalProject)
 ExternalProject_Add(Assimp 
 	URL https://github.com/assimp/assimp/archive/master.zip
-	PREFIX  ${DOWNLOAD_DIR}/Assimp
+	PREFIX  ${TEMP_DIR}/Assimp
 	INSTALL_DIR  ${CMAKE_CURRENT_BINARY_DIR}/lib/assimp
 	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DASSIMP_BUILD_TESTS:BOOL=OFF -DASSIMP_BIN_INSTALL_DIR:PATH=lib -DCMAKE_BUILD_TYPE=Release
 	BUILD_COMMAND ${CMAKE_COMMAND}  --build <BINARY_DIR> --target install --config Release
@@ -118,4 +112,14 @@ ExternalProject_Get_Property(Assimp install_dir)
 set(LIB_ASSIMP_INCLUDE_DIR "${install_dir}/include" CACHE PATH "Assimp include dir"  FORCE)
 set(LIB_ASSIMP_BINARY_DIR "${install_dir}/lib" CACHE PATH "Assimp build results" FORCE)
 message("Generate project and build Assimp project (as release), then reconfigure again with CONFIGURE_WITH_ASSIMP")
+endif()
+
+if(NOT ${CONFIGURE_WITH_ASSIMP})
+message("Configuring without assimp!")
+else()
+file(GLOB ASSIMP_LIB RELATIVE "${LIB_ASSIMP_BINARY_DIR}" "${LIB_ASSIMP_BINARY_DIR}/*.lib")
+message("Assimp found: ${ASSIMP_LIB}")
+file(GLOB ASSIMP_DLL "${LIB_ASSIMP_BINARY_DIR}/*.dll" )
+target_link_libraries(SpaceShooter ${ASSIMP_LIB})
+file(COPY ${ASSIMP_DLL} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()
