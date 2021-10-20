@@ -29,7 +29,7 @@ option(CONFIGURE_WITH_FREETYPE "Add freetype to project" OFF)
 option(MOVE_SCRIPT_AUTO_CLOSE "Auto close file moving script" ON)
 
 
-file(GLOB ZRODLA 
+file(GLOB FILES_SOURCES 
 "src/*.cpp"
 "src/*.h"
 "${LIB_GLAD_DIR}/include/glad.c"
@@ -38,7 +38,7 @@ file(GLOB ZRODLA
 "src/shaders/*.fs")
 
 
-add_executable(SpaceShooter ${ZRODLA})
+add_executable(SpaceShooter ${FILES_SOURCES})
 
 target_include_directories(SpaceShooter
 PUBLIC "${LIB_GLFW_DIR}/include"
