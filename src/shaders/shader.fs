@@ -1,11 +1,8 @@
-#version 330
+#version 440 core
 
-in vec2 texCoord;
-out vec4 outputColor;
-
-uniform sampler2D gSampler;
+layout(location = 0) out vec4 outputColor;
 
 void main()
 {
-	outputColor = texture2D(gSampler, texCoord);
+    outputColor = vec4(1.0, 1.0, 1.0, 1.0);
 }
