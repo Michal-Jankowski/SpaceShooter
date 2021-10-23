@@ -11,7 +11,7 @@ void VBO::createVBO(size_t reserveBytes) {
 
 	glGenBuffers(1, &m_bufferID);
 	m_rawData.reserve(reserveBytes > 0 ? reserveBytes : 1024);
-	std::cout << "Created buffer with ID " << m_bufferID << "and reserved size of " << m_rawData.capacity() << "bytes" << std::endl;
+	std::cout << "Created buffer with ID " << m_bufferID << " and reserved size of " << m_rawData.capacity() << "bytes" << std::endl;
 	m_isBufferInitalized = true;
 }
 
