@@ -1,11 +1,11 @@
 #include "SetupWindow.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-std::map<GLFWwindow*, SetupWindow*> SetupWindow::windows;
+std::map<GLFWwindow*, SetupWindow*> SetupWindow::m_windows;
 
 SetupWindow::SetupWindow() {
-	for (auto& kwp : keyWasPressed) {
-		kwp = false;
+	for (auto& keyPressElem : m_keyWasPressed) {
+		keyPressElem = false;
 	}
 }
 
@@ -21,31 +21,31 @@ bool SetupWindow::createWindow(const std::string& title, int majorVersion, int m
 	const auto videoMode = glfwGetVideoMode(primaryWindow);
 	const auto monitor = showFullscreen ? primaryWindow : nullptr;
 
-	window = glfwCreateWindow(videoMode->width, videoMode->height, title.c_str(), monitor, nullptr);
-	if (window == nullptr) {
+	m_window = glfwCreateWindow(videoMode->width, videoMode->height, title.c_str(), monitor, nullptr);
+	if (m_window == nullptr) {
 		return false;
 	}
-	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(m_window);
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
-	glfwSetWindowSizeCallback(window, onWindowSizeChangedStatic);
+	glfwSetWindowSizeCallback(m_window, onWindowSizeChangedStatic);
 	
 	if (!showFullscreen){
-		glfwMaximizeWindow(window);
+		glfwMaximizeWindow(m_window);
 		// After calling glfwMaximizeWindow, the onWindowSizeChanged somehow does not get called. Therefore I call it manually.
 		int width, height;
-		glfwGetWindowSize(window, &width, &height);
+		glfwGetWindowSize(m_window, &width, &height);
 		onWindowSizeChangedInternal(width, height);
 	}
-	glfwSetMouseButtonCallback(window, onMouseButtonPressedStatic);
-	glfwSetScrollCallback(window, onMouseWheelScrollStatic);
-	windows[window] = this;
+	glfwSetMouseButtonCallback(m_window, onMouseButtonPressedStatic);
+	glfwSetScrollCallback(m_window, onMouseWheelScrollStatic);
+	m_windows[m_window] = this;
 	return true;
 
 }
 
 GLFWwindow* SetupWindow::getWindow() const
 {
-	return window;
+	return m_window;
 }
 
 void SetupWindow::runApp() {
@@ -53,24 +53,24 @@ void SetupWindow::runApp() {
 	recalculateProjectionMatrix();
 	initScene();
 
-	lastFrameTime = lastFrameTimeFPS = glfwGetTime();
+	m_lastFrameTime = m_lastFrameTimeFPS = glfwGetTime();
 
-	while (glfwWindowShouldClose(window) == 0)
+	while (glfwWindowShouldClose(m_window) == 0)
 	{
 		updateDeltaTimeAndFPS();
 		renderScene();
 
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(m_window);
 		glfwPollEvents();
 		updateScene();
 	}
 
 	releaseScene();
 
-	glfwDestroyWindow(window);
-	windows.erase(windows.find(window));
+	glfwDestroyWindow(m_window);
+	m_windows.erase(m_windows.find(m_window));
 
-	if (windows.empty())
+	if (m_windows.empty())
 	{
 		glfwTerminate();
 	}
@@ -79,64 +79,64 @@ void SetupWindow::runApp() {
 void SetupWindow::updateDeltaTimeAndFPS()
 {
 	const auto currentTime = glfwGetTime();
-	timeDelta = currentTime - lastFrameTime;
-	lastFrameTime = currentTime;
-	nextFPS++;
+	m_timeDelta = currentTime - m_lastFrameTime;
+	m_lastFrameTime = currentTime;
+	m_nextFPS++;
 
-	if (currentTime - lastFrameTimeFPS > 1.0)
+	if (currentTime - m_lastFrameTimeFPS > 1.0)
 	{
-		lastFrameTimeFPS = currentTime;
-		FPS = nextFPS;
-		nextFPS = 0;
+		m_lastFrameTimeFPS = currentTime;
+		m_FPS = m_nextFPS;
+		m_nextFPS = 0;
 	}
 }
 
 void SetupWindow::setVerticalSynchronization(bool enable)
 {
 	glfwSwapInterval(enable ? 1 : 0);
-	isVerticalSynchronizationEnabled = enable;
+	m_isVerticalSynchronizationEnabled = enable;
 }
 
 bool SetupWindow::keyPressed(int keyCode) const {
-	return glfwGetKey(window, keyCode) == GLFW_PRESS;
+	return glfwGetKey(m_window, keyCode) == GLFW_PRESS;
 }
 
 bool SetupWindow::keyPressedOnce(int keyCode) {
 	bool result = false;
 
 	if (keyPressed(keyCode)) {
-		if (!keyWasPressed[keyCode]) {
+		if (!m_keyWasPressed[keyCode]) {
 			result = true;
 		}
-		keyWasPressed[keyCode] = true;
+		m_keyWasPressed[keyCode] = true;
 	}
 	else {
-		keyWasPressed[keyCode] = false;
+		m_keyWasPressed[keyCode] = false;
 	}
 	return result;
 }
 
 void SetupWindow::closeWindow(bool errorHasOccured) {
-	glfwSetWindowShouldClose(window, true);
-	hasErrorOccured = errorHasOccured;
+	glfwSetWindowShouldClose(m_window, true);
+	m_hasErrorOccured = errorHasOccured;
 }
 
 bool SetupWindow::errorHasOccured() const {
-	return hasErrorOccured;
+	return m_hasErrorOccured;
 }
 
 void SetupWindow::recalculateProjectionMatrix() {
 	int width, height;
 	glfwGetWindowSize(getWindow(), &width, &height);
-	projectionMatrix = glm::perspective(45.0f, static_cast<float>(width) / static_cast<float>(height), 0.5f, 1500.0f);
-	orthoMatrix = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
+	m_projectionMatrix = glm::perspective(45.0f, static_cast<float>(width) / static_cast<float>(height), 0.5f, 1500.0f);
+	m_orthoMatrix = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
 }
 
 void SetupWindow::onWindowSizeChangedInternal(int width, int height) {
 	recalculateProjectionMatrix();
 	glViewport(0, 0, width, height);
-	screenWidth = width;
-	screenHeight = height;
+	m_screenWidth = width;
+	m_screenHeight = height;
 	onWindowSizeChanged(width, height);
 }
 
@@ -144,19 +144,19 @@ void SetupWindow::updateDeltaTime() {
 }
 
 void SetupWindow::onMouseButtonPressedStatic(GLFWwindow* window, int button, int action, int mods) {
-	if (windows.count(window) != 0) {
-		windows[window]->onMouseButtonPressed(button, action);
+	if (m_windows.count(window) != 0) {
+		m_windows[window]->onMouseButtonPressed(button, action);
 	}
 }
 
 void SetupWindow::onMouseWheelScrollStatic(GLFWwindow* window, double offsetX, double offsetY) {
-	if (windows.count(window) != 0) {
-		windows[window]->onMouseWheelScroll(offsetX, offsetY);
+	if (m_windows.count(window) != 0) {
+		m_windows[window]->onMouseWheelScroll(offsetX, offsetY);
 	}
 }
 
 void SetupWindow::onWindowSizeChangedStatic(GLFWwindow* window, int width, int height) {
-	if (windows.count(window) != 0) {
-		windows[window]->onWindowSizeChangedInternal(width, height);
+	if (m_windows.count(window) != 0) {
+		m_windows[window]->onWindowSizeChangedInternal(width, height);
 	}
 }
