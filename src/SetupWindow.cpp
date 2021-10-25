@@ -97,6 +97,19 @@ void SetupWindow::setVerticalSynchronization(bool enable)
 	m_isVerticalSynchronizationEnabled = enable;
 }
 
+bool SetupWindow::isVerticalSynchronizationEnabled()
+{
+	return false;
+}
+
+glm::mat4 SetupWindow::getProjectionMatrix() const {
+	return m_projectionMatrix;
+}
+
+glm::mat4 SetupWindow::getOrthoProjectionMatrix() const {
+	return m_orthoMatrix;
+}
+
 bool SetupWindow::keyPressed(int keyCode) const {
 	return glfwGetKey(m_window, keyCode) == GLFW_PRESS;
 }
