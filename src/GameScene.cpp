@@ -47,7 +47,7 @@ void GameScene::initScene() {
 
 	m_textureBuffer.createVBO();
 	m_textureBuffer.bindVBO();
-	m_textureBuffer.addRawData(static_cast<void*>(m_staticGeometry.getPlainTexCoords().data()), sizeof(m_staticGeometry.getPlainVertices()));
+	m_textureBuffer.addRawData(static_cast<void*>(m_staticGeometry.getPlainTexCoords().data()), sizeof(m_staticGeometry.getPlainTexCoords()));
 	m_textureBuffer.uploadDataToGPU(GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), static_cast<void*>(0));
@@ -62,7 +62,10 @@ void GameScene::initScene() {
 	m_sampler.setFilterOptions(FilterOptions::MAG_FILTER_BILINEAR);
 	m_sampler.setFilterOptions(FilterOptions::MIN_FILTER_TRILINEAR);
 
-	m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), 15.0f);
+	int posX, posY, width, height;
+	glfwGetWindowPos(getWindow(), &posX, &posY);
+	glfwGetWindowPos(getWindow(), &width, &height);
+	m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(posX + width / 2, posY + height / 2), 15.0f);
 
 }
 
@@ -98,7 +101,17 @@ void GameScene::updateScene() {
 	if (keyPressedOnce(GLFW_KEY_0)) {
 		setVerticalSynchronization(!isVerticalSynchronizationEnabled());
 	}
+
+	if (keyPressedOnce(GLFW_KEY_1)) {
+		setWireframeMode(!isWireframeModeEnabled());
+	}
+
 	glfwSetWindowTitle(getWindow(), "SpaceShooter");
+
+	m_camera->update([this](int keyCode) {return this->keyPressed(keyCode); },
+		[this]() {double curPosX, curPosY; glfwGetCursorPos(this->getWindow(), &curPosX, &curPosY); return glm::u32vec2(curPosX, curPosY); },
+		[this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y);});
+
 }
 
 void GameScene::releaseScene() {
