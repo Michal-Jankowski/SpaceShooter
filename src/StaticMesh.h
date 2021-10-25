@@ -1,12 +1,12 @@
 #pragma once
 #include"glm/glm.hpp"
-#include <vector>
+#include <array>
 class StaticMesh
 {
 public:
-	std::vector<glm::vec2> getQuad();
-	std::vector<glm::vec3> getPlainVertices();
-	std::vector<glm::vec2> getPlainTexCoords();
-	std::vector<glm::vec3> getPlainColors();
+	std::array<glm::vec2, 4> getQuad();
+	std::array<glm::vec3, 4> getPlainVertices();
+	std::array<glm::vec2, 4> getPlainTexCoords();
+	std::array<glm::vec3, 4> getPlainColors();
 };
 
