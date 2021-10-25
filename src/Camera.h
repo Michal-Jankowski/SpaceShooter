@@ -6,9 +6,10 @@
 class Camera
 {
 public:
-	Camera(const glm::vec3& pos, const glm::vec3& viewPoint, const glm::vec3& up, float moveSpeed = 5.0f, float mouseSensitivity = 0.1f);
+	Camera(const glm::vec3& pos, const glm::vec3& viewPoint, const glm::vec3& up, glm::i32vec2 windowCenterPosition, float moveSpeed = 5.0f, float mouseSensitivity = 0.1f);
 	void setKeyboardControls(int forwardKeyCode, int backwardKeyCode, int strafeLeftKeyCode, int strafeRightKeyCode);
 	void update(const std::function<bool(int)>& keyInputFunc, const std::function<glm::i32vec2()>& getCursorPosFunc, const std::function<void(const glm::i32vec2&)>& setCursorPosFunc);
+	void setWindowCenterPosition(const glm::i32vec2& windowCenterPosition);
 	glm::vec3 getNormalizedViewVector() const;
 	glm::mat4 getViewMatrix() const;
 private:
