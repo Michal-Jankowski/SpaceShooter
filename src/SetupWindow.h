@@ -30,7 +30,8 @@ public:
 	bool errorHasOccured() const;
 	void setVerticalSynchronization(bool enable);
 	bool isVerticalSynchronizationEnabled();
-
+	void setWireframeMode(bool enable);
+	bool isWireframeModeEnabled();
     glm::mat4 getProjectionMatrix() const;
 	glm::mat4 getOrthoProjectionMatrix() const;
 private:
@@ -42,7 +43,7 @@ private:
 	bool m_keyWasPressed[512] = { false };
 	bool m_hasErrorOccured = false;
 	bool m_isVerticalSynchronizationEnabled = false;
-
+	bool m_wireFrameMode = false;
 	double m_lastFrameTime = 0.0;
 	double m_lastFrameTimeFPS = 0.0; 
 	double m_timeDelta = 0.0; 
