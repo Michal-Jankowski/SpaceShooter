@@ -40,10 +40,10 @@ public:
 	void setUniform(std::string sName, int* iValues, int iCount = 1);
 	void setUniform(std::string sName, const int iValue);
 
-	// Model and normal matrix setting ispretty common
+	// Model and normal matrix setting
 	void SetModelAndNormalMatrix(std::string sModelMatrixName, std::string sNormalMatrixName, glm::mat4 mModelMatrix);
 
 private:
-	GLuint m_programID; // ID of program
-	bool m_isLinked = false; // Whether program was linked and is ready to use
+	GLuint m_programID;
+	bool m_isLinked = false;
 };

@@ -4,10 +4,13 @@
 class TextureLoader
 {
 public:
-    bool loadTexture2D(const std::string& filePath, bool shouldGenerateMipmaps);
+    ~TextureLoader();
+    bool loadTexture2D(const std::string& filePath, bool shouldGenerateMipmaps = false);
 	bool createFromData(const unsigned char* data, int width, int height, int bytesPerPixel, bool generateMipmaps = false);
+    void bind(const int textureUnit = 0) const;
+    void deleteTexture();
 private:
-    GLuint textureID_ = 0; 
+    GLuint m_textureID = 0; 
     int m_width = 0; 
     int m_height = 0; 
     int m_bytesPerPixel = 0; 

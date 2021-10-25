@@ -4,6 +4,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../dependencies/stb/stb_image.h"
 
+TextureLoader::~TextureLoader() {
+    deleteTexture();
+}
+
 bool TextureLoader::loadTexture2D(const std::string& filePath, bool generateMipmaps)
 {
     stbi_set_flip_vertically_on_load(1);
@@ -22,6 +26,7 @@ bool TextureLoader::loadTexture2D(const std::string& filePath, bool generateMipm
 
 bool TextureLoader::createFromData(const unsigned char* data, int width, int height, int bytesPerPixel, bool generateMipmaps) {
     if (m_isLoaded) {
+        std::cerr << "Accessing non loaded texture!" << std::endl;
         return false;
     }
 
@@ -29,8 +34,8 @@ bool TextureLoader::createFromData(const unsigned char* data, int width, int hei
     m_height = height;
     m_bytesPerPixel = bytesPerPixel;
 
-    glGenTextures(1, &textureID_);
-    glBindTexture(GL_TEXTURE_2D, textureID_);
+    glGenTextures(1, &m_textureID);
+    glBindTexture(GL_TEXTURE_2D, m_textureID);
 
     GLenum internalFormat = 0;
     GLenum format = 0;
@@ -52,4 +57,23 @@ bool TextureLoader::createFromData(const unsigned char* data, int width, int hei
 
     m_isLoaded = true;
     return true;
+}
+
+void TextureLoader::bind(const int textureUnit) const {
+    if (!m_isLoaded) {
+        std::cerr << "Accessing non loaded texture!" << std::endl;
+        return;
+    }
+    glActiveTexture(GL_TEXTURE0 + textureUnit);
+    glBindTexture(GL_TEXTURE_2D, m_textureID);
+}
+
+void TextureLoader::deleteTexture() {
+
+    if (!m_isLoaded) {
+        return;
+    }
+    glDeleteTextures(1, &m_textureID);
+    m_textureID = 0;
+    m_isLoaded = false;
 }
