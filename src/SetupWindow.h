@@ -28,7 +28,11 @@ public:
 
 	void closeWindow(bool errorHasOccured = false);
 	bool errorHasOccured() const;
+	void setVerticalSynchronization(bool enable);
+	bool isVerticalSynchronizationEnabled();
 
+    glm::mat4 getProjectionMatrix() const;
+	glm::mat4 getOrthoProjectionMatrix() const;
 private:
 	GLFWwindow* m_window = nullptr;
 	glm::mat4 m_projectionMatrix = glm::mat4(0.0);
@@ -51,7 +55,6 @@ private:
 	static void onMouseButtonPressedStatic(GLFWwindow* window, int button, int action, int mods);
 	static void onMouseWheelScrollStatic(GLFWwindow* window, double offsetX, double offsetY);
 	static void onWindowSizeChangedStatic(GLFWwindow* window, int width, int height);
-	void setVerticalSynchronization(bool enable);
 	void updateDeltaTimeAndFPS();
 	static std::map<GLFWwindow*, SetupWindow*> m_windows;
 };
