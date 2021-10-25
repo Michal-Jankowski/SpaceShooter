@@ -71,7 +71,7 @@ void TextureLoader::bind(const int textureUnit) const {
 void TextureLoader::deleteTexture() {
 
     if (!m_isLoaded) {
-        std::cerr << "Attempting to free empty texture!" << std::endl;
+        return;
     }
     glDeleteTextures(1, &m_textureID);
     m_textureID = 0;
