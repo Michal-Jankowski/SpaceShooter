@@ -58,6 +58,43 @@ void Shader::deleteShader() {
     glDeleteShader(m_shaderID);
 }
 
+inline std::vector<std::string> split(std::string s, char t)
+{
+    std::vector<std::string> res;
+    while (true)
+    {
+        auto pos = s.find(t);
+        if (pos == -1)
+        {
+            if (s.size() > 0)
+                res.push_back(s);
+            break;
+        }
+        std::string tp = s.substr(0, pos);
+        if (tp.size() != 0)
+            res.push_back(tp);
+        s = s.substr(pos + 1, s.size() - pos - 1);
+    }
+    return res;
+}
+
+inline std::string upOneDirectory(const std::string& originalPath, char slashCharacter)
+{
+    bool isTrailingSlash = originalPath.back() == slashCharacter;
+    std::vector<std::string> subPaths = split(originalPath, slashCharacter);
+    std::string result = "";
+    for (size_t i = 0; i < subPaths.size() - 1; i++)
+    {
+        if (i > 0)
+            result += slashCharacter;
+        result += subPaths[i];
+    }
+    if (isTrailingSlash && result.size() > 0)
+        result += slashCharacter;
+
+    return result;
+}
+
 bool Shader::getLinesFromFile(const std::string& fileName, std::vector<std::string>& result, bool isReadingIncludedFile) const {
     std::ifstream file(fileName);
 
@@ -68,11 +105,10 @@ bool Shader::getLinesFromFile(const std::string& fileName, std::vector<std::stri
 
     std::string startDirectory;
     char slashCharacter = '/';
-    char doublebackslash = '\\';
     size_t slashIndex = -1;
     for (int i = static_cast<int>(fileName.size()) - 1; i >= 0; i--)
     {
-        if (fileName[i] == slashCharacter || fileName[i] == doublebackslash)
+        if (fileName[i] == slashCharacter)
         {
             slashIndex = i;
             break;
@@ -99,6 +135,21 @@ bool Shader::getLinesFromFile(const std::string& fileName, std::vector<std::stri
             if (includeFileName.size() > 0 && includeFileName[0] == '\"' && includeFileName[includeFileName.size() - 1] == '\"')
             {
                 includeFileName = includeFileName.substr(1, int(includeFileName.size()) - 2);
+                std::string directory = startDirectory;
+                std::vector<std::string> subPaths = split(includeFileName, slashCharacter);
+                std::string sFinalFileName = "";
+                for (const std::string& subPath : subPaths)
+                {
+                    if (subPath == "..")
+                        directory = upOneDirectory(directory, slashCharacter);
+                    else
+                    {
+                        if (sFinalFileName.size() > 0)
+                            sFinalFileName += slashCharacter;
+                        sFinalFileName += subPath;
+                    }
+                }
+                const auto combinedIncludeFilePath = directory + sFinalFileName;
                 getLinesFromFile(startDirectory + includeFileName, result, true);
             }
         }
