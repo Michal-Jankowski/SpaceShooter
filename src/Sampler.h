@@ -17,7 +17,7 @@ public:
 	void bind(int textureNumber = 0) const;
 	~Sampler();
 	void deleteSampler();
-	void setFilterOptions(FilterOptions filterOption) const;
+	void setFilterOptions(FilterOptions filterOption, GLenum pname) const;
 	void setRepeat(bool repeat) const;
 private:
 	GLuint m_samplerID = 0;

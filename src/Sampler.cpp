@@ -7,7 +7,7 @@ void Sampler::create() {
 
 	glGenSamplers(1, &m_samplerID);
 	m_isCreated = true;
-	setRepeat(true);
+	setRepeat(false);
 }
 
 void Sampler::bind(int samplerUnit) const {
@@ -19,6 +19,7 @@ void Sampler::bind(int samplerUnit) const {
 }
 
 Sampler::~Sampler() {
+    deleteSampler();
 }
 
 void Sampler::deleteSampler() {
@@ -26,13 +27,12 @@ void Sampler::deleteSampler() {
 	glDeleteSamplers(1, &m_samplerID);
 }
 
-void Sampler::setFilterOptions(FilterOptions filterOption) const {
+void Sampler::setFilterOptions(FilterOptions filterOption, GLenum pname) const {
 
     if (!m_isCreated) {
         std::cerr << "Sampler was not yet created!" << std::endl;
         return;
     }
-    const GLenum pname = GL_TEXTURE_MIN_FILTER;
     GLint param = GL_NEAREST;
     switch (filterOption) {
     case FilterOptions::MIN_FILTER_BILINEAR:
