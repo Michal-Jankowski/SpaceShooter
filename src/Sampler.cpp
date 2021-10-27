@@ -10,12 +10,16 @@ void Sampler::create() {
 	setRepeat(false);
 }
 
-void Sampler::bind(int samplerUnit) const {
+void Sampler::bind(int textureUnit) const {
     if (!m_isCreated) {
         std::cerr << "Sampler was not yet created!" << std::endl;
         return;
     }
-	glBindSampler(samplerUnit, m_samplerID);
+	glBindSampler(textureUnit, m_samplerID);
+    glSamplerParameteri(m_samplerID, GL_NEAREST, GL_TEXTURE_MIN_FILTER);
+    glSamplerParameteri(m_samplerID, GL_NEAREST, GL_TEXTURE_MAG_FILTER);
+
+
 }
 
 Sampler::~Sampler() {
