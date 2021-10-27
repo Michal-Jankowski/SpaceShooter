@@ -74,8 +74,7 @@ void Camera::strafeBy(float distance) {
 	m_viewPoint += strafeVector;
 }
 
-void Camera::rotateLeftRight(float angleInDegrees)
-{
+void Camera::rotateLeftRight(float angleInDegrees) {
 	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(angleInDegrees), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::vec4 rotatedViewVector = rotationMatrix * glm::vec4(getNormalizedViewVector(), 0.0f);
 	m_viewPoint = m_position + glm::vec3(rotatedViewVector);
@@ -91,8 +90,7 @@ void Camera::rotateUpDown(float angleInDegrees) {
 	}
 
 	float newAngleDegrees = currentAngleDegrees + angleInDegrees;
-	if (newAngleDegrees > -85.0f && newAngleDegrees < 85.0f)
-	{
+	if (newAngleDegrees > -85.0f && newAngleDegrees < 85.0f) {
 		glm::vec3 rotationAxis = glm::cross(getNormalizedViewVector(), m_upVector);
 		rotationAxis = glm::normalize(rotationAxis);
 
