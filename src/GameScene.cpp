@@ -1,4 +1,39 @@
 #include "GameScene.h"
+
+// Render using triangle strip!
+glm::vec3 plainGroundVertices[4] =
+{
+	glm::vec3(-200.0f, 0.0f, -200.0f), // Left-back point
+	glm::vec3(-200.0f, 0.0f, 200.0f), // Left-front point
+	glm::vec3(200.0f, 0.0f, -200.0f), // Right-back point
+	glm::vec3(200.0f, 0.0f, 200.0f) // Right-front point
+};
+
+glm::vec2 plainGroundTexCoords[4] =
+{
+	glm::vec2(0.0f, 20.0f),
+	glm::vec2(0.0f, 0.0f),
+	glm::vec2(20.0f, 20.0f),
+	glm::vec2(20.0f, 0.0f)
+};
+
+glm::vec3 plainGroundColors[4] =
+{
+	glm::vec3(0.0f, 0.5f, 0.0f),
+	glm::vec3(0.0f, 0.85f, 0.0f),
+	glm::vec3(0.0f, 0.35f, 0.25f),
+	glm::vec3(0.0f, 0.8f, 0.2f)
+};
+
+// Render using triangle strip!
+glm::vec2 quad2D[4] =
+{
+	glm::vec2(0, 1), // Top-left point
+	glm::vec2(0, 0), // Bottom-left point
+	glm::vec2(1, 1), // Top-right point
+	glm::vec2(1, 0) // Bottom-right point
+};
+
 void GameScene::initScene() {
 	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
 	// load shaders
@@ -6,6 +41,7 @@ void GameScene::initScene() {
 	m_fsShader.loadShaderFromFile("shader.fs", GL_FRAGMENT_SHADER);
 	m_vsGround.loadShaderFromFile("ground.vs", GL_VERTEX_SHADER);
 	m_fsGround.loadShaderFromFile("ground.fs", GL_FRAGMENT_SHADER);
+
 	if (!m_vsShader.hasLoaded() || !m_fsShader.hasLoaded()) {
 		closeWindow(true);
 		return;
@@ -40,14 +76,14 @@ void GameScene::initScene() {
 
 	m_vertexBuffer.createVBO();
 	m_vertexBuffer.bindVBO();
-	m_vertexBuffer.addRawData(static_cast<void*>(m_staticGeometry.getPlainVertices().data()), sizeof(m_staticGeometry.getPlainVertices()));
+	m_vertexBuffer.addRawData(plainGroundVertices, sizeof(plainGroundVertices));
 	m_vertexBuffer.uploadDataToGPU(GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), static_cast<void*>(0));
 
 	m_textureBuffer.createVBO();
 	m_textureBuffer.bindVBO();
-	m_textureBuffer.addRawData(static_cast<void*>(m_staticGeometry.getPlainTexCoords().data()), sizeof(m_staticGeometry.getPlainTexCoords()));
+	m_textureBuffer.addRawData(plainGroundTexCoords, sizeof(plainGroundTexCoords));
 	m_textureBuffer.uploadDataToGPU(GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), static_cast<void*>(0));
@@ -55,12 +91,12 @@ void GameScene::initScene() {
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0);
 
-	m_snowTexture.loadTexture2D("res/img/snow.png");
+	m_snowTexture.loadTexture2D("res/img/lava.png");
 
 	m_sampler.create();
 	m_sampler.bind();
-	m_sampler.setFilterOptions(FilterOptions::MAG_FILTER_BILINEAR);
-	m_sampler.setFilterOptions(FilterOptions::MIN_FILTER_TRILINEAR);
+	m_sampler.setFilterOptions(FilterOptions::MIN_FILTER_TRILINEAR, GL_TEXTURE_MIN_FILTER);
+	m_sampler.setFilterOptions(FilterOptions::MAG_FILTER_BILINEAR, GL_TEXTURE_MAG_FILTER);
 
 	int posX, posY, width, height;
 	glfwGetWindowPos(getWindow(), &posX, &posY);
@@ -108,9 +144,10 @@ void GameScene::updateScene() {
 
 	glfwSetWindowTitle(getWindow(), "SpaceShooter");
 
-	m_camera->update([this](int keyCode) {return this->keyPressed(keyCode); },
+	m_camera->update(
+		[this](int keyCode) {return this->keyPressed(keyCode); },
 		[this]() {double curPosX, curPosY; glfwGetCursorPos(this->getWindow(), &curPosX, &curPosY); return glm::u32vec2(curPosX, curPosY); },
-		[this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y);});
+		[this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y); });
 
 }
 
