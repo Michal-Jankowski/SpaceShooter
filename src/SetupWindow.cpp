@@ -97,9 +97,8 @@ void SetupWindow::setVerticalSynchronization(bool enable)
 	m_isVerticalSynchronizationEnabled = enable;
 }
 
-bool SetupWindow::isVerticalSynchronizationEnabled()
-{
-	return false;
+bool SetupWindow::isVerticalSynchronizationEnabled() {
+	return m_isVerticalSynchronizationEnabled;
 }
 
 void SetupWindow::setWireframeMode(bool enable) {
@@ -117,6 +116,10 @@ glm::mat4 SetupWindow::getProjectionMatrix() const {
 
 glm::mat4 SetupWindow::getOrthoProjectionMatrix() const {
 	return m_orthoMatrix;
+}
+
+int SetupWindow::getFPSCount() const {
+	return m_FPS;
 }
 
 bool SetupWindow::keyPressed(int keyCode) const {
