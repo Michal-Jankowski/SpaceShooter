@@ -141,8 +141,8 @@ void GameScene::updateScene() {
 	if (keyPressedOnce(GLFW_KEY_1)) {
 		setWireframeMode(!isWireframeModeEnabled());
 	}
-
-	glfwSetWindowTitle(getWindow(), "SpaceShooter");
+	std::string title = "SpaceShooter FPS count: " + std::to_string(getFPSCount()) + " VSync: " + (isVerticalSynchronizationEnabled() ? "On" : "Off"); 
+	glfwSetWindowTitle(getWindow(), title.c_str());
 
 	m_camera->update(
 		[this](int keyCode) {return this->keyPressed(keyCode); },
