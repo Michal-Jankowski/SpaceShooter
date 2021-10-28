@@ -87,7 +87,6 @@ void GameScene::initScene() {
 	m_vertexEBO.bindVBO(GL_ELEMENT_ARRAY_BUFFER);
 	m_vertexEBO.addRawData(plainGroundIndices, sizeof(plainGroundIndices));
 	m_vertexEBO.uploadDataToGPU(GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // we should not unbind EBO while VAO is active
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), static_cast<void*>(0));
 	glEnableVertexAttribArray(0);
@@ -100,9 +99,9 @@ void GameScene::initScene() {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), static_cast<void*>(0));
 
 	/// UNBINDING VBO, VAO, EBO
-	glBindBuffer(GL_ARRAY_BUFFER, 0); // unbinding VBO 
+	//glBindBuffer(GL_ARRAY_BUFFER, 0); // unbinding VBO, but dont have to
 	glBindVertexArray(0); // we can unbind VAO
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // we should not unbind EBO while VAO is active
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // we should not unbind EBO while VAO is active, but dont have to
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0);
 
