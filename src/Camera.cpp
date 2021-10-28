@@ -20,19 +20,20 @@ void Camera::setKeyboardControls(int forwardKeyCode, int backwardKeyCode, int st
 
 void Camera::update(const std::function<bool(int)>& keyInputFunc,
 	const std::function<glm::i32vec2()>& getCursorPosFunc,
-	const std::function<void(const glm::i32vec2&)>& setCursorPosFunc)
+	const std::function<void(const glm::i32vec2&)>& setCursorPosFunc,
+	const std::function<float(float)>& speedCorrectionFunc)
 {
 	if (keyInputFunc(m_forwardKeyCode)) {
-		moveBy(m_moveSpeed);
+		moveBy(speedCorrectionFunc(m_moveSpeed));
 	}
 	if (keyInputFunc(m_backwarKeyCode)) {
-		moveBy(-m_moveSpeed);
+		moveBy(speedCorrectionFunc(-m_moveSpeed));
 	}
 	if (keyInputFunc(m_strafeLeftKeyCode)) {
-		strafeBy(-m_moveSpeed);
+		strafeBy(speedCorrectionFunc (-m_moveSpeed));
 	}
 	if (keyInputFunc(m_strafeRightKeyCode)) {
-		strafeBy(m_moveSpeed);
+		strafeBy(speedCorrectionFunc(m_moveSpeed));
 	}
 	const auto currentMousePosition = getCursorPosFunc();
 	const auto delta = m_windowCenterPosition;
