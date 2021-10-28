@@ -141,14 +141,14 @@ void GameScene::updateScene() {
 	if (keyPressedOnce(GLFW_KEY_1)) {
 		setWireframeMode(!isWireframeModeEnabled());
 	}
-	std::string title = "SpaceShooter FPS count: " + std::to_string(getFPSCount()) + " VSync: " + (isVerticalSynchronizationEnabled() ? "On" : "Off"); 
+	std::string title = "SpaceShooter FPS count: " + std::to_string(getFPS()) + " VSync: " + (isVerticalSynchronizationEnabled() ? "On" : "Off"); 
 	glfwSetWindowTitle(getWindow(), title.c_str());
 
 	m_camera->update(
 		[this](int keyCode) {return this->keyPressed(keyCode); },
 		[this]() {double curPosX, curPosY; glfwGetCursorPos(this->getWindow(), &curPosX, &curPosY); return glm::u32vec2(curPosX, curPosY); },
-		[this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y); });
-
+		[this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y); },
+		[this](float value) { return this->getValueByTime(value); });
 }
 
 void GameScene::releaseScene() {
