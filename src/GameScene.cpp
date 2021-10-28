@@ -1,7 +1,7 @@
 #include "GameScene.h"
 
 // Render using triangle strip!
-glm::vec3 plainGroundVertices[4] =
+glm::vec3 plainGroundVertices[] =
 {
 	glm::vec3(-200.0f, 0.0f, -200.0f), // Left-back point
 	glm::vec3(-200.0f, 0.0f, 200.0f), // Left-front point
@@ -9,7 +9,12 @@ glm::vec3 plainGroundVertices[4] =
 	glm::vec3(200.0f, 0.0f, 200.0f) // Right-front point
 };
 
-glm::vec2 plainGroundTexCoords[4] =
+GLuint plainGroundIndices[] = {
+	0, 1, 3,
+	1, 2, 3
+};
+
+glm::vec2 plainGroundTexCoords[] =
 {
 	glm::vec2(0.0f, 20.0f),
 	glm::vec2(0.0f, 0.0f),
@@ -17,7 +22,7 @@ glm::vec2 plainGroundTexCoords[4] =
 	glm::vec2(20.0f, 0.0f)
 };
 
-glm::vec3 plainGroundColors[4] =
+glm::vec3 plainGroundColors[] =
 {
 	glm::vec3(0.0f, 0.5f, 0.0f),
 	glm::vec3(0.0f, 0.85f, 0.0f),
@@ -26,7 +31,7 @@ glm::vec3 plainGroundColors[4] =
 };
 
 // Render using triangle strip!
-glm::vec2 quad2D[4] =
+glm::vec2 quad2D[] =
 {
 	glm::vec2(0, 1), // Top-left point
 	glm::vec2(0, 0), // Bottom-left point
@@ -73,13 +78,19 @@ void GameScene::initScene() {
 	// one VAO array
 	glGenVertexArrays(1, &m_VAO); 
 	glBindVertexArray(m_VAO);
-
 	m_vertexBuffer.createVBO();
+	m_vertexEBO.createVBO(); // create EBO
 	m_vertexBuffer.bindVBO();
 	m_vertexBuffer.addRawData(plainGroundVertices, sizeof(plainGroundVertices));
 	m_vertexBuffer.uploadDataToGPU(GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
+	// use EBO
+	m_vertexEBO.bindVBO(GL_ELEMENT_ARRAY_BUFFER);
+	m_vertexEBO.addRawData(plainGroundIndices, sizeof(plainGroundIndices));
+	m_vertexEBO.uploadDataToGPU(GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // we should not unbind EBO while VAO is active
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), static_cast<void*>(0));
+	glEnableVertexAttribArray(0);
 
 	m_textureBuffer.createVBO();
 	m_textureBuffer.bindVBO();
@@ -88,6 +99,10 @@ void GameScene::initScene() {
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), static_cast<void*>(0));
 
+	/// UNBINDING VBO, VAO, EBO
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // unbinding VBO 
+	glBindVertexArray(0); // we can unbind VAO
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // we should not unbind EBO while VAO is active
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0);
 
@@ -157,6 +172,8 @@ void GameScene::releaseScene() {
 	m_vsShader.deleteShader();
 	m_fsShader.deleteShader();
 	m_vertexBuffer.deleteVBO();
+	m_vertexEBO.deleteVBO();
+	m_textureBuffer.deleteVBO();
 	m_snowTexture.deleteTexture();
 	m_sampler.deleteSampler();
 	glDeleteVertexArrays(1, &m_VAO);
