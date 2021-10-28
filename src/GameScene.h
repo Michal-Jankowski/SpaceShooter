@@ -21,8 +21,9 @@ private:
     TextureLoader m_snowTexture;
     Sampler m_sampler;
     std::unique_ptr<Camera> m_camera;
-    VBO m_vertexBuffer, m_textureBuffer;
+    VBO m_vertexBuffer, m_textureBuffer, m_vertexEBO;
     StaticMesh m_staticGeometry;
     GLuint m_VAO;
+    GLuint m_EBO;
 };
 
