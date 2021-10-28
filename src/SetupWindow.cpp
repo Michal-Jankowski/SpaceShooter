@@ -43,8 +43,7 @@ bool SetupWindow::createWindow(const std::string& title, int majorVersion, int m
 
 }
 
-GLFWwindow* SetupWindow::getWindow() const
-{
+GLFWwindow* SetupWindow::getWindow() const {
 	return m_window;
 }
 
@@ -76,8 +75,7 @@ void SetupWindow::runApp() {
 	}
 }
 
-void SetupWindow::updateDeltaTimeAndFPS()
-{
+void SetupWindow::updateDeltaTimeAndFPS() {
 	const auto currentTime = glfwGetTime();
 	m_timeDelta = currentTime - m_lastFrameTime;
 	m_lastFrameTime = currentTime;
@@ -91,8 +89,7 @@ void SetupWindow::updateDeltaTimeAndFPS()
 	}
 }
 
-void SetupWindow::setVerticalSynchronization(bool enable)
-{
+void SetupWindow::setVerticalSynchronization(bool enable) {
 	glfwSwapInterval(enable ? 1 : 0);
 	m_isVerticalSynchronizationEnabled = enable;
 }
@@ -118,8 +115,16 @@ glm::mat4 SetupWindow::getOrthoProjectionMatrix() const {
 	return m_orthoMatrix;
 }
 
-int SetupWindow::getFPSCount() const {
+int SetupWindow::getFPS() const {
 	return m_FPS;
+}
+
+double SetupWindow::getDeltaTime() const {
+	return m_timeDelta;
+}
+
+double SetupWindow::getValueByTime(double value) const {
+	return getDeltaTime() * value;
 }
 
 bool SetupWindow::keyPressed(int keyCode) const {
@@ -163,9 +168,6 @@ void SetupWindow::onWindowSizeChangedInternal(int width, int height) {
 	m_screenWidth = width;
 	m_screenHeight = height;
 	onWindowSizeChanged(width, height);
-}
-
-void SetupWindow::updateDeltaTime() {
 }
 
 void SetupWindow::onMouseButtonPressedStatic(GLFWwindow* window, int button, int action, int mods) {

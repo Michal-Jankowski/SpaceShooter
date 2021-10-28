@@ -34,7 +34,9 @@ public:
 	bool isWireframeModeEnabled();
     glm::mat4 getProjectionMatrix() const;
 	glm::mat4 getOrthoProjectionMatrix() const;
-	int getFPSCount() const;
+	int getFPS() const;
+	double getDeltaTime() const;
+	double getValueByTime(double value) const;
 private:
 	GLFWwindow* m_window = nullptr;
 	glm::mat4 m_projectionMatrix = glm::mat4(0.0);
@@ -50,10 +52,10 @@ private:
 	double m_timeDelta = 0.0; 
 	int m_FPS = 0; 
 	int m_nextFPS = 0; 
+	double m_deltaTime = 0.0;
 
 	void recalculateProjectionMatrix();
 	void onWindowSizeChangedInternal(int width, int height);
-	void updateDeltaTime();
 	static void onMouseButtonPressedStatic(GLFWwindow* window, int button, int action, int mods);
 	static void onMouseWheelScrollStatic(GLFWwindow* window, double offsetX, double offsetY);
 	static void onWindowSizeChangedStatic(GLFWwindow* window, int width, int height);
