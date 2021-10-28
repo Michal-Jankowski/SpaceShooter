@@ -1,13 +1,14 @@
 #include "Sampler.h"
 #include <iostream>
-void Sampler::create() {
+void Sampler::create(bool repeat) {
 	if (m_isCreated) {
 		return;
 	}
 
 	glGenSamplers(1, &m_samplerID);
 	m_isCreated = true;
-	setRepeat(false);
+    m_repeat = repeat;
+	setRepeat(m_repeat);
 }
 
 void Sampler::bind(int textureUnit) const {
@@ -16,10 +17,6 @@ void Sampler::bind(int textureUnit) const {
         return;
     }
 	glBindSampler(textureUnit, m_samplerID);
-    glSamplerParameteri(m_samplerID, GL_NEAREST, GL_TEXTURE_MIN_FILTER);
-    glSamplerParameteri(m_samplerID, GL_NEAREST, GL_TEXTURE_MAG_FILTER);
-
-
 }
 
 Sampler::~Sampler() {
@@ -64,13 +61,14 @@ void Sampler::setFilterOptions(FilterOptions filterOption, GLenum pname) const {
     glSamplerParameteri(m_samplerID, pname, param);
 }
 
-void Sampler::setRepeat(bool repeat) const {
+void Sampler::setRepeat(bool repeat) {
 
     if (!m_isCreated) {
         std::cerr << "Sampler was not yet created!" << std::endl;
         return;
     }
-    GLint param = repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE;
+    m_repeat = repeat;
+    GLint param = m_repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE;
 
     glSamplerParameteri(m_samplerID, GL_TEXTURE_WRAP_S, param);
     glSamplerParameteri(m_samplerID, GL_TEXTURE_WRAP_T, param);

@@ -13,15 +13,16 @@ enum class FilterOptions {
 class Sampler
 {
 public:
-	void create();
+	void create(bool repeat);
 	void bind(int textureNumber = 0) const;
 	~Sampler();
 	void deleteSampler();
 	void setFilterOptions(FilterOptions filterOption, GLenum pname) const;
-	void setRepeat(bool repeat) const;
+	void setRepeat(bool repeat);
 private:
 	GLuint m_samplerID = 0;
 	bool m_isCreated = false;
+	bool m_repeat = false;
 
 };
 
