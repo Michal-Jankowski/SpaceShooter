@@ -37,10 +37,10 @@ glm::vec2 quad2D[4] =
 void GameScene::initScene() {
 	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
 	// load shaders
-	m_vsShader.loadShaderFromFile("shader.vs", GL_VERTEX_SHADER);
-	m_fsShader.loadShaderFromFile("shader.fs", GL_FRAGMENT_SHADER);
-	m_vsGround.loadShaderFromFile("ground.vs", GL_VERTEX_SHADER);
-	m_fsGround.loadShaderFromFile("ground.fs", GL_FRAGMENT_SHADER);
+	m_vsShader.loadShaderFromFile("../src/shaders/shader.vs", GL_VERTEX_SHADER);
+	m_fsShader.loadShaderFromFile("../src/shaders/shader.fs", GL_FRAGMENT_SHADER);
+	m_vsGround.loadShaderFromFile("../src/shaders/ground.vs", GL_VERTEX_SHADER);
+	m_fsGround.loadShaderFromFile("../src/shaders/ground.fs", GL_FRAGMENT_SHADER);
 
 	if (!m_vsShader.hasLoaded() || !m_fsShader.hasLoaded()) {
 		closeWindow(true);
@@ -91,9 +91,9 @@ void GameScene::initScene() {
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0);
 
-	m_snowTexture.loadTexture2D("res/img/lava.png");
+	m_snowTexture.loadTexture2D("../res/img/lava.png", true);
 
-	m_sampler.create();
+	m_sampler.create(true);
 	m_sampler.bind();
 	m_sampler.setFilterOptions(FilterOptions::MIN_FILTER_TRILINEAR, GL_TEXTURE_MIN_FILTER);
 	m_sampler.setFilterOptions(FilterOptions::MAG_FILTER_BILINEAR, GL_TEXTURE_MAG_FILTER);
