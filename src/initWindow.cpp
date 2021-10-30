@@ -8,7 +8,7 @@ int main(void) {
 	int majorVersion = 4;
 	int minorVersion = 4;
 	GameScene gameScene;
-	if (!gameScene.createWindow(windowTitle, majorVersion, minorVersion, true))
+	if (!gameScene.createWindow(windowTitle, majorVersion, minorVersion))
 	{
 		printf("Failed to create window with OpenGL context %d.%d! Shutting down...\n", majorVersion, minorVersion);
 		return 1;
