@@ -1,13 +1,12 @@
 #include "Camera.h"
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
-Camera::Camera(const glm::vec3& pos, const glm::vec3& viewPoint, const glm::vec3& up, glm::i32vec2 windowCenterPosition, float moveSpeed, float mouseSensitivity)
+Camera::Camera(const glm::vec3& pos, const glm::vec3& viewPoint, const glm::vec3& up,float moveSpeed, float mouseSensitivity)
   :  m_position(pos)
   ,  m_viewPoint(viewPoint)
   ,  m_upVector(up)
   ,  m_moveSpeed(moveSpeed)
   ,  m_mouseSensitivity(mouseSensitivity)
-  ,  m_windowCenterPosition(windowCenterPosition)
 {
 }
 
@@ -36,7 +35,7 @@ void Camera::update(const std::function<bool(int)>& keyInputFunc,
 		strafeBy(speedCorrectionFunc(m_moveSpeed));
 	}
 	const auto currentMousePosition = getCursorPosFunc();
-	const auto delta = m_windowCenterPosition;
+	const auto delta = m_windowCenterPosition - currentMousePosition;
 
 	if (delta.x != 0) {
 		rotateLeftRight(static_cast<float>(delta.x) * m_mouseSensitivity);
