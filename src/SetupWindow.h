@@ -11,7 +11,7 @@ class SetupWindow
 public:
 	SetupWindow();
 
-	bool createWindow(const std::string& title, int majorVersion, int minorVersion, bool showFullscreen);
+	bool createWindow(const std::string& title, int majorVersion, int minorVersion, bool showFullscreen = false);
 	GLFWwindow* getWindow() const;
 	void runApp();
 
@@ -31,7 +31,9 @@ public:
 	void setVerticalSynchronization(bool enable);
 	bool isVerticalSynchronizationEnabled();
 	void setWireframeMode(bool enable);
-	bool isWireframeModeEnabled();
+	bool isWireframeModeEnabled() const;
+	bool isFullScreenEnabled() const;
+	void setFullScreenMode(bool enable);
     glm::mat4 getProjectionMatrix() const;
 	glm::mat4 getOrthoProjectionMatrix() const;
 	int getFPS() const;
@@ -47,6 +49,7 @@ private:
 	bool m_hasErrorOccured = false;
 	bool m_isVerticalSynchronizationEnabled = false;
 	bool m_wireFrameMode = false;
+	bool m_showFullScreen = false;
 	double m_lastFrameTime = 0.0;
 	double m_lastFrameTimeFPS = 0.0; 
 	double m_timeDelta = 0.0; 

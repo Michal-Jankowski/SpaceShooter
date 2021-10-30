@@ -19,7 +19,8 @@ bool SetupWindow::createWindow(const std::string& title, int majorVersion, int m
 
 	const auto primaryWindow = glfwGetPrimaryMonitor();
 	const auto videoMode = glfwGetVideoMode(primaryWindow);
-	const auto monitor = showFullscreen ? primaryWindow : nullptr;
+	m_showFullScreen = showFullscreen;
+	auto monitor = m_showFullScreen ? primaryWindow : nullptr;
 
 	m_window = glfwCreateWindow(videoMode->width, videoMode->height, title.c_str(), monitor, nullptr);
 	if (m_window == nullptr) {
@@ -103,8 +104,16 @@ void SetupWindow::setWireframeMode(bool enable) {
 	m_isVerticalSynchronizationEnabled = enable;
 }
 
-bool SetupWindow::isWireframeModeEnabled() {
+bool SetupWindow::isWireframeModeEnabled() const {
 	return m_isVerticalSynchronizationEnabled;
+}
+
+bool SetupWindow::isFullScreenEnabled() const {
+	return m_showFullScreen;
+}
+
+void SetupWindow::setFullScreenMode(bool enable) {
+	m_showFullScreen = enable;
 }
 
 glm::mat4 SetupWindow::getProjectionMatrix() const {
