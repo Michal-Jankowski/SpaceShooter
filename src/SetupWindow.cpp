@@ -101,11 +101,11 @@ bool SetupWindow::isVerticalSynchronizationEnabled() {
 
 void SetupWindow::setWireframeMode(bool enable) {
 	enable ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	m_isVerticalSynchronizationEnabled = enable;
+	m_isWireFrameModeEnabled = enable;
 }
 
 bool SetupWindow::isWireframeModeEnabled() const {
-	return m_isVerticalSynchronizationEnabled;
+	return m_isWireFrameModeEnabled;
 }
 
 bool SetupWindow::isFullScreenEnabled() const {
@@ -114,6 +114,14 @@ bool SetupWindow::isFullScreenEnabled() const {
 
 void SetupWindow::setFullScreenMode(bool enable) {
 	m_showFullScreen = enable;
+}
+
+bool SetupWindow::isCameraUpdateEnabled() const {
+	return m_isCameraUpdateEnabled;
+}
+
+void SetupWindow::setCameraUpdateEnabled(bool enable) {
+	m_isCameraUpdateEnabled = enable;
 }
 
 glm::mat4 SetupWindow::getProjectionMatrix() const {

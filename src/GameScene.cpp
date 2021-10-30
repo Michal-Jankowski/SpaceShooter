@@ -1,6 +1,6 @@
 #include "GameScene.h"
 
-bool updateCamera = false;
+bool updateCamera = true;
 // Render using triangle strip!
 glm::vec3 plainGroundVertices[] =
 {
@@ -112,8 +112,9 @@ void GameScene::initScene() {
 	m_sampler.bind();
 	m_sampler.setFilterOptions(FilterOptions::MIN_FILTER_TRILINEAR, GL_TEXTURE_MIN_FILTER);
 	m_sampler.setFilterOptions(FilterOptions::MAG_FILTER_BILINEAR, GL_TEXTURE_MAG_FILTER);
-
-	m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), 15.0f);
+	int width, height;
+	glfwGetWindowSize(getWindow(), &width, &height);
+	m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
 
 }
 
@@ -142,6 +143,10 @@ void GameScene::renderScene() {
 }
 
 void GameScene::updateScene() {
+
+	std::string title = "SpaceShooter FPS count: " + std::to_string(getFPS()) + " VSync: " + (isVerticalSynchronizationEnabled() ? "On" : "Off");
+	glfwSetWindowTitle(getWindow(), title.c_str());
+
 	if (keyPressedOnce(GLFW_KEY_ESCAPE)) {
 		closeWindow();
 	}
@@ -155,21 +160,12 @@ void GameScene::updateScene() {
 	}
 
 	if (keyPressedOnce(GLFW_KEY_2)) {
-		updateCamera = !updateCamera;
+		setCameraUpdateEnabled(!isCameraUpdateEnabled());
 	}
 
-	std::string title = "SpaceShooter FPS count: " + std::to_string(getFPS()) + " VSync: " + (isVerticalSynchronizationEnabled() ? "On" : "Off"); 
-	glfwSetWindowTitle(getWindow(), title.c_str());
-	if (updateCamera) {
-		int posX, posY, width, height;
-		glfwGetWindowSize(getWindow(), &width, &height);
-		m_camera->setWindowCenterPosition(glm::i32vec2(width / 2, height / 2));
-
-		m_camera->update(
-			[this](int keyCode) {return this->keyPressed(keyCode); },
-			[this]() {double curPosX, curPosY; glfwGetCursorPos(this->getWindow(), &curPosX, &curPosY); return glm::u32vec2(curPosX, curPosY); },
-			[this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y); },
-			[this](float value) { return this->getValueByTime(value); });
+	if (isCameraUpdateEnabled()) {
+		m_camera->update([this](int keyCode) {return this->keyPressed(keyCode); }, [this]() {double curPosX, curPosY; glfwGetCursorPos(this->getWindow(), &curPosX, &curPosY); return glm::u32vec2(curPosX, curPosY); },
+		[this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y); }, [this](float value) { return this->getValueByTime(value); });
 	}
 }
 

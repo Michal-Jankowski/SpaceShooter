@@ -34,6 +34,8 @@ public:
 	bool isWireframeModeEnabled() const;
 	bool isFullScreenEnabled() const;
 	void setFullScreenMode(bool enable);
+	bool isCameraUpdateEnabled() const;
+	void setCameraUpdateEnabled(bool enable);
     glm::mat4 getProjectionMatrix() const;
 	glm::mat4 getOrthoProjectionMatrix() const;
 	int getFPS() const;
@@ -48,8 +50,9 @@ private:
 	bool m_keyWasPressed[512] = { false };
 	bool m_hasErrorOccured = false;
 	bool m_isVerticalSynchronizationEnabled = false;
-	bool m_wireFrameMode = false;
+	bool m_isWireFrameModeEnabled = false;
 	bool m_showFullScreen = false;
+	bool m_isCameraUpdateEnabled = true;
 	double m_lastFrameTime = 0.0;
 	double m_lastFrameTimeFPS = 0.0; 
 	double m_timeDelta = 0.0; 
