@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <assimp/Importer.hpp>
+
 Camera::Camera(const glm::vec3& pos, const glm::vec3& viewPoint, const glm::vec3& up, glm::i32vec2 windowPosition, float moveSpeed, float mouseSensitivity)
   :  m_position(pos)
   ,  m_viewPoint(viewPoint)
