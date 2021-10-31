@@ -7,6 +7,7 @@
 #include "../src/Sampler.h"
 #include "../src/StaticMesh.h"
 #include "../src/Camera.h"
+#include "ModelMesh.h"
 #include <memory>
 class GameScene : public SetupWindow
 {
@@ -19,6 +20,7 @@ private:
     Shader m_vsShader, m_fsShader, m_vsGround, m_fsGround;
     ShaderProgram m_mainProgram, m_groundProgram;
     TextureLoader m_snowTexture;
+    ModelMesh m_ship;
     Sampler m_sampler;
     std::unique_ptr<Camera> m_camera;
     Buffer m_vertexBuffer, m_textureBuffer, m_vertexEBO;
