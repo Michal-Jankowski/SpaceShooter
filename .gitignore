@@ -447,3 +447,4 @@ FodyWeavers.xsd
 #cmake build results
 project/
 /cmake-build-debug/
+/cmake-build-release/
