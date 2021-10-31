@@ -2,13 +2,11 @@
 ShaderProgram::~ShaderProgram() {
 	deleteProgram();
 }
-void ShaderProgram::createProgram()
-{
+void ShaderProgram::createProgram() {
 	m_programID = glCreateProgram();
 }
 
-bool ShaderProgram::addShaderToProgram(const Shader& shShader)
-{
+bool ShaderProgram::addShaderToProgram(const Shader& shShader) {
 	if (!shShader.hasLoaded()) {
 		return false;
 	}
@@ -16,8 +14,7 @@ bool ShaderProgram::addShaderToProgram(const Shader& shShader)
 	return true;
 }
 
-bool ShaderProgram::linkProgram()
-{
+bool ShaderProgram::linkProgram() {
 	if (m_isLinked) {
 		return true;
 	}
@@ -39,8 +36,7 @@ bool ShaderProgram::linkProgram()
 	return m_isLinked;
 }    
  
-void ShaderProgram::deleteProgram()
-{
+void ShaderProgram::deleteProgram() {
 	if (!m_isLinked) {
 		return;
 	}
@@ -48,22 +44,19 @@ void ShaderProgram::deleteProgram()
 	glDeleteProgram(m_programID);
 }
 
-void ShaderProgram::useProgram() const
-{
+void ShaderProgram::useProgram() const {
 	if (m_isLinked) {
 		glUseProgram(m_programID);
 	}
 }
 
-unsigned ShaderProgram::getProgramID() const
-{
+unsigned ShaderProgram::getProgramID() const {
 	return m_programID;
 }
 
 // Setting floats
 
-void ShaderProgram::setUniform(const std::string& sName, float* fValues, int iCount)
-{
+void ShaderProgram::setUniform(const std::string& sName, float* fValues, int iCount) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -71,8 +64,7 @@ void ShaderProgram::setUniform(const std::string& sName, float* fValues, int iCo
 	glUniform1fv(iLoc, iCount, fValues);
 }
 
-void ShaderProgram::setUniform(const std::string& sName, const float fValue)
-{
+void ShaderProgram::setUniform(const std::string& sName, const float fValue) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -82,8 +74,7 @@ void ShaderProgram::setUniform(const std::string& sName, const float fValue)
 
 // Setting vectors
 
-void ShaderProgram::setUniform(const std::string& sName, glm::vec2* vVectors, int iCount)
-{
+void ShaderProgram::setUniform(const std::string& sName, glm::vec2* vVectors, int iCount) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -91,8 +82,7 @@ void ShaderProgram::setUniform(const std::string& sName, glm::vec2* vVectors, in
 	glUniform2fv(iLoc, iCount, (GLfloat*)vVectors);
 }
 
-void ShaderProgram::setUniform(const std::string& sName, const glm::vec2 vVector)
-{
+void ShaderProgram::setUniform(const std::string& sName, const glm::vec2 vVector) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -100,8 +90,7 @@ void ShaderProgram::setUniform(const std::string& sName, const glm::vec2 vVector
 	glUniform2fv(iLoc, 1, (GLfloat*)&vVector);
 }
 
-void ShaderProgram::setUniform(const std::string& sName, glm::vec3* vVectors, int iCount)
-{
+void ShaderProgram::setUniform(const std::string& sName, glm::vec3* vVectors, int iCount) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -109,8 +98,7 @@ void ShaderProgram::setUniform(const std::string& sName, glm::vec3* vVectors, in
 	glUniform3fv(iLoc, iCount, (GLfloat*)vVectors);
 }
 
-void ShaderProgram::setUniform(const std::string& sName, const glm::vec3 vVector)
-{
+void ShaderProgram::setUniform(const std::string& sName, const glm::vec3 vVector) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -118,8 +106,7 @@ void ShaderProgram::setUniform(const std::string& sName, const glm::vec3 vVector
 	glUniform3fv(iLoc, 1, (GLfloat*)&vVector);
 }
 
-void ShaderProgram::setUniform(const std::string& sName, glm::vec4* vVectors, int iCount)
-{
+void ShaderProgram::setUniform(const std::string& sName, glm::vec4* vVectors, int iCount) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -127,8 +114,7 @@ void ShaderProgram::setUniform(const std::string& sName, glm::vec4* vVectors, in
 	glUniform4fv(iLoc, iCount, (GLfloat*)vVectors);
 }
 
-void ShaderProgram::setUniform(const std::string& sName, const glm::vec4 vVector)
-{
+void ShaderProgram::setUniform(const std::string& sName, const glm::vec4 vVector) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -138,8 +124,7 @@ void ShaderProgram::setUniform(const std::string& sName, const glm::vec4 vVector
 
 // Setting 3x3 matrices
 
-void ShaderProgram::setUniform(const std::string& sName, glm::mat3* mMatrices, int iCount)
-{
+void ShaderProgram::setUniform(const std::string& sName, glm::mat3* mMatrices, int iCount) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -147,8 +132,7 @@ void ShaderProgram::setUniform(const std::string& sName, glm::mat3* mMatrices, i
 	glUniformMatrix3fv(iLoc, iCount, false, (GLfloat*)mMatrices);
 }
 
-void ShaderProgram::setUniform(const std::string& sName, const glm::mat3 mMatrix)
-{
+void ShaderProgram::setUniform(const std::string& sName, const glm::mat3 mMatrix) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -158,8 +142,7 @@ void ShaderProgram::setUniform(const std::string& sName, const glm::mat3 mMatrix
 
 // Setting 4x4 matrices
 
-void ShaderProgram::setUniform(const std::string& sName, glm::mat4* mMatrices, int iCount)
-{
+void ShaderProgram::setUniform(const std::string& sName, glm::mat4* mMatrices, int iCount) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -167,8 +150,7 @@ void ShaderProgram::setUniform(const std::string& sName, glm::mat4* mMatrices, i
 	glUniformMatrix4fv(iLoc, iCount, false, (GLfloat*)mMatrices);
 }
 
-void ShaderProgram::setUniform(const std::string& sName, const glm::mat4 mMatrix)
-{
+void ShaderProgram::setUniform(const std::string& sName, const glm::mat4 mMatrix) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -178,8 +160,7 @@ void ShaderProgram::setUniform(const std::string& sName, const glm::mat4 mMatrix
 
 // Setting integers
 
-void ShaderProgram::setUniform(const std::string& sName, const int* iValues, int iCount)
-{
+void ShaderProgram::setUniform(const std::string& sName, const int* iValues, int iCount) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name" << sName << "dose not exists, it will fail" << std::endl;
@@ -187,8 +168,7 @@ void ShaderProgram::setUniform(const std::string& sName, const int* iValues, int
 	glUniform1iv(iLoc, iCount, (GLint*)iValues);
 }
 
-void ShaderProgram::setUniform(const std::string& sName, const int iValue)
-{
+void ShaderProgram::setUniform(const std::string& sName, const int iValue) {
 	int iLoc = glGetUniformLocation(m_programID, sName.c_str());
 	if (iLoc == -1) {
 		std::cerr << "ERROR: uniform with this name " << sName << " dose not exists, it will fail" << std::endl;
@@ -196,8 +176,7 @@ void ShaderProgram::setUniform(const std::string& sName, const int iValue)
 	glUniform1iv(iLoc, 1, (GLint*)&iValue);
 }
 
-void ShaderProgram::SetModelAndNormalMatrix(const std::string& sModelMatrixName, const std::string& sNormalMatrixName, glm::mat4 mModelMatrix)
-{
+void ShaderProgram::SetModelAndNormalMatrix(const std::string& sModelMatrixName, const std::string& sNormalMatrixName, glm::mat4 mModelMatrix) {
 	setUniform(sModelMatrixName, mModelMatrix);
 	setUniform(sNormalMatrixName, glm::transpose(glm::inverse(mModelMatrix)));
 }
