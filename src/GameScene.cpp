@@ -1,7 +1,5 @@
 #include "GameScene.h"
 
-bool updateCamera = true;
-// Render using triangle strip!
 glm::vec3 plainGroundVertices[] =
 {
 	glm::vec3(-200.0f, 0.0f, -200.0f), // Left-back point
@@ -106,7 +104,7 @@ void GameScene::initScene() {
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0);
 
-	m_snowTexture.loadTexture2D("../res/img/lava.png", true);
+	m_snowTexture.loadTexture2D("../res/img/snow.png", true);
 
 	m_sampler.create(true);
 	m_sampler.bind();

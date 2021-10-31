@@ -2,7 +2,7 @@
 #include "../src/SetupWindow.h"
 #include "../src/Shader.h"
 #include "../src/ShaderProgram.h"
-#include "../src/VBO.h"
+#include "../src/Buffer.h"
 #include "../src/TextureLoader.h"
 #include "../src/Sampler.h"
 #include "../src/StaticMesh.h"
@@ -21,7 +21,7 @@ private:
     TextureLoader m_snowTexture;
     Sampler m_sampler;
     std::unique_ptr<Camera> m_camera;
-    VBO m_vertexBuffer, m_textureBuffer, m_vertexEBO;
+    Buffer m_vertexBuffer, m_textureBuffer, m_vertexEBO;
     StaticMesh m_staticGeometry;
     GLuint m_VAO;
     GLuint m_EBO;
