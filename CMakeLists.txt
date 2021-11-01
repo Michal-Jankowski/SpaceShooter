@@ -3,13 +3,17 @@ cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 
 if(NOT "${CMAKE_CXX_STANDARD}")
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 set(CMAKE_SUPPRESS_REGENERATION true)
 
 project(SpaceShooter)
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "SpaceShooter")
 
+file(COPY res DESTINATION ${CMAKE_BINARY_DIR}/Debug)
+file(COPY src DESTINATION ${CMAKE_BINARY_DIR}/Debug)
+file(COPY res DESTINATION ${CMAKE_BINARY_DIR}/Release)
+file(COPY src DESTINATION ${CMAKE_BINARY_DIR}/Release)
 ## User properties
 set(TEMP_DIR ${CMAKE_CURRENT_BINARY_DIR}/Temp)
 set(LIB_GLFW_DIR "${CMAKE_SOURCE_DIR}/dependencies/glfw" CACHE PATH "glfw library")
@@ -54,13 +58,8 @@ target_link_libraries(SpaceShooter
 glfw3.lib
 opengl32.lib)
 
-if(LIB_GLM_DIR STREQUAL "")
-message("Path to glm NOT added!")
-else()
 file(COPY res DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(GLOB SHADERY "src/shaders/*.vs"
- "src/shaders/*.fs")
-file(COPY ${SHADERY} DESTINATION  ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY src DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}" MOVE_SCRIPT_BUILD_DIR)
 file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" MOVE_SCRIPT_SOURCE_DIR)
 ### Should be only added when decided how we treat release version from cmake
@@ -69,6 +68,9 @@ file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" MOVE_SCRIPT_SOURCE_DIR)
 #file(COPY ${CMAKE_CURRENT_BINARY_DIR}/res/img/Vac.ttf DESTINATION  ${CMAKE_CURRENT_BINARY_DIR})
 #file(COPY ${CMAKE_CURRENT_BINARY_DIR}/res/img/edo.ttf DESTINATION  ${CMAKE_CURRENT_BINARY_DIR})
 configure_file(src/moveNewFiles.bat.in moveNewFiles.bat)
+
+if(LIB_GLM_DIR STREQUAL "")
+message("Path to glm NOT added!")
 endif()
 
 if(${DOWNLOAD_FREETYPE})
@@ -110,6 +112,9 @@ endif()
 
 if(${CONFIGURE_WITH_ASSIMP})
 file(GLOB ASSIMP_LIB RELATIVE "${LIB_ASSIMP_BINARY_DIR}" "${LIB_ASSIMP_BINARY_DIR}/*.lib")
+if(ASSIMP_LIB STREQUAL "")
+message("Assimp was not found!")
+endif()
 message("Assimp found: ${ASSIMP_LIB}")
 file(GLOB ASSIMP_DLL "${LIB_ASSIMP_BINARY_DIR}/*.dll" )
 target_link_libraries(SpaceShooter ${ASSIMP_LIB})
@@ -119,6 +124,6 @@ file(REMOVE_RECURSE ${TEMP_DIR}/x64/Release/Assimp)
 endif()
 
 if(${CONFIGURE_WITH_ASSIMP} AND ${CONFIGURE_WITH_FREETYPE})
-file(REMOVE_RECURSE ${TEMP_DIR}/x64)
-file(REMOVE_RECURSE ${TEMP_DIR}/Temp)
+file(REMOVE_RECURSE ${TEMP_DIR})
+file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/x64)
 endif()
