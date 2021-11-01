@@ -185,14 +185,14 @@ void ModelMesh::render() const
     std::string lastUsedTextureKey = "";
     for(auto i = 0; i < _meshStartIndices.size(); i++)
     {
-//        const auto usedMaterialIndex = _meshMaterialIndices[i];
-//        if (_materialTextureKeys.count(usedMaterialIndex) > 0)
-//        {
-//            const auto textureKey = _materialTextureKeys.at(usedMaterialIndex);
-//            if (textureKey != lastUsedTextureKey) {
-//                TextureManager::getInstance().getTexture(textureKey).bind();
-//            }
-//        }
+        const auto usedMaterialIndex = _meshMaterialIndices[i];
+        if (_materialTextureKeys.count(usedMaterialIndex) > 0)
+        {
+            const auto textureKey = _materialTextureKeys.at(usedMaterialIndex);
+            if (textureKey != lastUsedTextureKey) {
+                //TextureManager::getInstance().getTexture(textureKey).bind();
+            }
+        }
 
         glDrawArrays(GL_TRIANGLES, _meshStartIndices[i], _meshVerticesCount[i]);
     }

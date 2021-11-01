@@ -1,3 +1,4 @@
+#include <glm/ext/matrix_transform.hpp>
 #include "GameScene.h"
 
 glm::vec3 plainGroundVertices[] =
@@ -139,15 +140,22 @@ void GameScene::renderScene() {
 	m_sampler.bind(0);
 	m_groundProgram.setUniform("snowSampler", 0);
 
-	//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    m_ship.render();
+    //m_ship.render();
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	m_mainProgram.useProgram();
 	m_mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
 	m_mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
 	m_mainProgram.setUniform("color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
+    glm::mat4 model = glm::mat4( 1.0 );
+    glm::mat4 translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
 
+    m_mainProgram.setUniform("matrices.modelMatrix",translated);
+
+    m_mainProgram.setUniform("sampler", 0);
+
+    m_ship.render();
 }
 
 void GameScene::updateScene() {
