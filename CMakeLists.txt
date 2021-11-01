@@ -42,7 +42,7 @@ file(GLOB FILES_SOURCES
 "${LIB_GLAD_DIR}/include/glad.c"
 "${LIB_STB_DIR}/stb_image.h")
     
-add_executable(SpaceShooter ${FILES_SOURCES})
+add_executable(SpaceShooter ${FILES_SOURCES} src/PathHelper.cpp src/PathHelper.h)
 
 target_include_directories(SpaceShooter
 PUBLIC "${LIB_GLFW_DIR}/include"
