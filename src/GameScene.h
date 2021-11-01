@@ -7,7 +7,8 @@
 #include "../src/Sampler.h"
 #include "../src/StaticMesh.h"
 #include "../src/Camera.h"
-#include <memory>
+#include "../src/Skybox.h"
+
 class GameScene : public SetupWindow
 {
 public:
@@ -23,6 +24,7 @@ private:
     std::unique_ptr<Camera> m_camera;
     Buffer m_vertexBuffer, m_textureBuffer, m_vertexEBO;
     StaticMesh m_staticGeometry;
+    //std::unique_ptr<Skybox> m_skybox;
     GLuint m_VAO;
     GLuint m_EBO;
 };

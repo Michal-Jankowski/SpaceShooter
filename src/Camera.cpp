@@ -60,6 +60,10 @@ glm::mat4 Camera::getViewMatrix() const {
 	return glm::lookAt(m_position, m_viewPoint, m_upVector);
 }
 
+glm::vec3 Camera::getEye() const {
+	return m_position;
+}
+
 void Camera::moveBy(float distance) {
 	glm::vec3 offset = getNormalizedViewVector();
 	offset *= distance;

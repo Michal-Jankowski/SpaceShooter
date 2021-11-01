@@ -178,5 +178,6 @@ void ShaderProgram::setUniform(const std::string& sName, const int iValue) {
 
 void ShaderProgram::SetModelAndNormalMatrix(const std::string& sModelMatrixName, const std::string& sNormalMatrixName, glm::mat4 mModelMatrix) {
 	setUniform(sModelMatrixName, mModelMatrix);
-	setUniform(sNormalMatrixName, glm::transpose(glm::inverse(mModelMatrix)));
+	setUniform(sNormalMatrixName, glm::transpose(glm::inverse(glm::mat3(mModelMatrix))));
 }
+
