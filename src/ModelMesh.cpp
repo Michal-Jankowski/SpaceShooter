@@ -1,5 +1,6 @@
 #include "ModelMesh.h"
 #include "TextureManager.h"
+#include "PathHelper.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -11,10 +12,8 @@ const int ModelMesh::POSITION_ATTRIBUTE_INDEX           = 0;
 const int ModelMesh::TEXTURE_COORDINATE_ATTRIBUTE_INDEX = 1;
 const int ModelMesh::NORMAL_ATTRIBUTE_INDEX             = 2;
 
-const std::string ModelMesh::texturesPath = "res/img/";
 
-bool ModelMesh::loadModelFromFile(const std::string &path, const std::string &defaultTextureName,
-                                  const glm::mat4 &modelTransformMatrix) {
+bool ModelMesh::loadModelFromFile(const std::string &path, const glm::mat4 &modelTransformMatrix) {
     if (isInitialized) {
         clearData();
     }
@@ -43,9 +42,39 @@ bool ModelMesh::loadModelFromFile(const std::string &path, const std::string &de
 
     //vert pos, vert normal, uv coord
     const int vertSize = sizeof(aiVector3D) * 2 + sizeof(aiVector2D);
-    auto vertexCount = 0;
 
-    //positions
+    int vertexCount = ReadMeshPositions(modelTransformMatrix, scene);
+    ReadMeshUVs(scene);
+    ReadMeshNormals(modelTransformMatrix, scene);
+    ReadMeshMaterials(scene);
+
+    vbo.uploadDataToGPU(GL_STATIC_DRAW);
+    setVertexAttributesPointers(vertexCount);
+    isInitialized = true;
+
+    return isInitialized;
+}
+
+void ModelMesh::ReadMeshMaterials(const aiScene *scene) {
+    for(size_t i = 0; i < scene->mNumMaterials; i++)
+    {
+        const auto materialPtr = scene->mMaterials[i];
+        aiString aiTexturePath;
+        // TODO: this here is a hack for 64-bit system - Assimp has a problem extracting texture path apparently
+        // On 64-bit version, some models report texture count 1 and then it crashes when getting them
+        if (materialPtr->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+        {
+            if (materialPtr->GetTexture(aiTextureType_DIFFUSE, 0, &aiTexturePath) == AI_SUCCESS)
+            {
+                const std::string textureFileName = aiStringToStdString(aiTexturePath);
+                loadMaterialTexture(static_cast<int>(i), textureFileName);
+            }
+        }
+    }
+}
+
+int ModelMesh::ReadMeshPositions(const glm::mat4 &modelTransformMatrix, const aiScene *scene) {
+    auto vertexCount = 0;
     for (size_t i = 0; i < scene->mNumMeshes; i++)
     {
         const auto meshPtr = scene->mMeshes[i];
@@ -72,8 +101,10 @@ bool ModelMesh::loadModelFromFile(const std::string &path, const std::string &de
         vertexCount += vertexCountMesh;
         _meshVerticesCount.push_back(vertexCountMesh);
     }
+    return vertexCount;
+}
 
-    //uvs
+void ModelMesh::ReadMeshUVs(const aiScene *scene) {
     for (size_t i = 0; i < scene->mNumMeshes; i++)
     {
         const auto meshPtr = scene->mMeshes[i];
@@ -91,8 +122,9 @@ bool ModelMesh::loadModelFromFile(const std::string &path, const std::string &de
             }
         }
     }
+}
 
-    //normals
+void ModelMesh::ReadMeshNormals(const glm::mat4 &modelTransformMatrix, const aiScene *scene) {
     const auto normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelTransformMatrix)));
     for (size_t i = 0; i < scene->mNumMeshes; i++)
     {
@@ -111,33 +143,6 @@ bool ModelMesh::loadModelFromFile(const std::string &path, const std::string &de
             }
         }
     }
-
-///mats
-    for(size_t i = 0; i < scene->mNumMaterials; i++)
-    {
-        const auto materialPtr = scene->mMaterials[i];
-        aiString aiTexturePath;
-        // TODO: this here is a hack for 64-bit system - Assimp has a problem extracting texture path apparently
-        // On 64-bit version, some models report texture count 1 and then it crashes when getting them
-        if (defaultTextureName.empty() && materialPtr->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-        {
-            if (materialPtr->GetTexture(aiTextureType_DIFFUSE, 0, &aiTexturePath) == AI_SUCCESS)
-            {
-                const std::string textureFileName = aiStringToStdString(aiTexturePath);
-                loadMaterialTexture(static_cast<int>(i), textureFileName);
-            }
-        }
-    }
-
-    if (!defaultTextureName.empty()) {
-        loadMaterialTexture(0, defaultTextureName);
-    }
-
-    vbo.uploadDataToGPU(GL_STATIC_DRAW);
-    setVertexAttributesPointers(vertexCount);
-    isInitialized = true;
-
-    return isInitialized;
 }
 
 void ModelMesh::clearData() {
@@ -207,7 +212,7 @@ ModelMesh::~ModelMesh() {
 
 void ModelMesh::loadMaterialTexture(const int materialIndex, const std::string &textureFileName) {
     // If the texture with such path is already loaded, just use it and go on
-    const auto fullTexturePath = texturesPath + textureFileName;
+    const auto fullTexturePath = PathHelper::GetFullTexturePath(textureFileName);
     const auto newTextureKey = "assimp_" + fullTexturePath;
 
     const auto contains = TextureManager::getInstance().containsTexture(newTextureKey);
@@ -217,3 +222,5 @@ void ModelMesh::loadMaterialTexture(const int materialIndex, const std::string &
 
     _materialTextureKeys[materialIndex] = newTextureKey;
 }
+
+

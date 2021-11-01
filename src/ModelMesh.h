@@ -11,6 +11,8 @@
 #include <map>
 #include <glm/glm.hpp>
 #include <assimp/types.h>
+#include <assimp/mesh.h>
+#include <assimp/scene.h>
 #include "Buffer.h"
 
 class ModelMesh {
@@ -20,7 +22,7 @@ public:
     static const int TEXTURE_COORDINATE_ATTRIBUTE_INDEX; // Vertex attribute index of texture coordinate (1)
     static const int NORMAL_ATTRIBUTE_INDEX; // Vertex attribute index of vertex normal (2)
 
-    bool loadModelFromFile(const std::string& path, const std::string& defaultTextureName = "", const glm::mat4& modelTransformMatrix = glm::mat4(1.0f));
+    bool loadModelFromFile(const std::string& path, const glm::mat4& modelTransformMatrix = glm::mat4(1.0f));
 
     void render() const;
 
@@ -29,7 +31,6 @@ public:
 private:
     void loadMaterialTexture(const int materialIndex, const std::string& textureFileName);
 
-    static const std::string texturesPath;
     std::vector<int> _meshStartIndices; // Indices of where the meshes start in the VBO
     std::vector<int> _meshVerticesCount; // How many vertices are there for every mesh
     std::vector<int> _meshMaterialIndices; // Index of material for every mesh
@@ -41,6 +42,12 @@ private:
     bool isInitialized;
     static std::string aiStringToStdString(const aiString& aiStringStruct);
     void setVertexAttributesPointers(int numVertices);
+
+    void ReadMeshNormals(const glm::mat4 &modelTransformMatrix, const aiScene *scene);
+    void ReadMeshUVs(const aiScene *scene);
+    int ReadMeshPositions(const glm::mat4 &modelTransformMatrix, const aiScene *scene);
+
+    void ReadMeshMaterials(const aiScene *scene);
 };
 
 
