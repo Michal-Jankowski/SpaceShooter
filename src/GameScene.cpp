@@ -116,8 +116,8 @@ void GameScene::initScene() {
 	int width, height;
 	glfwGetWindowSize(getWindow(), &width, &height);
 	m_camera = std::make_unique<Camera>(
-            glm::vec3(3.0f, 0.0f, -3.0f),
-            glm::vec3(0.0f, 0.0f, -1.0f),
+            glm::vec3(3.0f, 2.0f, -3.0f),
+            glm::vec3(0.0f, -5.0f, 0.0f),
             glm::vec3(0.0f, 1.0f, 0.f),
             glm::i32vec2(width / 2, height / 2),
             15.0f);

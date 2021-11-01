@@ -27,7 +27,9 @@ public:
     void clearData();
 
 private:
-    std::string _modelRootDirectoryPath; // Path of the directory where model (and possibly its assets) is located
+    void loadMaterialTexture(const int materialIndex, const std::string& textureFileName);
+
+    static const std::string texturesPath;
     std::vector<int> _meshStartIndices; // Indices of where the meshes start in the VBO
     std::vector<int> _meshVerticesCount; // How many vertices are there for every mesh
     std::vector<int> _meshMaterialIndices; // Index of material for every mesh
