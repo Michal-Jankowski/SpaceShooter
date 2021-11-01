@@ -1,6 +1,5 @@
 #include <glm/ext/matrix_transform.hpp>
 #include "GameScene.h"
-
 glm::vec3 plainGroundVertices[] =
 {
 	glm::vec3(-200.0f, 0.0f, -200.0f), // Left-back point
@@ -46,6 +45,9 @@ void GameScene::initScene() {
 	m_fsShader.loadShaderFromFile("src/shaders/shader.fs", GL_FRAGMENT_SHADER);
 	m_vsGround.loadShaderFromFile("src/shaders/ground.vs", GL_VERTEX_SHADER);
 	m_fsGround.loadShaderFromFile("src/shaders/ground.fs", GL_FRAGMENT_SHADER);
+
+	// init skybox
+	//m_skybox = std::make_unique<Skybox>("res/lightblue/desert");
 
 	if (!m_vsShader.hasLoaded() || !m_fsShader.hasLoaded()) {
 		closeWindow(true);
@@ -156,6 +158,10 @@ void GameScene::renderScene() {
     m_mainProgram.setUniform("sampler", 0);
 
     m_ship.render();
+	//Render skybox
+
+	//m_skybox->render(m_camera->getEye(), m_mainProgram);
+
 }
 
 void GameScene::updateScene() {
