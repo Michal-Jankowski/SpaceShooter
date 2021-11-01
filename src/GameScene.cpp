@@ -112,7 +112,12 @@ void GameScene::initScene() {
 	m_sampler.setFilterOptions(FilterOptions::MAG_FILTER_BILINEAR, GL_TEXTURE_MAG_FILTER);
 	int width, height;
 	glfwGetWindowSize(getWindow(), &width, &height);
-	m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
+	m_camera = std::make_unique<Camera>(
+            glm::vec3(3.0f, 0.0f, -3.0f),
+            glm::vec3(0.0f, 0.0f, -1.0f),
+            glm::vec3(0.0f, 1.0f, 0.f),
+            glm::i32vec2(width / 2, height / 2),
+            15.0f);
 
 
     /// load models
@@ -134,7 +139,7 @@ void GameScene::renderScene() {
 	m_sampler.bind(0);
 	m_groundProgram.setUniform("snowSampler", 0);
 
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     m_ship.render();
 
 	m_mainProgram.useProgram();

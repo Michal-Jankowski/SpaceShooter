@@ -138,7 +138,7 @@ bool ModelMesh::loadModelFromFile(const std::string &path, const std::string &de
 }
 
 void ModelMesh::clearData() {
-
+    vbo.deleteVBO();
 }
 
 std::string ModelMesh::aiStringToStdString(const aiString& aiStringStruct)
@@ -196,4 +196,8 @@ void ModelMesh::render() const
 
         glDrawArrays(GL_TRIANGLES, _meshStartIndices[i], _meshVerticesCount[i]);
     }
+}
+
+ModelMesh::~ModelMesh() {
+    clearData();
 }
