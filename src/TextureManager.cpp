@@ -38,3 +38,7 @@ const TextureLoader& TextureManager::getTexture(const std::string& key) const {
 bool TextureManager::containsTexture(const std::string& key) const {
 	return m_textureKeys.count(key) > 0;
 }
+
+void TextureManager::clearTextureCache() {
+	m_textureKeys.clear();
+}

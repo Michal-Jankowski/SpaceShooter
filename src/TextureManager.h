@@ -10,6 +10,7 @@ public:
 	bool deleteTexture(const std::string& name);
 	const TextureLoader& getTexture(const std::string& key) const;
 	bool containsTexture(const std::string& key) const;
+	void clearTextureCache();
 
 private:
 	TextureManager() {}
