@@ -103,7 +103,7 @@
 
         const auto numVertices = 36;
         const auto vertexByteSize = getVertexByteSize();
-        m_vbo.createVBO(vertexByteSize * numVertices);
+        m_vbo.createVBO(static_cast<size_t>(vertexByteSize) * numVertices);
         m_vbo.bindVBO();
 
         if (m_hasPositions) {

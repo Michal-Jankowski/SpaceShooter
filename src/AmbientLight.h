@@ -4,6 +4,7 @@
 #include "ShaderProgram.h"
 class AmbientLight
 {
+public:
 	AmbientLight(const glm::vec3& color, const bool isOn = true);
 	void setUniform(ShaderProgram& shaderProgram, const std::string& uniformName);
 	glm::vec3 getColorContribution() const;
