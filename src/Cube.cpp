@@ -36,6 +36,9 @@
     const int Cube::NORMAL_ATTRIBUTE_INDEX = 2;
 
     Cube::Cube(bool withPositions, bool withTextureCoordinates, bool withNormals)
+        : m_hasPositions(withPositions)
+        , m_hasTextureCoordinates(withTextureCoordinates)
+        , m_hasNormals(withNormals)
     {
         initializeData();
     }
