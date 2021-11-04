@@ -37,8 +37,8 @@ option(MOVE_SCRIPT_AUTO_CLOSE "Auto close file moving script" ON)
 file(GLOB FILES_SOURCES 
 "src/*.cpp"
 "src/*.h"
-"src/shaders/*.vs"
-"src/shaders/*.fs"
+"src/shaders/*.vert"
+"src/shaders/*.frag"
 "${LIB_GLAD_DIR}/include/glad.c"
 "${LIB_STB_DIR}/stb_image.h")
     

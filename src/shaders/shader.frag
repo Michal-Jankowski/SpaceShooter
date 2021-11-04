@@ -28,17 +28,17 @@ struct DiffuseLight {
 vec3 getDiffuseLightColour(DiffuseLight diffuseLight, vec3 normal) {
 
     float finalIntensity = max(0.0, dot(normal, -diffuseLight.direction));
-    finalIntensity = clamp(finalIntensity*diffuseLight.factor, 0.0, 1.0);
-    return vec3(diffuseLight.color*finalIntensity);
+    finalIntensity = clamp(finalIntensity * diffuseLight.factor, 0.0, 1.0);
+    return vec3(diffuseLight.color * finalIntensity);
 }
 
 uniform AmbientLight ambientLight;
 uniform DiffuseLight diffuseLight;
 
 void main() {
-    vec3 normal = normalize(IOverNormal);
+   // vec3 normal = normalize(IOverNormal);
     vec4 texColor = texture(sampler, IOverTexCoord);
     vec4 objColor = texColor * color;
-    vec3 lightColour = getAmbientLightColour(ambientLight) + getDiffuseLightColour(diffuseLight, normal);
-    outputColour = objColor * vec4(lightColour, 1.0);
+   // vec3 lightColour = getAmbientLightColour(ambientLight) + getDiffuseLightColour(diffuseLight, normal);
+    outputColour = objColor; //* vec4(lightColour, 1.0);
 }
