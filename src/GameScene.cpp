@@ -67,16 +67,16 @@ void GameScene::initScene() {
 		shaderManager.loadFragmentShader("main_part", "src/shaders/shader.frag");
 		shaderManager.loadVertexShader("main_part", "src/shaders/shader.vert");
 
-		shaderManager.loadVertexShader("normals", "src/shaders/normals.vert");
-		shaderManager.loadFragmentShader("normals", "src/shaders/normals.frag");
+		//shaderManager.loadVertexShader("normals", "src/shaders/normals.vert");
+		//shaderManager.loadFragmentShader("normals", "src/shaders/normals.frag");
 
 		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
 		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("main_part"));
 
-		auto& normalsShaderProgram = shaderProgramManager.createShaderProgram("normals");
-		normalsShaderProgram.addShaderToProgram(shaderManager.getVertexShader("normals"));
-		normalsShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("normals"));
+		//auto& normalsShaderProgram = shaderProgramManager.createShaderProgram("normals");
+		//normalsShaderProgram.addShaderToProgram(shaderManager.getVertexShader("normals"));
+		//normalsShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("normals"));
 		// init skybox
 		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
 
@@ -165,21 +165,27 @@ void GameScene::renderScene() {
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
 	const int samplerValue = 0;
-	mainProgram.setUniform("sampler", samplerValue);
+	std::string sampler = "sampler";
+	int iLoc = glGetUniformLocation(mainProgram.getProgramID(), sampler.c_str());
+	if (iLoc == -1) {
+		std::cerr << "ERROR: uniform with this name " << sampler.c_str() << " dose not exists, it will fail" << std::endl;
+	}
+	glUniform1iv(iLoc, 1, (GLint*)&samplerValue);
+	//mainProgram.setUniform("sampler", samplerValue);
 
 	AmbientLight  ambientSkybox(glm::vec3(0.1f, 0.6f, 0.6f));
-	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
-	ambientSkybox.setUniform(mainProgram, "ambientLight");
+	//DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
+	//ambientSkybox.setUniform(mainProgram, "ambientLight");
 
 	// render skybox
-	m_ambientLight->setUniform(mainProgram, "ambientLight");
-	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
+	//m_ambientLight->setUniform(mainProgram, "ambientLight");
+	//m_diffuseLight->setUniform(mainProgram, "diffuseLight");
 	m_skybox->render(m_camera->getEye(), mainProgram);
 
 	SamplerManager::getInstance().getSampler("main").bind();
-	m_ambientLight->setUniform(mainProgram, "ambientLight");
-	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
-
+	//m_ambientLight->setUniform(mainProgram, "ambientLight");
+	//m_diffuseLight->setUniform(mainProgram, "diffuseLight");
+	
 	std::vector<glm::mat4> crateModelMatrices;
 	for (const auto& position : cratePositions)
 	{
@@ -197,34 +203,6 @@ void GameScene::renderScene() {
 		TextureManager::getInstance().getTexture("lava").bind(0);
 		m_cube->render();
 	}
-
-	/*
-	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	m_groundProgram.useProgram();
-	glBindVertexArray(m_VAO);
-
-	m_groundProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
-	m_groundProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
-
-	m_groundProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0));
-
-	m_snowTexture.bind(0);
-	m_sampler.bind(0);
-	m_groundProgram.setUniform("snowSampler", 0);
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	m_mainProgram.useProgram();
-	m_mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
-	m_mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
-	m_mainProgram.setUniform("color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-
-	//Render skybox
-
-	m_skybox->render(m_camera->getEye(), m_mainProgram);
-	*/
 }
 
 void GameScene::updateScene() {
@@ -258,17 +236,7 @@ void GameScene::updateScene() {
 }
 
 void GameScene::releaseScene() {
-	/*
-	m_mainProgram.deleteProgram();
-	m_vsShader.deleteShader();
-	m_fsShader.deleteShader();
-	m_vertexBuffer.deleteVBO();
-	m_vertexEBO.deleteVBO();
-	m_textureBuffer.deleteVBO();
-	m_snowTexture.deleteTexture();
-	m_sampler.deleteSampler();
-	glDeleteVertexArrays(1, &m_VAO);
-	*/
+
 	m_skybox.reset();
 	ShaderManager::getInstance().clearShaderCache();
 	ShaderProgramManager::getInstance().clearShaderProgramCache();
