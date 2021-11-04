@@ -15,11 +15,11 @@ layout(location = 2) in vec3 verNormal;
 smooth out vec2 IOverTexCoord;
 smooth out vec3 IOverNormal;
 
-void main() {
-
+void main() 
+{
 	mat4 MVP_matrix = matrices.projectionMatrix * matrices.viewMatrix * matrices.modelMatrix;
+	gl_Position = MVP_matrix * vec4(verTexPos, 1.0);
 	IOverTexCoord = verTexCoord;
 	IOverNormal = matrices.normalMatrix * verNormal;
-	gl_Position = MVP_matrix * vec4(verTexPos, 1.0);
 
 }
