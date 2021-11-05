@@ -10,6 +10,7 @@
 #include "Skybox.h"
 #include "AmbientLight.h"
 #include "DiffuseLight.h"
+#include "PlainGround.h"
 
 class GameScene : public SetupWindow
 {
@@ -30,6 +31,7 @@ private:
     std::unique_ptr<Cube> m_cube;
     std::unique_ptr<AmbientLight> m_ambientLight;
     std::unique_ptr <DiffuseLight> m_diffuseLight;
+    std::unique_ptr<PlainGround> m_plainGround;
     GLuint m_VAO;
     GLuint m_EBO;
 };
