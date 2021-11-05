@@ -16,9 +16,13 @@ public:
 
 	GLuint getProgramID() const;
 
+	// Setting integers
+	void setUniform(const std::string& sName, const int* iValues, int iCount);
+	void setUniform(std::string& sName, const int iValue);
+
 	// Setting vectors
 	void setUniform(const std::string& sName, glm::vec2* vVectors, int iCount);
-	void setUniform(const std::string& sName, const glm::vec2 vVector);
+	//void setUniform(const std::string& sName, const glm::vec2 vVector);
 	void setUniform(const std::string& sName, glm::vec3* vVectors, int iCount);
 	void setUniform(std::string& sName, const glm::vec3 vVector);
 	void setUniform(const std::string& sName, glm::vec4* vVectors, int iCount);
@@ -36,9 +40,6 @@ public:
 	void setUniform(const std::string&  sName, glm::mat4* mMatrices, int iCount);
 	void setUniform(const std::string&  sName, const glm::mat4 mMatrix);
 
-	// Setting integers
-	void setUniform(const std::string&  sName, const int* iValues, int iCount);
-	void setUniform(std::string&  sName, const int iValue);
 
 	// Model and normal matrix setting
 	void SetModelAndNormalMatrix(const std::string& sModelMatrixName, const std::string& sNormalMatrixName, glm::mat4 mModelMatrix);
