@@ -36,6 +36,9 @@
     const int Cube::NORMAL_ATTRIBUTE_INDEX = 2;
 
     Cube::Cube(bool withPositions, bool withTextureCoordinates, bool withNormals)
+        : m_hasPositions(withPositions)
+        , m_hasTextureCoordinates(withTextureCoordinates)
+        , m_hasNormals(withNormals)
     {
         initializeData();
     }
@@ -103,7 +106,7 @@
 
         const auto numVertices = 36;
         const auto vertexByteSize = getVertexByteSize();
-        m_vbo.createVBO(vertexByteSize * numVertices);
+        m_vbo.createVBO(static_cast<size_t>(vertexByteSize) * numVertices);
         m_vbo.bindVBO();
 
         if (m_hasPositions) {
