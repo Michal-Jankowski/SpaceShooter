@@ -83,23 +83,10 @@ void GameScene::renderScene() {
 	mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
-	glm::vec3 ambientColor = glm::vec3(0.6, 0.6, 0.6);
-
-	std::string sName = "ambientLight.color";
-	int iLoc = glGetUniformLocation(mainProgram.getProgramID(), sName.c_str());
-	if (iLoc == -1) {
-		std::cerr << "ERROR: uniform with this name " << sName << " dose not exists, it will fail" << std::endl;
-	}
-	glUniform3fv(iLoc, 1, (GLfloat*)&ambientColor);
-
-	//mainProgram.setUniform("ambientLight.color", glm::vec3(0.5, 0.5, 0.1));
-
-	//m_ambientLight->setUniform(mainProgram, "ambientLight");
-
-	const int samplerValue = 0;
+	m_ambientLight->setUniform(mainProgram, "ambientLight");
 	
-	mainProgram.setUniform("sampler", samplerValue);
-
+	mainProgram.setUniform("sampler", 0);
+	
 	//AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
 	//DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	//ambientSkybox.setUniform(mainProgram, "ambientLight");
@@ -111,7 +98,6 @@ void GameScene::renderScene() {
 	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
 
 	SamplerManager::getInstance().getSampler("main").bind();
-
 	std::vector<glm::mat4> crateModelMatrices;
 	for (const auto& position : cratePositions)
 	{
@@ -135,31 +121,45 @@ void GameScene::renderScene() {
 }
 
 void GameScene::updateScene() {
-
+	
 	std::string title = "SpaceShooter FPS count: " + std::to_string(getFPS()) + " VSync: " + (isVerticalSynchronizationEnabled() ? "On" : "Off");
 	glfwSetWindowTitle(getWindow(), title.c_str());
-
+	/* Should close window*/
 	if (keyPressedOnce(GLFW_KEY_ESCAPE)) {
 		closeWindow();
 	}
-	
+	/* Vertical Synchronization*/
 	if (keyPressedOnce(GLFW_KEY_0)) {
 		setVerticalSynchronization(!isVerticalSynchronizationEnabled());
 	}
-
+	/* Switch wireframe mode*/
 	if (keyPressedOnce(GLFW_KEY_1)) {
 		setWireframeMode(!isWireframeModeEnabled());
 	}
-
+	/* Free floating camera or static camera*/
 	if (keyPressedOnce(GLFW_KEY_2)) {
 		setCameraUpdateEnabled(!isCameraUpdateEnabled());
 	}
-
+	/* Update camera state*/
 	if (isCameraUpdateEnabled()) {
 		m_camera->update([this](int keyCode) {return this->keyPressed(keyCode); }, [this]() {double curPosX, curPosY; glfwGetCursorPos(this->getWindow(), &curPosX, &curPosY); return glm::u32vec2(curPosX, curPosY); },
 		[this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y); }, [this](float value) { return this->getValueByTime(value); });
 	}
+	/* Switch Diffuse Light*/
+	if (keyPressedOnce(GLFW_KEY_3)) {
+		auto& shaderProgramManager = ShaderProgramManager::getInstance();
+		auto& mainProgram = shaderProgramManager.getShaderProgram("main");
+		mainProgram.useProgram();
+		m_diffuseLight->switchLight(mainProgram, !m_diffuseLight->getLightState());
+	}
+	/* Switch Ambient Light*/
+	if (keyPressedOnce(GLFW_KEY_4)) {
+		auto& shaderProgramManager = ShaderProgramManager::getInstance();
+		auto& mainProgram = shaderProgramManager.getShaderProgram("main");
+		mainProgram.useProgram();
+		m_ambientLight->switchLight(mainProgram, !m_ambientLight->getLightState());
 
+	}
 	rotationAngleRad += getValueByTime(glm::radians(45.0f));
 
 }
