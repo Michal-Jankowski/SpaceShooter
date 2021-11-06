@@ -10,6 +10,15 @@ std::string DiffuseLight::constructAttributeName(const std::string& uniformName,
     return uniformName + "." + attributeName;
 }
 
+void DiffuseLight::switchLight(ShaderProgram& shaderProgram, const bool enable)  {
+    shaderProgram.setUniform(constructAttributeName("diffuseLight", "isOn"), enable);
+    m_isOn = enable;
+}
+
+bool DiffuseLight::getLightState() const {
+    return m_isOn;
+}
+
 void DiffuseLight::setUniform(ShaderProgram& shaderProgram, const std::string& uniformName) {
     shaderProgram.setUniform(constructAttributeName(uniformName, "color"), m_color);
     shaderProgram.setUniform(constructAttributeName(uniformName, "isOn"), m_isOn);
