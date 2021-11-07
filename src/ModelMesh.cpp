@@ -13,7 +13,7 @@ const int ModelMesh::TEXTURE_COORDINATE_ATTRIBUTE_INDEX = 1;
 const int ModelMesh::NORMAL_ATTRIBUTE_INDEX             = 2;
 
 
-bool ModelMesh::loadModelFromFile(const std::string &path, const glm::mat4 &modelTransformMatrix) {
+bool ModelMesh::loadModelFromFile(const std::string &path) {
     if (isInitialized) {
         clearData();
     }
@@ -43,9 +43,9 @@ bool ModelMesh::loadModelFromFile(const std::string &path, const glm::mat4 &mode
     //vert pos, vert normal, uv coord
     const int vertSize = sizeof(aiVector3D) * 2 + sizeof(aiVector2D);
 
-    int vertexCount = ReadMeshPositions(modelTransformMatrix, scene);
+    int vertexCount = ReadMeshPositions(scene);
     ReadMeshUVs(scene);
-    ReadMeshNormals(modelTransformMatrix, scene);
+    ReadMeshNormals(scene);
     ReadMeshMaterials(scene);
 
     vbo.uploadDataToGPU(GL_STATIC_DRAW);
@@ -73,7 +73,7 @@ void ModelMesh::ReadMeshMaterials(const aiScene *scene) {
     }
 }
 
-int ModelMesh::ReadMeshPositions(const glm::mat4 &modelTransformMatrix, const aiScene *scene) {
+int ModelMesh::ReadMeshPositions(const aiScene *scene) {
     auto vertexCount = 0;
     for (size_t i = 0; i < scene->mNumMeshes; i++)
     {
@@ -92,7 +92,7 @@ int ModelMesh::ReadMeshPositions(const glm::mat4 &modelTransformMatrix, const ai
             for (size_t k = 0; k < face.mNumIndices; k++)
             {
                 const auto& position = meshPtr->mVertices[face.mIndices[k]];
-                vbo.addData(glm::vec3(modelTransformMatrix * glm::vec4(position.x, position.y, position.z, 1.0f)));
+                vbo.addData(glm::vec3(position.x, position.y, position.z));
             }
 
             vertexCountMesh += face.mNumIndices;
@@ -124,8 +124,7 @@ void ModelMesh::ReadMeshUVs(const aiScene *scene) {
     }
 }
 
-void ModelMesh::ReadMeshNormals(const glm::mat4 &modelTransformMatrix, const aiScene *scene) {
-    const auto normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelTransformMatrix)));
+void ModelMesh::ReadMeshNormals(const aiScene *scene) {
     for (size_t i = 0; i < scene->mNumMeshes; i++)
     {
         const auto meshPtr = scene->mMeshes[i];
@@ -139,7 +138,7 @@ void ModelMesh::ReadMeshNormals(const glm::mat4 &modelTransformMatrix, const aiS
             for (size_t k = 0; k < face.mNumIndices; k++)
             {
                 const auto& normal = meshPtr->HasNormals() ? meshPtr->mNormals[face.mIndices[k]] : aiVector3D(0.0f, 1.0f, 0.0f);
-                vbo.addData(glm::normalize(normalMatrix * glm::vec3(normal.x, normal.y, normal.z)));
+                vbo.addData(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
             }
         }
     }
