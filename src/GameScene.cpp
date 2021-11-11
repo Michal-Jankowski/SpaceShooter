@@ -45,7 +45,7 @@ void GameScene::initScene() {
 		m_plainGround = std::make_unique<PlainGround>(true, true, true);
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
-
+		m_material = std::make_unique<Material>(12.0f, 20.0f);
 		SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
@@ -83,21 +83,21 @@ void GameScene::renderScene() {
 	mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
-	m_ambientLight->setUniform(mainProgram, "ambientLight");
-	
 	mainProgram.setUniform("sampler", 0);
-	
+
+	// TODO: render skybox only with AmbientLight, do we need that?
 	//AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
 	//DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	//ambientSkybox.setUniform(mainProgram, "ambientLight");
-
+	//Material::none().setUniform(mainProgram, "material");
 	// render skybox
-	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
 	m_skybox->render(m_camera->getEye(), mainProgram);
-
-	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
-
+	
 	SamplerManager::getInstance().getSampler("main").bind();
+	m_ambientLight->setUniform(mainProgram, "ambientLight");
+	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
+	mainProgram.setUniform("cameraPosition", m_camera->getEye());
+	m_material->setUniform(mainProgram, "material");
 	std::vector<glm::mat4> crateModelMatrices;
 	for (const auto& position : cratePositions)
 	{
@@ -117,7 +117,7 @@ void GameScene::renderScene() {
 
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
-	m_plainGround->render();
+	//m_plainGround->render();
 }
 
 void GameScene::updateScene() {
@@ -160,7 +160,7 @@ void GameScene::updateScene() {
 		m_ambientLight->switchLight(mainProgram, !m_ambientLight->getLightState());
 
 	}
-	rotationAngleRad += getValueByTime(glm::radians(45.0f));
+	rotationAngleRad += getValueByTime(glm::radians(0.0f));
 
 }
 
