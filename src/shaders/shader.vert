@@ -12,14 +12,19 @@ layout(location = 0) in vec3 verTexPos;
 layout(location = 1) in vec2 verTexCoord;
 layout(location = 2) in vec3 verNormal;
 
-smooth out vec2 IOverTexCoord;
-smooth out vec3 IOverNormal;
+smooth out vec2 IOVerTexCoord;
+smooth out vec3 IOVerNormal;
+smooth out vec4 IOWorldPosition;
+smooth out vec4 IOCameraSpacePosition;
 
 void main() 
 {
-	mat4 MVP_matrix = matrices.projectionMatrix * matrices.viewMatrix * matrices.modelMatrix;
-	gl_Position = MVP_matrix * vec4(verTexPos, 1.0);
-	IOverTexCoord = verTexCoord;
-	IOverNormal = matrices.normalMatrix * verNormal;
+	mat4 MV_Matrix = matrices.viewMatrix * matrices.modelMatrix;
+	mat4 MVP_matrix = matrices.projectionMatrix * MV_Matrix;
+	IOVerTexCoord = verTexCoord;
+	IOVerNormal = matrices.normalMatrix * verNormal;
+	IOWorldPosition = matrices.modelMatrix * vec4(verTexPos, 1.0);
+	IOCameraSpacePosition = MV_Matrix * vec4(verTexPos, 1.0);
 
+	gl_Position = MVP_matrix * vec4(verTexPos, 1.0);
 }
