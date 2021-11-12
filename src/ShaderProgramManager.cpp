@@ -45,3 +45,12 @@ void ShaderProgramManager::clearShaderProgramCache() {
 bool ShaderProgramManager::containsShaderProgram(const std::string& key) const {
     return m_shaderProgramKeys.count(key) > 0;
 }
+
+ShaderProgram& ShaderProgramManager::createOrGetShaderProgram(const std::string &key) {
+   if(containsShaderProgram(key)){
+       return getShaderProgram(key);
+   }
+   else{
+       return createShaderProgram(key);
+   }
+}
