@@ -81,6 +81,9 @@ void Material::generateMappings() {
     materialShaderMappings["side-ship"] = "main";
 }
 
-std::string Material::getMainTextureKey() const {
-    return mainTextureKey;
+void Material::setup(const glm::mat4 model) const{
+    TextureManager::getInstance().getTexture(mainTextureKey).bind();
+    auto shader = ShaderProgramManager::getInstance().getShaderProgram(shaderProgramKey);
+    shader.useProgram();
+    shader.setUniform("matrices.modelMatrix", model);
 }

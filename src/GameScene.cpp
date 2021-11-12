@@ -47,7 +47,7 @@ void GameScene::initScene() {
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
-		m_ship = std::make_unique<GameModel>("../res/models/ship.obj", "main");
+		m_ship = std::make_unique<GameModel>("../res/models/ship.obj");
         SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
@@ -89,6 +89,7 @@ void GameScene::renderScene() {
 
     mainProgram.setUniform("matrices.modelMatrix",translated);
 
+    m_ship->moveBy(glm::vec3(0.0f, 0.0f, -SetupWindow::getDeltaTime()));
     m_ship->render();
 
 	//Render skybox
