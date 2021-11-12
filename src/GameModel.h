@@ -13,7 +13,7 @@
 class GameModel {
 public:
 
-    GameModel(const std::string& path,const std::string& shaderKey);
+    GameModel(const std::string& path);
 
     void render();
     void moveBy(glm::vec3 distance);

@@ -10,7 +10,7 @@ public:
     Material(const aiMaterial *assimpMat);
 	static Material& none();
 	void setUniform(ShaderProgram& shaderProgram, const std::string& uniformName);
-    std::string getMainTextureKey() const;
+    void setup(const glm::mat4 model) const;
 private:
 	std::string constructAttributeName(const std::string& uniformName, const std::string& attributeName);
 	bool m_isEnabled;

@@ -164,7 +164,7 @@ void ModelMesh::setVertexAttributesPointers(int numVertices)
     offset += sizeof(glm::vec3)*numVertices;
 }
 
-void ModelMesh::render() const
+void ModelMesh::render(const glm::mat4 model) const
 {
     if (!isInitialized) {
         return;
@@ -172,19 +172,14 @@ void ModelMesh::render() const
 
     glBindVertexArray(vao_ind);
 
-    std::string lastUsedTextureKey = "";
     for(auto i = 0; i < _meshStartIndices.size(); i++)
     {
         const auto usedMaterialIndex = _meshMaterialIndices[i];
         if (materials.count(usedMaterialIndex) > 0)
         {
             const auto mat = *materials.at(usedMaterialIndex);
-            const auto textureKey = mat.getMainTextureKey();
-            if (textureKey != lastUsedTextureKey) {
-                TextureManager::getInstance().getTexture(textureKey).bind();
-            }
+            mat.setup(model);
         }
-
         glDrawArrays(GL_TRIANGLES, _meshStartIndices[i], _meshVerticesCount[i]);
     }
 }

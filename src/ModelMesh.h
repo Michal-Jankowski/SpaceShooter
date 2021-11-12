@@ -25,7 +25,7 @@ public:
 
     bool loadModelFromFile(const std::string& path);
 
-    void render() const;
+    void render(const glm::mat4 model) const;
 
     void clearData();
 
