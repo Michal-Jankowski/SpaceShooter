@@ -10,6 +10,19 @@
 #include "ModelMesh.h"
 #include <memory>
 #include "../src/Skybox.h"
+#include "SetupWindow.h"
+#include "Shader.h"
+#include "ShaderProgram.h"
+#include "Buffer.h"
+#include "TextureLoader.h"
+#include "Sampler.h"
+#include "StaticMesh.h"
+#include "Camera.h"
+#include "Skybox.h"
+#include "AmbientLight.h"
+#include "DiffuseLight.h"
+#include "PlainGround.h"
+#include "Material.h"
 
 class GameScene : public SetupWindow
 {
@@ -27,7 +40,12 @@ private:
     std::unique_ptr<Camera> m_camera;
     Buffer m_vertexBuffer, m_textureBuffer, m_vertexEBO;
     StaticMesh m_staticGeometry;
-    //std::unique_ptr<Skybox> m_skybox;
+    std::unique_ptr<Skybox> m_skybox;
+    std::unique_ptr<Cube> m_cube;
+    std::unique_ptr<AmbientLight> m_ambientLight;
+    std::unique_ptr<DiffuseLight> m_diffuseLight;
+    std::unique_ptr<PlainGround> m_plainGround;
+    std::unique_ptr<Material> m_material;
     GLuint m_VAO;
     GLuint m_EBO;
 };

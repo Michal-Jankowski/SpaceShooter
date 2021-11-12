@@ -15,6 +15,6 @@ smooth out vec2 vertexTexCoordsVS;
 void main()
 {
     mat4 MVP_Matrix = matrices.projectionMatrix * matrices.viewMatrix * matrices.modelMatrix;
-    gl_Position = MVP_Matrix * vec4(vertexPosition, 1.0);
     vertexTexCoordsVS = vertexTexCoords;
+    gl_Position = MVP_Matrix * vec4(vertexPosition, 1.0);
 }

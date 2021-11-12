@@ -1,142 +1,84 @@
 #include <glm/ext/matrix_transform.hpp>
 #include "GameScene.h"
-glm::vec3 plainGroundVertices[] =
+#include "ShaderManager.h"
+#include "ShaderProgramManager.h"
+#include "TextureManager.h"
+#include "SamplerManager.h"
+#include "MatrixManager.h"
+#include <glm/gtc/matrix_transform.hpp>
+
+
+std::vector<glm::vec3> cratePositions
 {
-	glm::vec3(-200.0f, 0.0f, -200.0f), // Left-back point
-	glm::vec3(-200.0f, 0.0f, 200.0f), // Left-front point
-	glm::vec3(200.0f, 0.0f, -200.0f), // Right-back point
-	glm::vec3(200.0f, 0.0f, 200.0f) // Right-front point
+	glm::vec3(-30.0f, 0.0f, -80.0f),
+	glm::vec3(30.0f, 0.0f, -40.0f),
+	glm::vec3(-30.0f, 0.0f, 0.0f),
+	glm::vec3(30.0f, 0.0f, 40.0f),
+	glm::vec3(-30.0f, 0.0f, 80.0f),
 };
 
-GLuint plainGroundIndices[] = {
-	0, 1, 3,
-	1, 2, 3
-};
+float rotationAngleRad = 0.0f;
 
-glm::vec2 plainGroundTexCoords[] =
-{
-	glm::vec2(0.0f, 20.0f),
-	glm::vec2(0.0f, 0.0f),
-	glm::vec2(20.0f, 20.0f),
-	glm::vec2(20.0f, 0.0f)
-};
-
-glm::vec3 plainGroundColors[] =
-{
-	glm::vec3(0.0f, 0.5f, 0.0f),
-	glm::vec3(0.0f, 0.85f, 0.0f),
-	glm::vec3(0.0f, 0.35f, 0.25f),
-	glm::vec3(0.0f, 0.8f, 0.2f)
-};
-
-// Render using triangle strip!
-glm::vec2 quad2D[] =
-{
-	glm::vec2(0, 1), // Top-left point
-	glm::vec2(0, 0), // Bottom-left point
-	glm::vec2(1, 1), // Top-right point
-	glm::vec2(1, 0) // Bottom-right point
-};
 
 void GameScene::initScene() {
-	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
-	// load shaders
-	m_vsShader.loadShaderFromFile("src/shaders/shader.vs", GL_VERTEX_SHADER);
-	m_fsShader.loadShaderFromFile("src/shaders/shader.fs", GL_FRAGMENT_SHADER);
-	m_vsGround.loadShaderFromFile("src/shaders/ground.vs", GL_VERTEX_SHADER);
-	m_fsGround.loadShaderFromFile("src/shaders/ground.fs", GL_FRAGMENT_SHADER);
 
-	// init skybox
-	//m_skybox = std::make_unique<Skybox>("res/lightblue/desert");
+	try {
+		auto& shaderManager = ShaderManager::getInstance();
+		auto& shaderProgramManager = ShaderProgramManager::getInstance();
+		auto& textureManager = TextureManager::getInstance();
 
-	if (!m_vsShader.hasLoaded() || !m_fsShader.hasLoaded()) {
+		shaderManager.loadFragmentShader("main_part", "../src/shaders/shader.frag");
+		shaderManager.loadVertexShader("main_part", "../src/shaders/shader.vert");
+
+		shaderManager.loadVertexShader("normals", "../src/shaders/normals.vert");
+		shaderManager.loadFragmentShader("normals", "../src/shaders/normals.frag");
+
+		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
+		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
+		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("main_part"));
+
+		auto& normalsShaderProgram = shaderProgramManager.createShaderProgram("normals");
+		normalsShaderProgram.addShaderToProgram(shaderManager.getVertexShader("normals"));
+		normalsShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("normals"));
+		// init skybox
+		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
+		m_cube = std::make_unique<Cube>(true, true, true);
+		m_plainGround = std::make_unique<PlainGround>(true, true, true);
+		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
+		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
+		m_material = std::make_unique<Material>(12.0f, 20.0f);
+		SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
+		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
+		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
+
+		shaderProgramManager.linkAllPrograms();
+		int width, height;
+		glfwGetWindowSize(getWindow(), &width, &height);
+		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
+	}
+	catch (const std::runtime_error& error) {
+		std::cout << "Error occured during initialization: " << error.what() << std::endl;
 		closeWindow(true);
 		return;
 	}
-	// load vs & fs to mainProgram
-	m_mainProgram.createProgram();
-	m_mainProgram.addShaderToProgram(m_vsShader);
-	m_mainProgram.addShaderToProgram(m_fsShader);
-
-	if (!m_mainProgram.linkProgram()) {
-		closeWindow(true);
-		return;
-	}
-
-	if (!m_vsGround.hasLoaded() || !m_fsGround.hasLoaded()) {
-		closeWindow(true);
-		return;
-	}
-	m_groundProgram.createProgram();
-	m_groundProgram.addShaderToProgram(m_vsGround);
-	m_groundProgram.addShaderToProgram(m_fsGround);
-
-	if (!m_groundProgram.linkProgram()) {
-		closeWindow(true);
-		return;
-	}
-
-	
-	// one VAO array
-	glGenVertexArrays(1, &m_VAO); 
-	glBindVertexArray(m_VAO);
-	m_vertexBuffer.createVBO();
-	m_vertexEBO.createVBO(); // create EBO
-	m_vertexBuffer.bindVBO();
-	m_vertexBuffer.addRawData(plainGroundVertices, sizeof(plainGroundVertices));
-	m_vertexBuffer.uploadDataToGPU(GL_STATIC_DRAW);
-	// use EBO
-	m_vertexEBO.bindVBO(GL_ELEMENT_ARRAY_BUFFER);
-	m_vertexEBO.addRawData(plainGroundIndices, sizeof(plainGroundIndices));
-	m_vertexEBO.uploadDataToGPU(GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), static_cast<void*>(0));
-	glEnableVertexAttribArray(0);
-
-	m_textureBuffer.createVBO();
-	m_textureBuffer.bindVBO();
-	m_textureBuffer.addRawData(plainGroundTexCoords, sizeof(plainGroundTexCoords));
-	m_textureBuffer.uploadDataToGPU(GL_STATIC_DRAW);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), static_cast<void*>(0));
-
-	/// UNBINDING VBO, VAO, EBO
-	//glBindBuffer(GL_ARRAY_BUFFER, 0); // unbinding VBO, but dont have to
-	glBindVertexArray(0); // we can unbind VAO
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // we should not unbind EBO while VAO is active, but dont have to
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0);
-
-	m_snowTexture.loadTexture2D("res/img/snow.png", true);
-
-	m_sampler.create(true);
-	m_sampler.bind();
-	m_sampler.setFilterOptions(FilterOptions::MIN_FILTER_TRILINEAR, GL_TEXTURE_MIN_FILTER);
-	m_sampler.setFilterOptions(FilterOptions::MAG_FILTER_BILINEAR, GL_TEXTURE_MAG_FILTER);
-	int width, height;
-	glfwGetWindowSize(getWindow(), &width, &height);
-	m_camera = std::make_unique<Camera>(
-            glm::vec3(3.0f, 2.0f, -3.0f),
-            glm::vec3(0.0f, -5.0f, 0.0f),
-            glm::vec3(0.0f, 1.0f, 0.f),
-            glm::i32vec2(width / 2, height / 2),
-            15.0f);
-
+	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
 
     /// load models
     m_ship.loadModelFromFile("../res/models/ship.obj");
+	
+
 }
 
 void GameScene::renderScene() {
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	m_groundProgram.useProgram();
-	glBindVertexArray(m_VAO);
 
-	m_groundProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
-	m_groundProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
-
-	m_groundProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0));
+	auto& matrixManager = MatrixManager::getInstance();
+	auto& shaderProgramManager = ShaderProgramManager::getInstance();
+	auto& textureManager = TextureManager::getInstance();
 
 	m_snowTexture.bind(0);
 	m_sampler.bind(0);
@@ -159,47 +101,105 @@ void GameScene::renderScene() {
 
     m_ship.render();
 	//Render skybox
+	
+	matrixManager.setProjectionMatrix(getProjectionMatrix());
+	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
+	matrixManager.setViewMatrix(m_camera->getViewMatrix());
 
-	//m_skybox->render(m_camera->getEye(), m_mainProgram);
+	auto& mainProgram = shaderProgramManager.getShaderProgram("main");
+	mainProgram.useProgram();
+	mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
+	mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
+	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
+	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
+	mainProgram.setUniform("sampler", 0);
 
+	// TODO: render skybox only with AmbientLight, do we need that?
+	//AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
+	//DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
+	//ambientSkybox.setUniform(mainProgram, "ambientLight");
+	//Material::none().setUniform(mainProgram, "material");
+	// render skybox
+	m_skybox->render(m_camera->getEye(), mainProgram);
+	
+	SamplerManager::getInstance().getSampler("main").bind();
+	m_ambientLight->setUniform(mainProgram, "ambientLight");
+	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
+	mainProgram.setUniform("cameraPosition", m_camera->getEye());
+	m_material->setUniform(mainProgram, "material");
+	std::vector<glm::mat4> crateModelMatrices;
+	for (const auto& position : cratePositions)
+	{
+		const auto crateSize = 8.0f;
+		auto model = glm::translate(glm::mat4(1.0f), position);
+		float renderedHeight = 5.0f;
+		model = glm::translate(model, glm::vec3(0.0f, 1.5f + crateSize / 2.0f + renderedHeight, 0.0f));
+		model = glm::rotate(model, rotationAngleRad, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, rotationAngleRad, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, rotationAngleRad, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(crateSize, crateSize, crateSize));
+		crateModelMatrices.push_back(model);
+		mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
+		TextureManager::getInstance().getTexture("lava").bind(0);
+		m_cube->render();
+	}
+
+	textureManager.getTexture("snow").bind(0);
+	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
+	//m_plainGround->render();
 }
 
 void GameScene::updateScene() {
-
+	
 	std::string title = "SpaceShooter FPS count: " + std::to_string(getFPS()) + " VSync: " + (isVerticalSynchronizationEnabled() ? "On" : "Off");
 	glfwSetWindowTitle(getWindow(), title.c_str());
-
+	/* Should close window*/
 	if (keyPressedOnce(GLFW_KEY_ESCAPE)) {
 		closeWindow();
 	}
-	
+	/* Vertical Synchronization*/
 	if (keyPressedOnce(GLFW_KEY_0)) {
 		setVerticalSynchronization(!isVerticalSynchronizationEnabled());
 	}
-
+	/* Switch wireframe mode*/
 	if (keyPressedOnce(GLFW_KEY_1)) {
 		setWireframeMode(!isWireframeModeEnabled());
 	}
-
+	/* Free floating camera or static camera*/
 	if (keyPressedOnce(GLFW_KEY_2)) {
 		setCameraUpdateEnabled(!isCameraUpdateEnabled());
 	}
-
+	/* Update camera state*/
 	if (isCameraUpdateEnabled()) {
 		m_camera->update([this](int keyCode) {return this->keyPressed(keyCode); }, [this]() {double curPosX, curPosY; glfwGetCursorPos(this->getWindow(), &curPosX, &curPosY); return glm::u32vec2(curPosX, curPosY); },
 		[this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y); }, [this](float value) { return this->getValueByTime(value); });
 	}
+	/* Switch Diffuse Light*/
+	if (keyPressedOnce(GLFW_KEY_3)) {
+		auto& shaderProgramManager = ShaderProgramManager::getInstance();
+		auto& mainProgram = shaderProgramManager.getShaderProgram("main");
+		mainProgram.useProgram();
+		m_diffuseLight->switchLight(mainProgram, !m_diffuseLight->getLightState());
+	}
+	/* Switch Ambient Light*/
+	if (keyPressedOnce(GLFW_KEY_4)) {
+		auto& shaderProgramManager = ShaderProgramManager::getInstance();
+		auto& mainProgram = shaderProgramManager.getShaderProgram("main");
+		mainProgram.useProgram();
+		m_ambientLight->switchLight(mainProgram, !m_ambientLight->getLightState());
+
+	}
+	rotationAngleRad += getValueByTime(glm::radians(0.0f));
+
 }
 
 void GameScene::releaseScene() {
 
-	m_mainProgram.deleteProgram();
-	m_vsShader.deleteShader();
-	m_fsShader.deleteShader();
-	m_vertexBuffer.deleteVBO();
-	m_vertexEBO.deleteVBO();
-	m_textureBuffer.deleteVBO();
-	m_snowTexture.deleteTexture();
-	m_sampler.deleteSampler();
-	glDeleteVertexArrays(1, &m_VAO);
+	m_skybox.reset();
+	m_plainGround.reset();
+	ShaderManager::getInstance().clearShaderCache();
+	ShaderProgramManager::getInstance().clearShaderProgramCache();
+	TextureManager::getInstance().clearTextureCache();
+	SamplerManager::getInstance().clearSamplerKeys();
+	m_cube.reset();
 }
