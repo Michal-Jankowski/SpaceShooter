@@ -30,6 +30,7 @@ private:
 	int m_backwarKeyCode = GLFW_KEY_S;
 	int m_strafeLeftKeyCode = GLFW_KEY_A;
 	int m_strafeRightKeyCode = GLFW_KEY_D;
+	int m_accelerateKeyCode = GLFW_KEY_LEFT_SHIFT;
 
 	glm::i32vec2 m_windowCenterPosition;
 };

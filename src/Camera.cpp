@@ -27,6 +27,9 @@ void Camera::update(const std::function<bool(int)>& keyInputFunc,
 	if (keyInputFunc(m_forwardKeyCode)) {
 		moveBy(speedCorrectionFunc(m_moveSpeed));
 	}
+	if (keyInputFunc(m_accelerateKeyCode)) {
+		moveBy(speedCorrectionFunc(5.0f * m_moveSpeed));
+	}
 	if (keyInputFunc(m_backwarKeyCode)) {
 		moveBy(speedCorrectionFunc(-m_moveSpeed));
 	}
