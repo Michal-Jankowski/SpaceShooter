@@ -47,7 +47,8 @@ void GameScene::initScene() {
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
-		SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
+		m_ship = std::make_unique<GameModel>("../res/models/ship.obj", "main");
+        SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
 
@@ -65,10 +66,6 @@ void GameScene::initScene() {
 	glClearDepth(1.0);
 	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
 
-    /// load models
-    m_ship.loadModelFromFile("../res/models/ship.obj");
-	
-
 }
 
 void GameScene::renderScene() {
@@ -80,33 +77,27 @@ void GameScene::renderScene() {
 	auto& shaderProgramManager = ShaderProgramManager::getInstance();
 	auto& textureManager = TextureManager::getInstance();
 
-	m_snowTexture.bind(0);
-	m_sampler.bind(0);
-	m_groundProgram.setUniform("snowSampler", 0);
 
-    //m_ship.render();
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    auto& mainProgram = shaderProgramManager.getShaderProgram("main");
 
-	m_mainProgram.useProgram();
-	m_mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
-	m_mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
-	m_mainProgram.setUniform("color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    matrixManager.setProjectionMatrix(getProjectionMatrix());
+    matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
+    matrixManager.setViewMatrix(m_camera->getViewMatrix());
 
     glm::mat4 model = glm::mat4( 1.0 );
     glm::mat4 translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
 
-    m_mainProgram.setUniform("matrices.modelMatrix",translated);
+    mainProgram.setUniform("matrices.modelMatrix",translated);
 
-    m_mainProgram.setUniform("sampler", 0);
+    m_ship->render();
 
-    m_ship.render();
 	//Render skybox
 	
 	matrixManager.setProjectionMatrix(getProjectionMatrix());
 	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
 	matrixManager.setViewMatrix(m_camera->getViewMatrix());
 
-	auto& mainProgram = shaderProgramManager.getShaderProgram("main");
+	mainProgram = shaderProgramManager.getShaderProgram("main");
 	mainProgram.useProgram();
 	mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
 	mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
@@ -202,4 +193,5 @@ void GameScene::releaseScene() {
 	TextureManager::getInstance().clearTextureCache();
 	SamplerManager::getInstance().clearSamplerKeys();
 	m_cube.reset();
+    m_ship.release();
 }

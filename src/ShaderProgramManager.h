@@ -9,6 +9,7 @@ public:
 
 	ShaderProgram& createShaderProgram(const std::string& key);
 	ShaderProgram& getShaderProgram(const std::string& key) const;
+	ShaderProgram& createOrGetShaderProgram(const std::string& key);
 	void linkAllPrograms();
 	void clearShaderProgramCache();
 private:

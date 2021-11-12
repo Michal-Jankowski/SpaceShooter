@@ -14,6 +14,7 @@
 #include <assimp/mesh.h>
 #include <assimp/scene.h>
 #include "Buffer.h"
+#include "Material.h"
 
 class ModelMesh {
 public:
@@ -29,18 +30,16 @@ public:
     void clearData();
 
 private:
-    void loadMaterialTexture(const int materialIndex, const std::string& textureFileName);
-
     std::vector<int> _meshStartIndices; // Indices of where the meshes start in the VBO
     std::vector<int> _meshVerticesCount; // How many vertices are there for every mesh
     std::vector<int> _meshMaterialIndices; // Index of material for every mesh
-    std::map<int, std::string> _materialTextureKeys; // Map for index of material -> texture key to be retrieved from TextureManager
+    std::map<int, std::unique_ptr<Material>> materials;
 
     GLuint vao_ind = 0;
     Buffer vbo;
 
     bool isInitialized;
-    static std::string aiStringToStdString(const aiString& aiStringStruct);
+
     void setVertexAttributesPointers(int numVertices);
 
     void ReadMeshNormals(const aiScene *scene);
