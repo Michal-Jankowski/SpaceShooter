@@ -2,6 +2,7 @@
 #include "PathHelper.h"
 #include "TextureManager.h"
 #include "ShaderProgramManager.h"
+#include <assimp/types.h>
 
 Material::Material(const float intensity, const float strength, const bool isEnabled)
     : m_specularIntensity(intensity)
@@ -32,12 +33,18 @@ Material::Material(const aiMaterial *assimpMat) {
     generateMappings();
 
     aiString name;
-    assimpMat->Get(AI_MATKEY_NAME,name);
+    assimpMat->Get(AI_MATKEY_NAME, name);
     shaderProgramKey = materialShaderMappings[name.C_Str()];
 
-    //TODO read spec params
+    ///SPECULARITY
     m_isEnabled = true;
-    //m_specularIntensity =
+    float spec;
+    assimpMat->Get(AI_MATKEY_SHININESS, spec);
+    m_specularIntensity = spec;
+    assimpMat->Get(AI_MATKEY_SHININESS_STRENGTH, spec);
+    m_specularStrength = spec;
+
+    std::cout << m_specularStrength << " " << m_specularIntensity << std::endl;
 
     ///TEXUTRES
     aiString aiTexturePath;
@@ -86,4 +93,12 @@ void Material::setup(const glm::mat4 model) const{
     auto shader = ShaderProgramManager::getInstance().getShaderProgram(shaderProgramKey);
     shader.useProgram();
     shader.setUniform("matrices.modelMatrix", model);
+    ///specular
+    shader.setUniform("material.isOn", m_isEnabled);
+    if (!m_isEnabled) {
+        return;
+    }
+    shader.setUniform("material.specularIntensity", m_specularIntensity);
+    shader.setUniform("material.specularStrength", m_specularStrength);
+
 }
