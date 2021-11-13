@@ -107,10 +107,10 @@ void GameScene::renderScene() {
 	mainProgram.setUniform("sampler", 0);
 
 	// TODO: render skybox only with AmbientLight, do we need that?
-	//AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
-	//DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
-	//ambientSkybox.setUniform(mainProgram, "ambientLight");
-	//Material::none().setUniform(mainProgram, "material");
+	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
+	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
+	ambientSkybox.setUniform(mainProgram, "ambientLight");
+	Material::none().setUniform(mainProgram, "material");
 	// render skybox
 	m_skybox->render(m_camera->getEye(), mainProgram);
 	

@@ -41,10 +41,11 @@ Material::Material(const aiMaterial *assimpMat) {
     float spec;
     assimpMat->Get(AI_MATKEY_SHININESS, spec);
     m_specularIntensity = spec;
-    assimpMat->Get(AI_MATKEY_SHININESS_STRENGTH, spec);
-    m_specularStrength = spec;
+    float specStr = 1.0f;
+    assimpMat->Get(AI_MATKEY_SHININESS_STRENGTH, specStr);
+    m_specularStrength = specStr;
 
-    std::cout << m_specularStrength << " " << m_specularIntensity << std::endl;
+    //std::cout << name.C_Str() << " " << m_specularIntensity <<  " " <<  m_specularStrength << std::endl;
 
     ///TEXUTRES
     aiString aiTexturePath;
