@@ -30,16 +30,10 @@ void GameScene::initScene() {
 		shaderManager.loadFragmentShader("main_part", "../src/shaders/shader.frag");
 		shaderManager.loadVertexShader("main_part", "../src/shaders/shader.vert");
 
-		shaderManager.loadVertexShader("normals", "../src/shaders/normals.vert");
-		shaderManager.loadFragmentShader("normals", "../src/shaders/normals.frag");
-
 		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
 		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("main_part"));
 
-		auto& normalsShaderProgram = shaderProgramManager.createShaderProgram("normals");
-		normalsShaderProgram.addShaderToProgram(shaderManager.getVertexShader("normals"));
-		normalsShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("normals"));
 		// init skybox
 		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
 		m_cube = std::make_unique<Cube>(true, true, true);
@@ -86,7 +80,7 @@ void GameScene::renderScene() {
 
     glm::mat4 model = glm::mat4( 1.0 );
     glm::mat4 translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
-
+	mainProgram.useProgram();
     mainProgram.setUniform("matrices.modelMatrix",translated);
 
     m_ship->moveBy(glm::vec3(0.0f, 0.0f, -SetupWindow::getDeltaTime()));
@@ -181,7 +175,7 @@ void GameScene::updateScene() {
 		m_ambientLight->switchLight(mainProgram, !m_ambientLight->getLightState());
 
 	}
-	rotationAngleRad += getValueByTime(glm::radians(0.0f));
+	rotationAngleRad += getValueByTime(glm::radians(5.0f));
 
 }
 
