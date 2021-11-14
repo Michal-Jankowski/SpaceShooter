@@ -144,6 +144,21 @@ double SetupWindow::getValueByTime(double value) const {
 	return getDeltaTime() * value;
 }
 
+SetupWindow* SetupWindow::getDefaultWindow() {
+	return m_windows.size() == 0 ? nullptr : (*m_windows.begin()).second;
+
+}
+
+int SetupWindow::getScreenWidth() const
+{
+	return m_screenWidth;
+}
+
+int SetupWindow::getScreenHeight() const
+{
+	return m_screenHeight;
+}
+
 bool SetupWindow::keyPressed(int keyCode) const {
 	return glfwGetKey(m_window, keyCode) == GLFW_PRESS;
 }

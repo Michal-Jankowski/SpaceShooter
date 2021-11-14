@@ -40,6 +40,11 @@ bool RenderBuff::resize(GLsizei width, GLsizei height) {
     return create(internalFormat, width, height);
 }
 
+GLuint RenderBuff::getID() const
+{
+    return m_renderBufferID;
+}
+
 void RenderBuff::deleteRenderBuff() {
     if (m_renderBufferID == 0) {
         return;

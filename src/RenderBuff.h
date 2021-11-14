@@ -8,8 +8,10 @@ public:
 
 	bool create(GLenum format, GLsizei width, GLsizei height);
 	bool resize(GLsizei width, GLsizei height);
-private:
+    GLuint getID() const;
     void deleteRenderBuff();
+
+private:
 
     GLuint m_renderBufferID = 0; 
     GLenum m_format = 0; 
