@@ -17,7 +17,6 @@ std::vector<glm::vec3> cratePositions
 	glm::vec3(-30.0f, 0.0f, 80.0f),
 };
 
-float rotationAngleRad = 0.0f;
 
 
 void GameScene::initScene() {
@@ -120,9 +119,9 @@ void GameScene::renderScene() {
 		auto model = glm::translate(glm::mat4(1.0f), position);
 		float renderedHeight = 5.0f;
 		model = glm::translate(model, glm::vec3(0.0f, 1.5f + crateSize / 2.0f + renderedHeight, 0.0f));
-		model = glm::rotate(model, rotationAngleRad, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, rotationAngleRad, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, rotationAngleRad, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::rotate(model, m_rotationAngleRad, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, m_rotationAngleRad, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, m_rotationAngleRad, glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, glm::vec3(crateSize, crateSize, crateSize));
 		crateModelMatrices.push_back(model);
 		mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
@@ -175,7 +174,7 @@ void GameScene::updateScene() {
 		m_ambientLight->switchLight(mainProgram, !m_ambientLight->getLightState());
 
 	}
-	rotationAngleRad += getValueByTime(glm::radians(5.0f));
+	m_rotationAngleRad += getValueByTime(glm::radians(5.0f));
 
 }
 

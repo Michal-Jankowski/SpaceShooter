@@ -32,5 +32,6 @@ private:
     std::unique_ptr<DiffuseLight> m_diffuseLight;
     std::unique_ptr<PlainGround> m_plainGround;
     std::unique_ptr<Material> m_material;
+    float m_rotationAngleRad = 0.0f;
 };
 
