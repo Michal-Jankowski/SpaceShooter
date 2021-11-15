@@ -15,6 +15,8 @@
 #include "PlainGround.h"
 #include "Material.h"
 #include "GameModel.h"
+#include "game/Ship.h"
+#include "game/Collectible.h"
 
 class GameScene : public SetupWindow
 {
@@ -24,7 +26,8 @@ public:
     void updateScene() override;
     void releaseScene() override;
 private:
-    std::unique_ptr<GameModel> m_ship;
+    std::unique_ptr<Ship> m_ship;
+    std::unique_ptr<Collectible> m_coin;
     std::unique_ptr<Camera> m_camera;
     std::unique_ptr<Skybox> m_skybox;
     std::unique_ptr<Cube> m_cube;

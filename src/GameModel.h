@@ -9,11 +9,12 @@
 #include "ShaderProgram.h"
 #include "ModelMesh.h"
 #include "Material.h"
+#include "Collider.h"
 
 class GameModel {
 public:
 
-    GameModel(const std::string& path);
+    explicit GameModel(const std::string& path);
 
     void render();
     void moveBy(glm::vec3 distance);
@@ -23,7 +24,8 @@ public:
     glm::mat4 mModelMatrix;
     ShaderProgram shader;
     ModelMesh mesh = ModelMesh();
-    //Material material;
+
+    std::unique_ptr<Collider>  col;
 };
 
 
