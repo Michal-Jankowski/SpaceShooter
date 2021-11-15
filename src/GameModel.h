@@ -10,12 +10,14 @@
 #include "ModelMesh.h"
 #include "Material.h"
 #include "Collider.h"
+#include "SetupWindow.h"
 
 class GameModel {
 public:
 
     explicit GameModel(const std::string& path);
 
+    virtual void update(SetupWindow& gScene);
     void render();
     void moveBy(glm::vec3 distance);
     void rotateBy(glm::vec4 rotation);

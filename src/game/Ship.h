@@ -11,7 +11,7 @@
 class Ship : public GameModel {
 public:
     explicit Ship(const std::string &modelPath);
-
+    void update(SetupWindow& scene) override;
 };
 
 

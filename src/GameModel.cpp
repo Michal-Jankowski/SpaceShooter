@@ -18,3 +18,7 @@ void GameModel::render() {
 void GameModel::moveBy(glm::vec3 distance) {
     mModelMatrix = glm::translate(mModelMatrix, distance);
 }
+
+void GameModel::update(SetupWindow &gScene) {
+
+}

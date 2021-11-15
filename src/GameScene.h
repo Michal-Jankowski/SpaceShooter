@@ -26,8 +26,7 @@ public:
     void updateScene() override;
     void releaseScene() override;
 private:
-    std::unique_ptr<Ship> m_ship;
-    std::unique_ptr<Collectible> m_coin;
+    std::vector<std::unique_ptr<GameModel>> gameObjects;
     std::unique_ptr<Camera> m_camera;
     std::unique_ptr<Skybox> m_skybox;
     std::unique_ptr<Cube> m_cube;

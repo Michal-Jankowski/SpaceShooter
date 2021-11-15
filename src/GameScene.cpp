@@ -40,9 +40,7 @@ void GameScene::initScene() {
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
-		m_ship = std::make_unique<Ship>("../res/models/ship.obj");
-		m_coin = std::make_unique<Collectible>("../res/models/collectible.obj");
-        m_coin->moveBy(glm::vec3(0.0f,0.0f,-10.0f));
+
         SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
@@ -51,7 +49,12 @@ void GameScene::initScene() {
 		int width, height;
 		glfwGetWindowSize(getWindow(), &width, &height);
 		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
-	}
+
+        std::unique_ptr<GameModel> m_coin = std::make_unique<Collectible>("../res/models/collectible.obj");
+        m_coin->moveBy(glm::vec3(0.0f,0.0f,-10.0f));
+        gameObjects.push_back(std::make_unique<Ship>("../res/models/ship.obj"));
+        gameObjects.push_back(std::move(m_coin));
+    }
 	catch (const std::runtime_error& error) {
 		std::cout << "Error occured during initialization: " << error.what() << std::endl;
 		closeWindow(true);
@@ -84,9 +87,13 @@ void GameScene::renderScene() {
 	mainProgram.useProgram();
     mainProgram.setUniform("matrices.modelMatrix",translated);
 
-    m_ship->moveBy(glm::vec3(0.0f, 0.0f, -SetupWindow::getDeltaTime()));
-    m_ship->render();
-    m_coin->render();
+
+    for (auto & gameObject : gameObjects) {
+        gameObject->update(*this);
+    }
+    for (auto & gameObject : gameObjects) {
+        gameObject->render();
+    }
 
 	//Render skybox
 	
@@ -190,6 +197,7 @@ void GameScene::releaseScene() {
 	TextureManager::getInstance().clearTextureCache();
 	SamplerManager::getInstance().clearSamplerKeys();
 	m_cube.reset();
-    m_ship.reset();
-    m_coin.reset();
+    for (int i = 0; i < gameObjects.size(); ++i) {
+        gameObjects[i].reset();
+    }
 }
