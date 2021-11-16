@@ -18,16 +18,24 @@ public:
     explicit GameModel(const std::string& path);
 
     virtual void update(SetupWindow& gScene);
+    virtual void onCollision(GameModel* other);
     void render();
     void moveBy(glm::vec3 distance);
     void rotateBy(glm::vec4 rotation);
     void scaleBy(glm::vec3 scale);
+    glm::vec3 getPosition();
 
-    glm::mat4 mModelMatrix;
     ShaderProgram shader;
     ModelMesh mesh = ModelMesh();
 
+    bool useCollision = false;
     std::unique_ptr<Collider>  col;
+    bool awaitingDestroy = false;
+
+private:
+    glm::mat4 mModelMatrix;
+
+
 };
 
 

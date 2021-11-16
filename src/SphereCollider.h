@@ -8,11 +8,12 @@
 
 #include "Collider.h"
 
-class SphereCollider : Collider {
+class SphereCollider : public Collider {
 
 public:
+    SphereCollider(glm::vec3 pos, float radius);
     bool isColliding(Collider* other) override;
-    glm::vec3 pos;
+
     float radius;
 
 };

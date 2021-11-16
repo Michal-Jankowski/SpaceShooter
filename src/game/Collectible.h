@@ -11,6 +11,8 @@
 class Collectible : public GameModel {
 public:
     explicit Collectible(const std::string &modelPath);
+    void update(SetupWindow &gScene) override;
+    void onCollision(GameModel *other) override;
 };
 
 

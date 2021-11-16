@@ -5,7 +5,6 @@
 #include "TextureManager.h"
 #include "SamplerManager.h"
 #include "MatrixManager.h"
-#include <glm/gtc/matrix_transform.hpp>
 
 
 std::vector<glm::vec3> cratePositions
@@ -87,13 +86,7 @@ void GameScene::renderScene() {
 	mainProgram.useProgram();
     mainProgram.setUniform("matrices.modelMatrix",translated);
 
-
-    for (auto & gameObject : gameObjects) {
-        gameObject->update(*this);
-    }
-    for (auto & gameObject : gameObjects) {
-        gameObject->render();
-    }
+    gameObjectsLoop();
 
 	//Render skybox
 	
@@ -199,5 +192,39 @@ void GameScene::releaseScene() {
 	m_cube.reset();
     for (int i = 0; i < gameObjects.size(); ++i) {
         gameObjects[i].reset();
+    }
+}
+
+void GameScene::gameObjectsLoop() {
+    ///UPDATE
+    for (auto & gameObject : gameObjects) {
+        gameObject->update(*this);
+    }
+    ///COLLISIONS
+    for (int i = 0; i < gameObjects.size(); ++i) {
+        if(gameObjects[i]->useCollision){
+            for (int j = i+1; j < gameObjects.size(); ++j) {
+                if (gameObjects[j]->useCollision) {
+                    bool col = gameObjects[i]->col->isColliding(gameObjects[j]->col.get());
+                    if(col){
+                        gameObjects[i]->onCollision(gameObjects[j].get());
+                        gameObjects[j]->onCollision(gameObjects[i].get());
+                    }
+                }
+            }
+        }
+
+    }
+    ///RENDER
+    for (auto & gameObject : gameObjects) {
+        gameObject->render();
+    }
+    ///REMOVE
+    for (int i = 0; i < gameObjects.size(); ++i) {
+        if(gameObjects[i]->awaitingDestroy){
+            gameObjects[i].reset();
+            gameObjects.erase(gameObjects.begin()+i);
+            i--;
+        }
     }
 }

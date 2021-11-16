@@ -15,3 +15,8 @@ bool SphereCollider::isColliding(Collider* other) {
     }
     return false;
 }
+
+SphereCollider::SphereCollider(glm::vec3 pos, float radius) {
+    this->pos = pos;
+    this->radius = radius;
+}
