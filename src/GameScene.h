@@ -23,6 +23,8 @@ public:
     void renderScene() override;
     void updateScene() override;
     void releaseScene() override;
+    void onWindowSizeChanged(int width, int height) override;
+    void onMouseButtonPressed(int button, int action) override;
 private:
     std::unique_ptr<GameModel> m_ship;
     std::unique_ptr<Camera> m_camera;

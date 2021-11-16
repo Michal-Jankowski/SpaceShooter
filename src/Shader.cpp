@@ -4,6 +4,10 @@
 #include <sstream>
 #include <fstream>
 
+Shader::~Shader() {
+    deleteShader();
+}
+
 bool Shader::loadShaderFromFile(const std::string& file, GLenum shaderType) {
     std::vector<std::string> shaderLines;
 
@@ -54,6 +58,7 @@ void Shader::deleteShader() {
     if (!m_hasLoaded) {
         return;
     }
+    std::cout << "Deleting shader with ID " << m_shaderID << std::endl;
     m_hasLoaded = false;
     glDeleteShader(m_shaderID);
 }

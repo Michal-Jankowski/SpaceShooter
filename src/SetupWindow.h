@@ -44,6 +44,7 @@ public:
 	static SetupWindow* getDefaultWindow();
 	int getScreenWidth() const;
 	int getScreenHeight() const;
+	glm::ivec2 getOpenGLCursorPosition() const;
 private:
 	GLFWwindow* m_window = nullptr;
 	glm::mat4 m_projectionMatrix = glm::mat4(0.0);

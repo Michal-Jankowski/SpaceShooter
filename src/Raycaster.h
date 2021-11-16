@@ -2,28 +2,11 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <memory>
-#include "Mesh.h"
+#include "StaticMesh3D.h"
 #include "FrameBuff.h"
 #include "Material.h"
 #include "Cube.h"
 
-struct PickableObject
-{
-    glm::vec3 position; 
-    Mesh* meshPtr;
-    glm::vec3 occlusionBoxSize; 
-    float rotationAngleRad{ 0.0f }; 
-    float renderScaleAngleRad{ 0.0f };
-
-    
-     // Creates pulsing effect with sine method.
-    glm::vec3 getRenderScale() const
-    {
-        const auto sine = sin(renderScaleAngleRad);
-        const auto scaleFactor = 1.0f + sine * 0.1f;
-        return glm::vec3{ scaleFactor };
-    }
-};
 
 class Raycaster {
 public:
@@ -45,10 +28,28 @@ private:
     Raycaster(const Raycaster&) = delete; 
     void operator=(const Raycaster&) = delete;
 
+    struct PickableObject
+    {
+        glm::vec3 position;
+        StaticMesh3D* meshPtr;
+        glm::vec3 occlusionBoxSize;
+        float rotationAngleRad{ 0.0f };
+        float renderScaleAngleRad{ 0.0f };
+
+
+        // Creates pulsing effect with sine method.
+        glm::vec3 getRenderScale() const
+        {
+            const auto sine = sin(renderScaleAngleRad);
+            const auto scaleFactor = 1.0f + sine * 0.1f;
+            return glm::vec3{ scaleFactor };
+        }
+    };
+
     void renderInColorMode();
 
     std::unique_ptr<Cube> occluderCube_; 
-    std::vector<std::unique_ptr<Mesh>> meshes_; 
+    std::vector<std::unique_ptr<StaticMesh3D>> meshes_;
     std::vector<PickableObject> objects_; 
 
     FrameBuff pickingFrameBuffer_; 

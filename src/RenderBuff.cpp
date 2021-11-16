@@ -17,14 +17,14 @@ bool RenderBuff::create(GLenum format, GLsizei width, GLsizei height) {
     glGenRenderbuffers(1, &m_renderBufferID);
     if (m_renderBufferID == 0)
     {
-        std::cerr << "Unable to create renderbuffer with internal format " << m_format << "with width: " << width << "and height: " << height << std::endl;
+        std::cerr << "Unable to create renderbuffer with internal format " << format << "with width: " << width << "and height: " << height << std::endl;
         return false;
     }
 
     std::cout << "Created renderbuffer with ID " << m_renderBufferID << std::endl;
     glBindRenderbuffer(GL_RENDERBUFFER, m_renderBufferID);
-    glRenderbufferStorage(GL_RENDERBUFFER, m_format, width, height);
-    m_format = m_format;
+    glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+    m_format = format;
     m_width = width;
     m_height = height;
 

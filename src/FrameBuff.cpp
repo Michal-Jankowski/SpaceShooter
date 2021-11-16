@@ -57,6 +57,7 @@ bool FrameBuff::createFrameBufferWithColorAndDepth(GLsizei width, GLsizei height
     // Check FBO status when all attachments have been attached
     const auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "Could not attach FBO to create framebuffer #" << m_frameBufferID << "!" << std::endl;
         return false;
     }
 
@@ -232,7 +233,9 @@ GLint FrameBuff::getStencilBits()
 
 std::vector<GLubyte> FrameBuff::readColorValue(int x, int y)
 {
-	return std::vector<GLubyte>();
+    std::vector<GLubyte> result(4, 0);
+    glReadPixels(x, y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, result.data());
+    return result;
 }
 
 void FrameBuff::deleteFrameBuffer()
