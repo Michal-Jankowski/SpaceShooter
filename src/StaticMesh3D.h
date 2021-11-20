@@ -9,61 +9,22 @@ public:
 
 	StaticMesh3D(bool withPositions, bool withTextureCoordinates, bool withNormals);
 	virtual ~StaticMesh3D();
-
-	/**
-	 * Renders static mesh.
-	 */
 	virtual void render() const = 0;
-
-	/**
-	 * Renders static mesh as points only. Default implementation does nothing,
-	 * because different meshes have different logic for rendering points).
-	 */
 	virtual void renderPoints() const {}
-
-	/**
-	 * Deletes static mesh data.
-	 */
 	virtual void deleteMesh();
-
-	/**
-	 * Checks, if static mesh has vertex positions.
-	 */
 	bool hasPositions() const;
-
-	/**
-	 * Checks, if static mesh has texture coordinates.
-	 */
 	bool hasTextureCoordinates() const;
-
-	/**
-	 * Checks, if static mesh has vertex normals.
-	 */
 	bool hasNormals() const;
-
-	/**
-	 * Gets byte size of one vertex (depending on present vertex attributes).
-	 */
 	int getVertexByteSize() const;
 
 protected:
-	bool _hasPositions = false; // Flag telling, if we have vertex positions
-	bool _hasTextureCoordinates = false; // Flag telling, if we have texture coordinates
-	bool _hasNormals = false; // Flag telling, if we have vertex normals
+	bool m_hasPositions = false; 
+	bool m_hasTexCoords = false; 
+	bool m_hasNormals = false; 
 
-	bool _isInitialized = false; // Is mesh initialized flag
-	GLuint _vao = 0; // VAO ID from OpenGL
-	Buffer _vbo; // Our VBO wrapper class holding static mesh data
-
-	/**
-	 * Initializes vertex data. Default implementation does nothing as its not needed for all classes
-	 */
+	bool m_isInit = false;
+	GLuint m_vao = 0; 
+	Buffer m_vbo; 
 	virtual void initializeData() {}
-
-	/**
-	* Sets vertex attribute pointers in a standard way.
-	*
-	* @param numVertices  Number of vertices present in the buffer
-	*/
 	void setVertexAttributesPointers(int numVertices);
 };

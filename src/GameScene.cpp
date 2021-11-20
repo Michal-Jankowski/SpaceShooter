@@ -5,7 +5,7 @@
 #include "TextureManager.h"
 #include "SamplerManager.h"
 #include "MatrixManager.h"
-#include "Raycaster.h"
+#include "ObjPicker.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "DefaultBuff.h"
 
@@ -39,8 +39,7 @@ void GameScene::initScene() {
 		auto& singleColorShaderProgram = shaderProgramManager.createShaderProgram("outline");
 		singleColorShaderProgram.addShaderToProgram(shaderManager.getVertexShader("outline_part"));
 		singleColorShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("outline_part"));
-
-		// init skybox
+		// init objs
 		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
 		m_cube = std::make_unique<Cube>(true, true, true);
 		m_plainGround = std::make_unique<PlainGround>(true, true, true);
@@ -48,6 +47,7 @@ void GameScene::initScene() {
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
 		m_ship = std::make_unique<GameModel>("../res/models/ship.obj");
+		m_raycast = std::make_unique<Laser>(glm::vec3(-20, 8, 120), glm::vec3(-40, 120, 8));
         SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
@@ -55,8 +55,8 @@ void GameScene::initScene() {
 		shaderProgramManager.linkAllPrograms();
 		int width, height;
 		glfwGetWindowSize(getWindow(), &width, &height);
-		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
-		Raycaster::getInstance().initialize();
+		m_camera = std::make_unique<Camera>(glm::vec3(-20.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
+		ObjPicker::getInstance().initialize();
 
 	}
 	catch (const std::runtime_error& error) {
@@ -79,9 +79,8 @@ void GameScene::renderScene() {
 	DefaultBuff::bindAsBothReadAndDraw();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
     auto& mainProgram = shaderProgramManager.getShaderProgram("main");
-
+	auto& outlineProgram = shaderProgramManager.getShaderProgram("outline");
     matrixManager.setProjectionMatrix(getProjectionMatrix());
     matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
     matrixManager.setViewMatrix(m_camera->getViewMatrix());
@@ -93,8 +92,6 @@ void GameScene::renderScene() {
 
     m_ship->moveBy(glm::vec3(0.0f, 0.0f, -SetupWindow::getDeltaTime()));
     m_ship->render();
-
-	//Render skybox
 	
 	matrixManager.setProjectionMatrix(getProjectionMatrix());
 	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
@@ -108,7 +105,7 @@ void GameScene::renderScene() {
 	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
 	mainProgram.setUniform("sampler", 0);
 
-	auto& objectPicker = Raycaster::getInstance();
+	auto& objectPicker = ObjPicker::getInstance();
 	objectPicker.renderAllPickableObjects();
 
 	if (visualizeColorFrameBuffer)
@@ -117,9 +114,6 @@ void GameScene::renderScene() {
 		objectPicker.performObjectPicking(cursorPosition.x, cursorPosition.y);
 		objectPicker.copyColorToDefaultFrameBuffer();
 	}
-	//const auto cursorPosition = getOpenGLCursorPosition();
-	//objectPicker.performObjectPicking(cursorPosition.x, cursorPosition.y);
-	//objectPicker.copyColorToDefaultFrameBuffer();
 
 	// TODO: render skybox only with AmbientLight, do we need that?
 	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
@@ -153,30 +147,30 @@ void GameScene::renderScene() {
 
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
-	//m_plainGround->render();
+	
+	outlineProgram.useProgram();
+	outlineProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
+	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
+	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
+	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
 	DefaultBuff::bindAsBothReadAndDraw();
 	DefaultBuff::setFullViewport();
+	m_raycast->draw();
 }
 void GameScene::onWindowSizeChanged(int width, int height)
 {
 	if (width == 0 || height == 0) {
 		return;
 	}
-	Raycaster::getInstance().resizePickingFrameBuffer(width, height);
+	ObjPicker::getInstance().resizePickingFrameBuffer(width, height);
 }
 
 void GameScene::onMouseButtonPressed(int button, int action) {
-	//if (visualizeColorFrameBuffer)
-//	{
-		// If we show color frame buffer, we perform picking nonstop, so don't even react to mouse action
-//		return;
-//	}
-
 	// Otherwise perform object picking on left mouse button press
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
 		const auto cursorPosition = getOpenGLCursorPosition();
-		Raycaster::getInstance().performObjectPicking(cursorPosition.x, cursorPosition.y);
+		ObjPicker::getInstance().performObjectPicking(cursorPosition.x, cursorPosition.y);
 	}
 }
 
@@ -225,13 +219,13 @@ void GameScene::updateScene() {
 
 	}
 	
-	Raycaster::getInstance().updateAllPickableObjects(getValueByTime(1.0f));
+	ObjPicker::getInstance().updateAllPickableObjects(getValueByTime(1.0f));
 	m_rotationAngleRad += getValueByTime(glm::radians(5.0f));
 
 }
 
 void GameScene::releaseScene() {
-	Raycaster::getInstance().release();
+	ObjPicker::getInstance().release();
 	m_skybox.reset();
 	m_plainGround.reset();
 	ShaderManager::getInstance().clearShaderCache();

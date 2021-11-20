@@ -9,9 +9,9 @@ public:
     void deleteMesh() override;
 
 protected:
-    Buffer _indicesVBO; // Our VBO wrapper class holding indices data
+    Buffer m_indicesVBO;
 
-    int _numVertices = 0; // Holds the total number of generated vertices
-    int _numIndices = 0; // Holds the number of generated indices used for rendering
-    int _primitiveRestartIndex = 0; // Index of primitive restart
+    int m_numVertices = 0;
+    int m_numIndices = 0;
+    int m_primitiveRestartIndex = 0;
 };

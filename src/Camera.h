@@ -14,6 +14,7 @@ public:
 	glm::vec3 getNormalizedViewVector() const;
 	glm::mat4 getViewMatrix() const;
 	glm::vec3 getEye() const;
+	glm::vec3  getViewPoint() const;
 private:
 	void moveBy(float distance);
 	void strafeBy(float distance);

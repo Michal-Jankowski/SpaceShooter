@@ -5,16 +5,16 @@ StaticMeshIndexed3D::StaticMeshIndexed3D(bool withPositions, bool withTextureCoo
 
 StaticMeshIndexed3D::~StaticMeshIndexed3D()
 {
-    if (_isInitialized) {
+    if (m_isInit) {
         // It's enough to delete indices VBO here, rest of stuff is destructed in super destructor
-        _indicesVBO.deleteVBO();
+        m_indicesVBO.deleteVBO();
     }
 }
 
 void StaticMeshIndexed3D::deleteMesh()
 {
-    if (_isInitialized) {
-        _indicesVBO.deleteVBO();
+    if (m_isInit) {
+        m_indicesVBO.deleteVBO();
         StaticMesh3D::deleteMesh();
     }
 }

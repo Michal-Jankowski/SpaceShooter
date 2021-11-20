@@ -5,9 +5,9 @@ const int StaticMesh3D::TEXTURE_COORDINATE_ATTRIBUTE_INDEX = 1;
 const int StaticMesh3D::NORMAL_ATTRIBUTE_INDEX = 2;
 
 StaticMesh3D::StaticMesh3D(bool withPositions, bool withTextureCoordinates, bool withNormals)
-    : _hasPositions(withPositions)
-    , _hasTextureCoordinates(withTextureCoordinates)
-    , _hasNormals(withNormals) {}
+    : m_hasPositions(withPositions)
+    , m_hasTexCoords(withTextureCoordinates)
+    , m_hasNormals(withNormals) {}
 
 StaticMesh3D::~StaticMesh3D()
 {
@@ -16,29 +16,29 @@ StaticMesh3D::~StaticMesh3D()
 
 void StaticMesh3D::deleteMesh()
 {
-    if (!_isInitialized) {
+    if (!m_isInit) {
         return;
     }
 
-    glDeleteVertexArrays(1, &_vao);
-    _vbo.deleteVBO();
+    glDeleteVertexArrays(1, &m_vao);
+    m_vbo.deleteVBO();
 
-    _isInitialized = false;
+    m_isInit = false;
 }
 
 bool StaticMesh3D::hasPositions() const
 {
-    return _hasPositions;
+    return m_hasPositions;
 }
 
 bool StaticMesh3D::hasTextureCoordinates() const
 {
-    return _hasTextureCoordinates;
+    return m_hasTexCoords;
 }
 
 bool StaticMesh3D::hasNormals() const
 {
-    return _hasNormals;
+    return m_hasNormals;
 }
 
 int StaticMesh3D::getVertexByteSize() const

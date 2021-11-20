@@ -15,6 +15,10 @@
 #include "PlainGround.h"
 #include "Material.h"
 #include "GameModel.h"
+#include <thread>
+#include <deque>
+#include <mutex>
+#include "Laser.h"
 
 class GameScene : public SetupWindow
 {
@@ -34,6 +38,7 @@ private:
     std::unique_ptr<DiffuseLight> m_diffuseLight;
     std::unique_ptr<PlainGround> m_plainGround;
     std::unique_ptr<Material> m_material;
+    std::unique_ptr<Laser> m_raycast;
     float m_rotationAngleRad = 0.0f;
 };
 

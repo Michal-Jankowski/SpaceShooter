@@ -18,14 +18,14 @@ Sphere::Sphere(float radius, int numSlices, int numStacks, bool withPositions, b
 
 void Sphere::render() const
 {
-    if (!_isInitialized) {
+    if (!m_isInit) {
         return;
     }
 
-    glBindVertexArray(_vao);
+    glBindVertexArray(m_vao);
 
     glEnable(GL_PRIMITIVE_RESTART);
-    glPrimitiveRestartIndex(_primitiveRestartIndex);
+    glPrimitiveRestartIndex(m_primitiveRestartIndex);
 
     // Render north pole
     glDrawElements(GL_TRIANGLES, _numPoleIndices, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * _northPoleIndexOffset));
@@ -42,12 +42,12 @@ void Sphere::render() const
 
 void Sphere::renderPoints() const
 {
-    if (!_isInitialized) {
+    if (!m_isInit) {
         return;
     }
 
-    glBindVertexArray(_vao);
-    glDrawArrays(GL_POINTS, 0, _numVertices);
+    glBindVertexArray(m_vao);
+    glDrawArrays(GL_POINTS, 0, m_numVertices);
 }
 
 float Sphere::getRadius() const
@@ -67,12 +67,12 @@ int Sphere::getNumStacks() const
 
 void Sphere::initializeData()
 {
-    if (_isInitialized) {
+    if (m_isInit) {
         return;
     }
 
     // Cache count of vertices
-    _numVertices = (_numStacks + 1) * (_numSlices + 1);
+    m_numVertices = (_numStacks + 1) * (_numSlices + 1);
 
     // Cache number of indices it takes to render body
     const auto numBodyStacks = _numStacks - 2;
@@ -88,14 +88,14 @@ void Sphere::initializeData()
     _southPoleIndexOffset = _bodyIndexOffset + _numBodyIndices;
 
     // Finally cache total number of indices and primitive restart index
-    _numIndices = 2 * _numPoleIndices + _numBodyIndices;
-    _primitiveRestartIndex = _numVertices;
+    m_numIndices = 2 * _numPoleIndices + _numBodyIndices;
+    m_primitiveRestartIndex = m_numVertices;
 
     // Generate VAO and VBOs for vertex attributes and indices
-    glGenVertexArrays(1, &_vao);
-    glBindVertexArray(_vao);
-    _vbo.createVBO(getVertexByteSize() * _numVertices);
-    _indicesVBO.createVBO(sizeof(GLuint) * _numIndices);
+    glGenVertexArrays(1, &m_vao);
+    glBindVertexArray(m_vao);
+    m_vbo.createVBO(getVertexByteSize() * m_numVertices);
+    m_indicesVBO.createVBO(sizeof(GLuint) * m_numIndices);
 
     // Pre-calculate sines / cosines for given number of slices
     const auto sliceAngleStep = 2.0f * glm::pi<float>() / static_cast<float>(_numSlices);
@@ -133,7 +133,7 @@ void Sphere::initializeData()
                 const auto x = _radius * stackCosines[i] * sliceCosines[j];
                 const auto y = _radius * stackSines[i];
                 const auto z = _radius * stackCosines[i] * sliceSines[j];
-                _vbo.addData(glm::vec3(x, y, z));
+                m_vbo.addData(glm::vec3(x, y, z));
             }
         }
     }
@@ -164,7 +164,7 @@ void Sphere::initializeData()
 
                 const auto u = 1.0f - static_cast<float>(j) / _numSlices;
                 const auto v = 1.0f - static_cast<float>(i) / _numStacks;
-                _vbo.addData(glm::vec2(u, v));
+                m_vbo.addData(glm::vec2(u, v));
             }
         }
     }
@@ -179,7 +179,7 @@ void Sphere::initializeData()
                 const auto x = stackCosines[i] * sliceCosines[j];
                 const auto y = stackSines[i];
                 const auto z = stackCosines[i] * sliceSines[j];
-                _vbo.addData(glm::vec3(x, y, z));
+                m_vbo.addData(glm::vec3(x, y, z));
             }
         }
     }
@@ -189,9 +189,9 @@ void Sphere::initializeData()
     {
         GLuint sliceIndex = i;
         GLuint nextSliceIndex = sliceIndex + _numSlices + 1;
-        _indicesVBO.addData(static_cast<GLuint>(sliceIndex));
-        _indicesVBO.addData(static_cast<GLuint>(nextSliceIndex));
-        _indicesVBO.addData(static_cast<GLuint>(nextSliceIndex + 1));
+        m_indicesVBO.addData(static_cast<GLuint>(sliceIndex));
+        m_indicesVBO.addData(static_cast<GLuint>(nextSliceIndex));
+        m_indicesVBO.addData(static_cast<GLuint>(nextSliceIndex + 1));
     }
 
     // Then for body (triangle strip)
@@ -201,37 +201,37 @@ void Sphere::initializeData()
         // Primitive restart triangle strip from second body stack on
         if (i > 0)
         {
-            _indicesVBO.addData(_primitiveRestartIndex);
+            m_indicesVBO.addData(m_primitiveRestartIndex);
         }
 
         for (auto j = 0; j <= _numSlices; j++)
         {
             GLuint sliceIndex = currentVertexIndex + j;
             GLuint nextSliceIndex = currentVertexIndex + _numSlices + 1 + j;
-            _indicesVBO.addData(sliceIndex);
-            _indicesVBO.addData(nextSliceIndex);
+            m_indicesVBO.addData(sliceIndex);
+            m_indicesVBO.addData(nextSliceIndex);
         }
 
         currentVertexIndex += _numSlices + 1;
     }
 
     // And finally south pole (triangles again)
-    GLuint beforeLastStackIndexOffset = _numVertices - 2 * (_numSlices + 1);
+    GLuint beforeLastStackIndexOffset = m_numVertices - 2 * (_numSlices + 1);
     for (auto i = 0; i < _numSlices; i++)
     {
         GLuint sliceIndex = beforeLastStackIndexOffset + i;
         GLuint nextSliceIndex = sliceIndex + _numSlices + 1;
-        _indicesVBO.addData(static_cast<GLuint>(sliceIndex));
-        _indicesVBO.addData(static_cast<GLuint>(sliceIndex + 1));
-        _indicesVBO.addData(static_cast<GLuint>(nextSliceIndex));
+        m_indicesVBO.addData(static_cast<GLuint>(sliceIndex));
+        m_indicesVBO.addData(static_cast<GLuint>(sliceIndex + 1));
+        m_indicesVBO.addData(static_cast<GLuint>(nextSliceIndex));
     }
 
-    _vbo.bindVBO();
-    _vbo.uploadDataToGPU(GL_STATIC_DRAW);
-    setVertexAttributesPointers(_numVertices);
+    m_vbo.bindVBO();
+    m_vbo.uploadDataToGPU(GL_STATIC_DRAW);
+    setVertexAttributesPointers(m_numVertices);
 
-    _indicesVBO.bindVBO(GL_ELEMENT_ARRAY_BUFFER);
-    _indicesVBO.uploadDataToGPU(GL_STATIC_DRAW);
+    m_indicesVBO.bindVBO(GL_ELEMENT_ARRAY_BUFFER);
+    m_indicesVBO.uploadDataToGPU(GL_STATIC_DRAW);
 
-    _isInitialized = true;
+    m_isInit = true;
 }

@@ -8,25 +8,24 @@
 #include "Cube.h"
 
 
-class Raycaster {
+class ObjPicker {
 public:
-    static Raycaster& getInstance();
+    static ObjPicker& getInstance();
 
     void initialize();
     void release();
     void renderAllPickableObjects();
     void updateAllPickableObjects(float deltaTime);
     bool isPixelPerfectSelectionMode() const;
-    void togglePixelPerfectSelectionMode();
     void performObjectPicking(int x, int y);
     void copyColorToDefaultFrameBuffer() const;
     std::string getSelectedObjectDescription() const;
     void resizePickingFrameBuffer(int width, int height);
 
 private:
-    Raycaster() = default; 
-    Raycaster(const Raycaster&) = delete; 
-    void operator=(const Raycaster&) = delete;
+    ObjPicker() = default; 
+    ObjPicker(const ObjPicker&) = delete; 
+    void operator=(const ObjPicker&) = delete;
 
     struct PickableObject
     {
@@ -48,15 +47,14 @@ private:
 
     void renderInColorMode();
 
-    std::unique_ptr<Cube> occluderCube_; 
-    std::vector<std::unique_ptr<StaticMesh3D>> meshes_;
-    std::vector<PickableObject> objects_; 
+    std::unique_ptr<Cube> m_occluderCube; 
+    std::vector<std::unique_ptr<StaticMesh3D>> m_meshes;
+    std::vector<PickableObject> m_objects; 
 
-    FrameBuff pickingFrameBuffer_; 
-    bool pixelPerfectSelectionMode_{ true }; 
-    int selectedIndex_{ std::numeric_limits<int>::max() }; 
+    FrameBuff m_pickingFrameBuff; 
+    int m_selectedIndex{ std::numeric_limits<int>::max() }; 
 
-    Material shinyMaterial_{ 1.0f, 32.0f }; 
+    Material m_shinyMaterial{ 1.0f, 32.0f }; 
 
 };
 
