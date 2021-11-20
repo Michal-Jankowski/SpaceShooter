@@ -15,6 +15,11 @@
 #include "PlainGround.h"
 #include "Material.h"
 #include "GameModel.h"
+#include <thread>
+#include <deque>
+#include <mutex>
+#include "Laser.h"
+#include "Sphere.h"
 #include "game/Ship.h"
 #include "game/Collectible.h"
 
@@ -25,6 +30,8 @@ public:
     void renderScene() override;
     void updateScene() override;
     void releaseScene() override;
+    void onWindowSizeChanged(int width, int height) override;
+    void onMouseButtonPressed(int button, int action) override;
 private:
     void gameObjectsLoop();
     std::vector<std::unique_ptr<GameModel>> gameObjects;
@@ -35,6 +42,8 @@ private:
     std::unique_ptr<DiffuseLight> m_diffuseLight;
     std::unique_ptr<PlainGround> m_plainGround;
     std::unique_ptr<Material> m_material;
+    std::unique_ptr<Laser> m_raycast;
+    std::unique_ptr<Sphere> m_sphere;
     float m_rotationAngleRad = 0.0f;
 };
 

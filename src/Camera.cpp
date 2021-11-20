@@ -67,6 +67,11 @@ glm::vec3 Camera::getEye() const {
 	return m_position;
 }
 
+
+glm::vec3 Camera::getViewPoint() const {
+	return m_viewPoint;
+}
+
 void Camera::moveBy(float distance) {
 	glm::vec3 offset = getNormalizedViewVector();
 	offset *= distance;

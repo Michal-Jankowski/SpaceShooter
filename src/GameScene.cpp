@@ -5,6 +5,9 @@
 #include "TextureManager.h"
 #include "SamplerManager.h"
 #include "MatrixManager.h"
+#include "ObjPicker.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include "DefaultBuff.h"
 
 
 std::vector<glm::vec3> cratePositions
@@ -16,7 +19,8 @@ std::vector<glm::vec3> cratePositions
 	glm::vec3(-30.0f, 0.0f, 80.0f),
 };
 
-
+bool visualizeColorFrameBuffer = false;
+std::array<glm::vec3, 2> linePositions = { glm::vec3(-50, 1, 120), glm::vec3(-20, 1, 8)};
 
 void GameScene::initScene() {
 
@@ -27,33 +31,42 @@ void GameScene::initScene() {
 
 		shaderManager.loadFragmentShader("main_part", "../src/shaders/shader.frag");
 		shaderManager.loadVertexShader("main_part", "../src/shaders/shader.vert");
+		shaderManager.loadFragmentShader("outline_part", "../src/shaders/shaderOutline.frag");
+		shaderManager.loadVertexShader("outline_part", "../src/shaders/shaderOutline.vert");
 
 		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
 		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("main_part"));
 
-		// init skybox
+		auto& singleColorShaderProgram = shaderProgramManager.createShaderProgram("outline");
+		singleColorShaderProgram.addShaderToProgram(shaderManager.getVertexShader("outline_part"));
+		singleColorShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("outline_part"));
+		// init objs
 		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
 		m_cube = std::make_unique<Cube>(true, true, true);
 		m_plainGround = std::make_unique<PlainGround>(true, true, true);
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
+		m_raycast = std::make_unique<Laser>(linePositions[0], linePositions[1]);
+		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
+		Material shinnyMaterial = Material(1.0f, 32.0f);
 
-        SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
+    SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
+
 
 		shaderProgramManager.linkAllPrograms();
 		int width, height;
 		glfwGetWindowSize(getWindow(), &width, &height);
+		ObjPicker::getInstance().initialize();
 		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
-
-        std::unique_ptr<GameModel> m_coin = std::make_unique<Collectible>("../res/models/collectible.obj");
-        m_coin->moveBy(glm::vec3(0.0f,0.0f,-10.0f));
-        gameObjects.push_back(std::make_unique<Ship>("../res/models/ship.obj"));
-        gameObjects.push_back(std::move(m_coin));
-    }
+    
+    std::unique_ptr<GameModel> m_coin = std::make_unique<Collectible>("../res/models/collectible.obj");
+    m_coin->moveBy(glm::vec3(0.0f,0.0f,-10.0f));
+    gameObjects.push_back(std::make_unique<Ship>("../res/models/ship.obj"));
+    gameObjects.push_back(std::move(m_coin));
 	catch (const std::runtime_error& error) {
 		std::cout << "Error occured during initialization: " << error.what() << std::endl;
 		closeWindow(true);
@@ -67,28 +80,24 @@ void GameScene::initScene() {
 
 void GameScene::renderScene() {
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
 	auto& matrixManager = MatrixManager::getInstance();
 	auto& shaderProgramManager = ShaderProgramManager::getInstance();
 	auto& textureManager = TextureManager::getInstance();
 
+	DefaultBuff::bindAsBothReadAndDraw();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto& mainProgram = shaderProgramManager.getShaderProgram("main");
-
+  	auto& outlineProgram = shaderProgramManager.getShaderProgram("outline");
     matrixManager.setProjectionMatrix(getProjectionMatrix());
     matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
     matrixManager.setViewMatrix(m_camera->getViewMatrix());
 
     glm::mat4 model = glm::mat4( 1.0 );
     glm::mat4 translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
-	mainProgram.useProgram();
+  	mainProgram.useProgram();
     mainProgram.setUniform("matrices.modelMatrix",translated);
-
     gameObjectsLoop();
-
-	//Render skybox
 	
 	matrixManager.setProjectionMatrix(getProjectionMatrix());
 	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
@@ -102,12 +111,21 @@ void GameScene::renderScene() {
 	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
 	mainProgram.setUniform("sampler", 0);
 
+	auto& objectPicker = ObjPicker::getInstance();
+	objectPicker.renderAllPickableObjects();
+
+	if (visualizeColorFrameBuffer)
+	{
+		const auto cursorPosition = getOpenGLCursorPosition();
+		objectPicker.performObjectPicking(cursorPosition.x, cursorPosition.y);
+		objectPicker.copyColorToDefaultFrameBuffer();
+	}
+
 	// TODO: render skybox only with AmbientLight, do we need that?
 	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
 	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
 	Material::none().setUniform(mainProgram, "material");
-	// render skybox
 	m_skybox->render(m_camera->getEye(), mainProgram);
 	
 	SamplerManager::getInstance().getSampler("main").bind();
@@ -134,7 +152,35 @@ void GameScene::renderScene() {
 
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
-	//m_plainGround->render();
+	m_sphere->render();
+
+	outlineProgram.useProgram();
+	outlineProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
+	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
+	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
+	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
+	DefaultBuff::bindAsBothReadAndDraw();
+	DefaultBuff::setFullViewport();
+	// draw raycast "Laser" & check for collision with sphere
+	m_raycast->draw();
+	if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 30)) {
+		std::cout<<"Laser HIT"<<std::endl;
+	}
+}
+void GameScene::onWindowSizeChanged(int width, int height)
+{
+	if (width == 0 || height == 0) {
+		return;
+	}
+	ObjPicker::getInstance().resizePickingFrameBuffer(width, height);
+}
+
+void GameScene::onMouseButtonPressed(int button, int action) {
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		const auto cursorPosition = getOpenGLCursorPosition();
+		ObjPicker::getInstance().performObjectPicking(cursorPosition.x, cursorPosition.y);
+	}
 }
 
 void GameScene::updateScene() {
@@ -177,12 +223,18 @@ void GameScene::updateScene() {
 		m_ambientLight->switchLight(mainProgram, !m_ambientLight->getLightState());
 
 	}
+	if (keyPressedOnce(GLFW_KEY_5)) {
+		visualizeColorFrameBuffer = !visualizeColorFrameBuffer;
+
+	}
+	
+	ObjPicker::getInstance().updateAllPickableObjects(getValueByTime(1.0f));
 	m_rotationAngleRad += getValueByTime(glm::radians(5.0f));
 
 }
 
 void GameScene::releaseScene() {
-
+	ObjPicker::getInstance().release();
 	m_skybox.reset();
 	m_plainGround.reset();
 	ShaderManager::getInstance().clearShaderCache();
@@ -190,6 +242,7 @@ void GameScene::releaseScene() {
 	TextureManager::getInstance().clearTextureCache();
 	SamplerManager::getInstance().clearSamplerKeys();
 	m_cube.reset();
+	m_raycast.reset();
     for (int i = 0; i < gameObjects.size(); ++i) {
         gameObjects[i].reset();
     }

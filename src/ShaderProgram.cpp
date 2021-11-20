@@ -37,9 +37,10 @@ bool ShaderProgram::linkProgram() {
 }    
  
 void ShaderProgram::deleteProgram() {
-	if (!m_isLinked) {
+	if (!m_programID == 0) {
 		return;
 	}
+	std::cout << "Deleting shader program with ID " << m_programID << std::endl;
 	m_isLinked = false;
 	glDeleteProgram(m_programID);
 }

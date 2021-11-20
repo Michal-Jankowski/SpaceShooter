@@ -144,6 +144,28 @@ double SetupWindow::getValueByTime(double value) const {
 	return getDeltaTime() * value;
 }
 
+SetupWindow* SetupWindow::getDefaultWindow() {
+	return m_windows.size() == 0 ? nullptr : (*m_windows.begin()).second;
+
+}
+
+int SetupWindow::getScreenWidth() const
+{
+	return m_screenWidth;
+}
+
+int SetupWindow::getScreenHeight() const
+{
+	return m_screenHeight;
+}
+
+glm::ivec2 SetupWindow::getOpenGLCursorPosition() const
+{
+	double posX, posY;
+	glfwGetCursorPos(m_window, &posX, &posY);
+	return glm::ivec2(static_cast<int>(posX), m_screenHeight - static_cast<int>(posY));
+}
+
 bool SetupWindow::keyPressed(int keyCode) const {
 	return glfwGetKey(m_window, keyCode) == GLFW_PRESS;
 }
