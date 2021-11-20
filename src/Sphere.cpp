@@ -4,9 +4,9 @@
 #include <glm/ext/scalar_constants.hpp>
 Sphere::Sphere(float radius, int numSlices, int numStacks, bool withPositions, bool withTextureCoordinates, bool withNormals)
     : StaticMeshIndexed3D(withPositions, withTextureCoordinates, withNormals)
-    , _radius(radius)
-    , _numSlices(numSlices)
-    , _numStacks(numStacks)
+    , m_radius(radius)
+    , m_numSlices(numSlices)
+    , m_numStacks(numStacks)
 {
     // Validate input by throwing an exception - such spheres don't even make any sense
     if (numSlices < 3 || numStacks < 2) {
@@ -28,13 +28,13 @@ void Sphere::render() const
     glPrimitiveRestartIndex(m_primitiveRestartIndex);
 
     // Render north pole
-    glDrawElements(GL_TRIANGLES, _numPoleIndices, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * _northPoleIndexOffset));
+    glDrawElements(GL_TRIANGLES, m_numPoleIndices, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * m_northPoleIndexOffset));
 
     // Render body
-    glDrawElements(GL_TRIANGLE_STRIP, _numBodyIndices, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * _bodyIndexOffset));
+    glDrawElements(GL_TRIANGLE_STRIP, m_numBodyIndices, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * m_bodyIndexOffset));
 
     // Render south pole 
-    glDrawElements(GL_TRIANGLES, _numPoleIndices, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * _southPoleIndexOffset));
+    glDrawElements(GL_TRIANGLES, m_numPoleIndices, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * m_southPoleIndexOffset));
 
     // Disable primitive restart, we won't need it now
     glDisable(GL_PRIMITIVE_RESTART);
@@ -52,17 +52,17 @@ void Sphere::renderPoints() const
 
 float Sphere::getRadius() const
 {
-    return _radius;
+    return m_radius;
 }
 
 int Sphere::getNumSlices() const
 {
-    return _numSlices;
+    return m_numSlices;
 }
 
 int Sphere::getNumStacks() const
 {
-    return _numStacks;
+    return m_numStacks;
 }
 
 void Sphere::initializeData()
@@ -72,23 +72,23 @@ void Sphere::initializeData()
     }
 
     // Cache count of vertices
-    m_numVertices = (_numStacks + 1) * (_numSlices + 1);
+    m_numVertices = (m_numStacks + 1) * (m_numSlices + 1);
 
     // Cache number of indices it takes to render body
-    const auto numBodyStacks = _numStacks - 2;
+    const auto numBodyStacks = m_numStacks - 2;
     const auto numBodyPrimitiveRestarts = std::max(0, numBodyStacks - 1);
-    _numBodyIndices = 2 * numBodyStacks * (_numSlices + 1) + numBodyPrimitiveRestarts;
+    m_numBodyIndices = 2 * numBodyStacks * (m_numSlices + 1) + numBodyPrimitiveRestarts;
 
     // Cache count of pole indices
-    _numPoleIndices = _numSlices * 3;
+    m_numPoleIndices = m_numSlices * 3;
 
     // Cache offsets for sphere parts
-    _northPoleIndexOffset = 0;
-    _bodyIndexOffset = _numPoleIndices;
-    _southPoleIndexOffset = _bodyIndexOffset + _numBodyIndices;
+    m_northPoleIndexOffset = 0;
+    m_bodyIndexOffset = m_numPoleIndices;
+    m_southPoleIndexOffset = m_bodyIndexOffset + m_numBodyIndices;
 
     // Finally cache total number of indices and primitive restart index
-    m_numIndices = 2 * _numPoleIndices + _numBodyIndices;
+    m_numIndices = 2 * m_numPoleIndices + m_numBodyIndices;
     m_primitiveRestartIndex = m_numVertices;
 
     // Generate VAO and VBOs for vertex attributes and indices
@@ -98,10 +98,10 @@ void Sphere::initializeData()
     m_indicesVBO.createVBO(sizeof(GLuint) * m_numIndices);
 
     // Pre-calculate sines / cosines for given number of slices
-    const auto sliceAngleStep = 2.0f * glm::pi<float>() / static_cast<float>(_numSlices);
+    const auto sliceAngleStep = 2.0f * glm::pi<float>() / static_cast<float>(m_numSlices);
     auto currentSliceAngle = 0.0f;
     std::vector<float> sliceSines, sliceCosines;
-    for (auto i = 0; i <= _numSlices; i++)
+    for (auto i = 0; i <= m_numSlices; i++)
     {
         sliceSines.push_back(sin(currentSliceAngle));
         sliceCosines.push_back(cos(currentSliceAngle));
@@ -111,10 +111,10 @@ void Sphere::initializeData()
     }
 
     // Pre-calculate sines / cosines for given number of stacks
-    const auto stackAngleStep = -glm::pi<float>() / static_cast<float>(_numStacks);
+    const auto stackAngleStep = -glm::pi<float>() / static_cast<float>(m_numStacks);
     auto currentStackAngle = glm::pi<float>() / 2.0f;
     std::vector<float> stackSines, stackCosines;
-    for (auto i = 0; i <= _numStacks; i++)
+    for (auto i = 0; i <= m_numStacks; i++)
     {
         stackSines.push_back(sin(currentStackAngle));
         stackCosines.push_back(cos(currentStackAngle));
@@ -126,13 +126,13 @@ void Sphere::initializeData()
     // Generate sphere vertex positions
     if (hasPositions())
     {
-        for (auto i = 0; i <= _numStacks; i++)
+        for (auto i = 0; i <= m_numStacks; i++)
         {
-            for (auto j = 0; j <= _numSlices; j++)
+            for (auto j = 0; j <= m_numSlices; j++)
             {
-                const auto x = _radius * stackCosines[i] * sliceCosines[j];
-                const auto y = _radius * stackSines[i];
-                const auto z = _radius * stackCosines[i] * sliceSines[j];
+                const auto x = m_radius * stackCosines[i] * sliceCosines[j];
+                const auto y = m_radius * stackSines[i];
+                const auto z = m_radius * stackCosines[i] * sliceSines[j];
                 m_vbo.addData(glm::vec3(x, y, z));
             }
         }
@@ -141,9 +141,9 @@ void Sphere::initializeData()
     // Generate sphere texture coordinates
     if (hasTextureCoordinates())
     {
-        for (auto i = 0; i <= _numStacks; i++)
+        for (auto i = 0; i <= m_numStacks; i++)
         {
-            for (auto j = 0; j <= _numSlices; j++)
+            for (auto j = 0; j <= m_numSlices; j++)
             {
                 const auto x = stackCosines[i] * sliceCosines[j];
                 const auto y = stackSines[i];
@@ -162,8 +162,8 @@ void Sphere::initializeData()
                 // float u = 0.5f + x * 0.5f;
                 // float v = 0.5f + y * 0.5f;
 
-                const auto u = 1.0f - static_cast<float>(j) / _numSlices;
-                const auto v = 1.0f - static_cast<float>(i) / _numStacks;
+                const auto u = 1.0f - static_cast<float>(j) / m_numSlices;
+                const auto v = 1.0f - static_cast<float>(i) / m_numStacks;
                 m_vbo.addData(glm::vec2(u, v));
             }
         }
@@ -172,9 +172,9 @@ void Sphere::initializeData()
     // Generate sphere normals
     if (hasNormals())
     {
-        for (auto i = 0; i <= _numStacks; i++)
+        for (auto i = 0; i <= m_numStacks; i++)
         {
-            for (auto j = 0; j <= _numSlices; j++)
+            for (auto j = 0; j <= m_numSlices; j++)
             {
                 const auto x = stackCosines[i] * sliceCosines[j];
                 const auto y = stackSines[i];
@@ -185,17 +185,17 @@ void Sphere::initializeData()
     }
 
     // Now that we have all vertex data, generate indices for north pole (triangles)
-    for (auto i = 0; i < _numSlices; i++)
+    for (auto i = 0; i < m_numSlices; i++)
     {
         GLuint sliceIndex = i;
-        GLuint nextSliceIndex = sliceIndex + _numSlices + 1;
+        GLuint nextSliceIndex = sliceIndex + m_numSlices + 1;
         m_indicesVBO.addData(static_cast<GLuint>(sliceIndex));
         m_indicesVBO.addData(static_cast<GLuint>(nextSliceIndex));
         m_indicesVBO.addData(static_cast<GLuint>(nextSliceIndex + 1));
     }
 
     // Then for body (triangle strip)
-    GLuint currentVertexIndex = _numSlices + 1;
+    GLuint currentVertexIndex = m_numSlices + 1;
     for (auto i = 0; i < numBodyStacks; i++)
     {
         // Primitive restart triangle strip from second body stack on
@@ -204,23 +204,23 @@ void Sphere::initializeData()
             m_indicesVBO.addData(m_primitiveRestartIndex);
         }
 
-        for (auto j = 0; j <= _numSlices; j++)
+        for (auto j = 0; j <= m_numSlices; j++)
         {
             GLuint sliceIndex = currentVertexIndex + j;
-            GLuint nextSliceIndex = currentVertexIndex + _numSlices + 1 + j;
+            GLuint nextSliceIndex = currentVertexIndex + m_numSlices + 1 + j;
             m_indicesVBO.addData(sliceIndex);
             m_indicesVBO.addData(nextSliceIndex);
         }
 
-        currentVertexIndex += _numSlices + 1;
+        currentVertexIndex += m_numSlices + 1;
     }
 
     // And finally south pole (triangles again)
-    GLuint beforeLastStackIndexOffset = m_numVertices - 2 * (_numSlices + 1);
-    for (auto i = 0; i < _numSlices; i++)
+    GLuint beforeLastStackIndexOffset = m_numVertices - 2 * (m_numSlices + 1);
+    for (auto i = 0; i < m_numSlices; i++)
     {
         GLuint sliceIndex = beforeLastStackIndexOffset + i;
-        GLuint nextSliceIndex = sliceIndex + _numSlices + 1;
+        GLuint nextSliceIndex = sliceIndex + m_numSlices + 1;
         m_indicesVBO.addData(static_cast<GLuint>(sliceIndex));
         m_indicesVBO.addData(static_cast<GLuint>(sliceIndex + 1));
         m_indicesVBO.addData(static_cast<GLuint>(nextSliceIndex));

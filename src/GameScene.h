@@ -19,6 +19,7 @@
 #include <deque>
 #include <mutex>
 #include "Laser.h"
+#include "Sphere.h"
 
 class GameScene : public SetupWindow
 {
@@ -39,6 +40,7 @@ private:
     std::unique_ptr<PlainGround> m_plainGround;
     std::unique_ptr<Material> m_material;
     std::unique_ptr<Laser> m_raycast;
+    std::unique_ptr<Sphere> m_sphere;
     float m_rotationAngleRad = 0.0f;
 };
 

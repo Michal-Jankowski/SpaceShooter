@@ -7,7 +7,7 @@ public:
 	Laser(glm::vec3 pos1, glm::vec3 vector);
 	~Laser();
 	void draw();
-	bool isColliding(glm::vec3 pointPos, glm::vec4 sphereOrigin);
+	bool isColliding(std::array<glm::vec3, 2> linePoints, glm::vec3 sphereCoords, float radius);
 private:
 	unsigned int VBO{ 0 }, vao{ 0 };
 	std::vector<float> vertices;

@@ -1,5 +1,5 @@
 #include "Laser.h"
-
+#include <array>
 Laser::Laser(glm::vec3 start, glm::vec3 end)
 {
 	startPoint = start;
@@ -36,14 +36,23 @@ void Laser::draw()
 	glBindVertexArray(vao);
 	glDrawArrays(GL_LINES, 0, 2);
 }
-
-bool Laser::isColliding(glm::vec3 pointPos, glm::vec4 sphereOrigin)
+// where:
+// linePoints -> start & end coords
+bool Laser::isColliding(std::array<glm::vec3, 2> linePoints, glm::vec3 sphereCoords, float radius)
 {
-	auto xCoord = (pointPos.x - sphereOrigin.x) * (pointPos.x - sphereOrigin.x);
-	auto yCoord = (pointPos.y - sphereOrigin.y) * (pointPos.y - sphereOrigin.y);
-	auto zCoord = (pointPos.z - sphereOrigin.z) * (pointPos.z - sphereOrigin.z);
+	// solving quadratic equation of the form: au^2 + bu + c = 0
+	glm::vec3 diffValues = glm::vec3(linePoints[1].x - linePoints[0].x, linePoints[1].y - linePoints[0].y, linePoints[1].z - linePoints[1].z);
 
-	auto sum = xCoord + yCoord + zCoord;
-	auto doubleRadius = sphereOrigin.z * sphereOrigin.z; // z represents radius
-	return sum < doubleRadius;
+	auto a = diffValues.x * diffValues.x + diffValues.y * diffValues.y + diffValues.z * diffValues.z;
+	auto b = 2 * (diffValues.x * (linePoints[0].x - sphereCoords.x) + diffValues.y * (linePoints[1].y - sphereCoords.y) + diffValues.z * (linePoints[0].z - sphereCoords.z));
+	auto c = sphereCoords.x * sphereCoords.x + sphereCoords.y * sphereCoords.y * sphereCoords.z * sphereCoords.z;
+	c += linePoints[0].x * linePoints[0].x + linePoints[0].y * linePoints[0].y + linePoints[0].z * linePoints[0].z;
+	c -= 2 * (sphereCoords.x * linePoints[0].x + sphereCoords.y * linePoints[0].y + sphereCoords.z * linePoints[0].z);
+	c -= radius * radius;
+	auto delta = b * b - 4 * a * c;
+
+	if (abs(a) < std::numeric_limits<float>::epsilon() || delta < 0) {
+		return false; // line do not intersect
+	}
+	return true; // line intersects or touches the sphere
 }

@@ -19,6 +19,7 @@ std::vector<glm::vec3> cratePositions
 };
 
 bool visualizeColorFrameBuffer = false;
+std::array<glm::vec3, 2> linePositions = { glm::vec3(-50, 1, 120), glm::vec3(-20, 1, 8)};
 
 void GameScene::initScene() {
 
@@ -47,10 +48,14 @@ void GameScene::initScene() {
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
 		m_ship = std::make_unique<GameModel>("../res/models/ship.obj");
-		m_raycast = std::make_unique<Laser>(glm::vec3(-20, 8, 120), glm::vec3(-40, 120, 8));
+		m_raycast = std::make_unique<Laser>(linePositions[0], linePositions[1]);
+		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
+		Material shinnyMaterial = Material(1.0f, 32.0f);
+
         SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
+
 
 		shaderProgramManager.linkAllPrograms();
 		int width, height;
@@ -147,7 +152,8 @@ void GameScene::renderScene() {
 
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
-	
+	m_sphere->render();
+
 	outlineProgram.useProgram();
 	outlineProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
 	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
@@ -155,7 +161,11 @@ void GameScene::renderScene() {
 	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
 	DefaultBuff::bindAsBothReadAndDraw();
 	DefaultBuff::setFullViewport();
+	// draw raycast "Laser" & check for collision with sphere
 	m_raycast->draw();
+	if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 30)) {
+		std::cout<<"Laser HIT"<<std::endl;
+	}
 }
 void GameScene::onWindowSizeChanged(int width, int height)
 {
@@ -166,7 +176,6 @@ void GameScene::onWindowSizeChanged(int width, int height)
 }
 
 void GameScene::onMouseButtonPressed(int button, int action) {
-	// Otherwise perform object picking on left mouse button press
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
 		const auto cursorPosition = getOpenGLCursorPosition();
@@ -234,4 +243,5 @@ void GameScene::releaseScene() {
 	SamplerManager::getInstance().clearSamplerKeys();
 	m_cube.reset();
     m_ship.release();
+	m_raycast.reset();
 }
