@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "DefaultBuff.h"
 
+
 std::vector<glm::vec3> cratePositions
 {
 	glm::vec3(-30.0f, 0.0f, -80.0f),
@@ -47,12 +48,11 @@ void GameScene::initScene() {
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
-		m_ship = std::make_unique<GameModel>("../res/models/ship.obj");
 		m_raycast = std::make_unique<Laser>(linePositions[0], linePositions[1]);
 		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
 		Material shinnyMaterial = Material(1.0f, 32.0f);
 
-        SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
+    SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
 
@@ -60,10 +60,13 @@ void GameScene::initScene() {
 		shaderProgramManager.linkAllPrograms();
 		int width, height;
 		glfwGetWindowSize(getWindow(), &width, &height);
-		m_camera = std::make_unique<Camera>(glm::vec3(-20.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
 		ObjPicker::getInstance().initialize();
-
-	}
+		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
+    
+    std::unique_ptr<GameModel> m_coin = std::make_unique<Collectible>("../res/models/collectible.obj");
+    m_coin->moveBy(glm::vec3(0.0f,0.0f,-10.0f));
+    gameObjects.push_back(std::make_unique<Ship>("../res/models/ship.obj"));
+    gameObjects.push_back(std::move(m_coin));
 	catch (const std::runtime_error& error) {
 		std::cout << "Error occured during initialization: " << error.what() << std::endl;
 		closeWindow(true);
@@ -85,18 +88,16 @@ void GameScene::renderScene() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto& mainProgram = shaderProgramManager.getShaderProgram("main");
-	auto& outlineProgram = shaderProgramManager.getShaderProgram("outline");
+  	auto& outlineProgram = shaderProgramManager.getShaderProgram("outline");
     matrixManager.setProjectionMatrix(getProjectionMatrix());
     matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
     matrixManager.setViewMatrix(m_camera->getViewMatrix());
 
     glm::mat4 model = glm::mat4( 1.0 );
     glm::mat4 translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
-	mainProgram.useProgram();
+  	mainProgram.useProgram();
     mainProgram.setUniform("matrices.modelMatrix",translated);
-
-    m_ship->moveBy(glm::vec3(0.0f, 0.0f, -SetupWindow::getDeltaTime()));
-    m_ship->render();
+    gameObjectsLoop();
 	
 	matrixManager.setProjectionMatrix(getProjectionMatrix());
 	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
@@ -125,7 +126,6 @@ void GameScene::renderScene() {
 	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
 	Material::none().setUniform(mainProgram, "material");
-	// render skybox
 	m_skybox->render(m_camera->getEye(), mainProgram);
 	
 	SamplerManager::getInstance().getSampler("main").bind();
@@ -242,6 +242,42 @@ void GameScene::releaseScene() {
 	TextureManager::getInstance().clearTextureCache();
 	SamplerManager::getInstance().clearSamplerKeys();
 	m_cube.reset();
-    m_ship.release();
 	m_raycast.reset();
+    for (int i = 0; i < gameObjects.size(); ++i) {
+        gameObjects[i].reset();
+    }
+}
+
+void GameScene::gameObjectsLoop() {
+    ///UPDATE
+    for (auto & gameObject : gameObjects) {
+        gameObject->update(*this);
+    }
+    ///COLLISIONS
+    for (int i = 0; i < gameObjects.size(); ++i) {
+        if(gameObjects[i]->useCollision){
+            for (int j = i+1; j < gameObjects.size(); ++j) {
+                if (gameObjects[j]->useCollision) {
+                    bool col = gameObjects[i]->col->isColliding(gameObjects[j]->col.get());
+                    if(col){
+                        gameObjects[i]->onCollision(gameObjects[j].get());
+                        gameObjects[j]->onCollision(gameObjects[i].get());
+                    }
+                }
+            }
+        }
+
+    }
+    ///RENDER
+    for (auto & gameObject : gameObjects) {
+        gameObject->render();
+    }
+    ///REMOVE
+    for (int i = 0; i < gameObjects.size(); ++i) {
+        if(gameObjects[i]->awaitingDestroy){
+            gameObjects[i].reset();
+            gameObjects.erase(gameObjects.begin()+i);
+            i--;
+        }
+    }
 }

@@ -3,6 +3,7 @@
 #include "TextureManager.h"
 #include "ShaderProgramManager.h"
 #include <assimp/types.h>
+#include <map>
 
 Material::Material(const float intensity, const float strength, const bool isEnabled)
     : m_specularIntensity(intensity)
@@ -34,6 +35,14 @@ Material::Material(const aiMaterial *assimpMat) {
 
     aiString name;
     assimpMat->Get(AI_MATKEY_NAME, name);
+
+    auto nameStr = name.C_Str();
+
+    if (!materialShaderMappings.count(nameStr))    {
+        auto msg = "Shader material mapping non-defined!";
+        throw std::runtime_error(msg);
+    }
+
     shaderProgramKey = materialShaderMappings[name.C_Str()];
 
     ///SPECULARITY
@@ -87,9 +96,12 @@ void Material::generateMappings() {
     materialShaderMappings["DefaultMaterial"] = "";
     materialShaderMappings["main-ship"] = "main";
     materialShaderMappings["side-ship"] = "main";
+    materialShaderMappings["collectible"] = "main";
 }
 
 void Material::setup(const glm::mat4 model) const{
+
+
     TextureManager::getInstance().getTexture(mainTextureKey).bind();
     auto shader = ShaderProgramManager::getInstance().getShaderProgram(shaderProgramKey);
     shader.useProgram();

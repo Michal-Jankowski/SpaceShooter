@@ -20,6 +20,8 @@
 #include <mutex>
 #include "Laser.h"
 #include "Sphere.h"
+#include "game/Ship.h"
+#include "game/Collectible.h"
 
 class GameScene : public SetupWindow
 {
@@ -31,7 +33,8 @@ public:
     void onWindowSizeChanged(int width, int height) override;
     void onMouseButtonPressed(int button, int action) override;
 private:
-    std::unique_ptr<GameModel> m_ship;
+    void gameObjectsLoop();
+    std::vector<std::unique_ptr<GameModel>> gameObjects;
     std::unique_ptr<Camera> m_camera;
     std::unique_ptr<Skybox> m_skybox;
     std::unique_ptr<Cube> m_cube;

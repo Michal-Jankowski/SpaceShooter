@@ -18,3 +18,15 @@ void GameModel::render() {
 void GameModel::moveBy(glm::vec3 distance) {
     mModelMatrix = glm::translate(mModelMatrix, distance);
 }
+
+void GameModel::update(SetupWindow &gScene) {
+
+}
+
+void GameModel::onCollision(GameModel *other) {
+    std::cout << "colliding" << std::endl;
+}
+
+glm::vec3 GameModel::getPosition() {
+    return glm::vec3(mModelMatrix[0][3], mModelMatrix[1][3], mModelMatrix[2][3]);
+}
