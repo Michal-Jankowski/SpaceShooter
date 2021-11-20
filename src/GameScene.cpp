@@ -20,7 +20,7 @@ std::vector<glm::vec3> cratePositions
 };
 
 bool visualizeColorFrameBuffer = false;
-std::array<glm::vec3, 2> linePositions = { glm::vec3(-50, 1, 120), glm::vec3(-20, 1, 8)};
+std::array<glm::vec3, 2> linePositions = {glm::vec3(-50, 1, 120), glm::vec3(-32, 1, 8) };
 
 void GameScene::initScene() {
 
