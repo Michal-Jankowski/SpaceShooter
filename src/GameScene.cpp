@@ -52,7 +52,7 @@ void GameScene::initScene() {
 		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
 		Material shinnyMaterial = Material(1.0f, 32.0f);
 
-    SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
+		SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
 
@@ -62,11 +62,12 @@ void GameScene::initScene() {
 		glfwGetWindowSize(getWindow(), &width, &height);
 		ObjPicker::getInstance().initialize();
 		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
-    
-    std::unique_ptr<GameModel> m_coin = std::make_unique<Collectible>("../res/models/collectible.obj");
-    m_coin->moveBy(glm::vec3(0.0f,0.0f,-10.0f));
-    gameObjects.push_back(std::make_unique<Ship>("../res/models/ship.obj"));
-    gameObjects.push_back(std::move(m_coin));
+
+		std::unique_ptr<GameModel> m_coin = std::make_unique<Collectible>("../res/models/collectible.obj");
+		m_coin->moveBy(glm::vec3(0.0f, 0.0f, -10.0f));
+		gameObjects.push_back(std::make_unique<Ship>("../res/models/ship.obj"));
+		gameObjects.push_back(std::move(m_coin));
+	}
 	catch (const std::runtime_error& error) {
 		std::cout << "Error occured during initialization: " << error.what() << std::endl;
 		closeWindow(true);
