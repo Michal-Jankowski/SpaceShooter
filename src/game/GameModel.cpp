@@ -4,7 +4,6 @@
 
 #include <glm/ext/matrix_transform.hpp>
 #include "GameModel.h"
-#include "../ShaderProgramManager.h"
 
 GameModel::GameModel(const std::string& path, glm::vec3 pos) {
     mModelMatrix = glm::translate(glm::mat4(1.0f), pos);

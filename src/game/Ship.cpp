@@ -8,7 +8,7 @@
 #include "../SphereCollider.h"
 
 Ship::Ship(const std::string &modelPath, glm::vec3 pos) : GameModel(modelPath, pos) {
-    col = std::make_unique<SphereCollider>(glm::vec3(0.0f), 1.0f, true);
+    col = std::make_unique<SphereCollider>(2.0f, true);
     useCollision = true;
 }
 

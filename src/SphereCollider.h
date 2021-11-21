@@ -10,7 +10,7 @@
 class SphereCollider : public Collider {
 
 public:
-    SphereCollider(glm::vec3 pos, float radius, bool drawDebug);
+    SphereCollider(float radius, bool drawDebug);
     bool isColliding(Collider* other) override;
     void drawDebugImpl() override;
     float radius;

@@ -13,7 +13,7 @@ public:
 
     virtual bool isColliding(Collider* other) =0;
     void drawDebug();
-    glm::vec3 pos;
+    glm::vec3 pos = glm::vec3(0.0f);
     bool debugEnable;
 
 protected:
