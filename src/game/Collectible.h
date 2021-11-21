@@ -6,7 +6,7 @@
 #define SPACESHOOTER_COLLECTIBLE_H
 
 
-#include "../GameModel.h"
+#include "GameModel.h"
 
 class Collectible : public GameModel {
 public:

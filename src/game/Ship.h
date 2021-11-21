@@ -6,7 +6,7 @@
 #define SPACESHOOTER_SHIP_H
 
 
-#include "../GameModel.h"
+#include "GameModel.h"
 
 class Ship : public GameModel {
 public:

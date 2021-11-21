@@ -4,7 +4,7 @@
 
 #include <glm/ext/matrix_transform.hpp>
 #include "GameModel.h"
-#include "ShaderProgramManager.h"
+#include "../ShaderProgramManager.h"
 
 GameModel::GameModel(const std::string& path) {
     mModelMatrix = glm::mat4(1.0f);

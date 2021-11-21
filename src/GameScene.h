@@ -14,7 +14,7 @@
 #include "DiffuseLight.h"
 #include "PlainGround.h"
 #include "Material.h"
-#include "GameModel.h"
+#include "game/GameModel.h"
 #include <thread>
 #include <deque>
 #include <mutex>
