@@ -9,8 +9,18 @@
 
 class Collider {
 public:
+    explicit Collider(bool drawDebug);
+
     virtual bool isColliding(Collider* other) =0;
+    void drawDebug();
     glm::vec3 pos;
+    bool debugEnable;
+
+protected:
+    virtual void drawDebugImpl() = 0;
+private:
+
+
 };
 
 

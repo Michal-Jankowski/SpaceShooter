@@ -13,6 +13,9 @@ GameModel::GameModel(const std::string& path) {
 
 void GameModel::render() {
     mesh.render(mModelMatrix);
+    if(useCollision){
+        col->drawDebug();
+    }
 }
 
 void GameModel::moveBy(glm::vec3 distance) {

@@ -7,7 +7,7 @@
 #include "../SphereCollider.h"
 
 Collectible::Collectible(const std::string &modelPath) : GameModel(modelPath) {
-    col = std::make_unique<SphereCollider>(glm::vec3(0.0f), 1.0f);
+    col = std::make_unique<SphereCollider>(glm::vec3(0.0f), 1.0f, true);
     useCollision = true;
 }
 
