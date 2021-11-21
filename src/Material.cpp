@@ -64,6 +64,9 @@ Material::Material(const aiMaterial *assimpMat) {
     {
         if (assimpMat->GetTexture(aiTextureType_DIFFUSE, 0, &aiTexturePath) == AI_SUCCESS)
         {
+            aiBlendMode blendMode;
+            //TODO blendmode to assimp
+            assimpMat->Get(AI_MATKEY_BLEND_FUNC, blendMode);
             const std::string textureFileName = aiStringToStdString(aiTexturePath);
             mainTextureKey = loadMaterialTexture(textureFileName);
         }

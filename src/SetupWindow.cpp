@@ -40,7 +40,8 @@ bool SetupWindow::createWindow(const std::string& title, int majorVersion, int m
 	glfwSetMouseButtonCallback(m_window, onMouseButtonPressedStatic);
 	glfwSetScrollCallback(m_window, onMouseWheelScrollStatic);
 	m_windows[m_window] = this;
-	return true;
+
+    return true;
 
 }
 

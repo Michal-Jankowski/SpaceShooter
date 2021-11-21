@@ -63,6 +63,8 @@ vec3 getSpecularMaterialLightColour(DiffuseLight diffuseLight, Material material
 void main() {
     vec3 normal = normalize(IOVerNormal);
     vec4 texColor = texture(sampler, IOVerTexCoord);
+    if(texColor.a < 0.05)
+        discard;
     vec4 objColor = texColor * color;
     vec3 lightColour = getAmbientLightColour(ambientLight) + getDiffuseLightColour(diffuseLight, normal)
     + getSpecularMaterialLightColour(diffuseLight, material, IOWorldPosition.xyz, normal, cameraPosition);

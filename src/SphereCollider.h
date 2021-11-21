@@ -16,7 +16,7 @@ public:
     float radius;
 
 private:
-    static const int debugResolution = 50;
+    static const int debugResolution = 20;
     glm::vec3 spherePoint(float phi, float theta);
 };
 

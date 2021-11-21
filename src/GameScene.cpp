@@ -68,6 +68,9 @@ void GameScene::initScene() {
 		gameObjects.push_back(std::make_unique<Collectible>(
                 "../res/models/collectible.obj",
                 glm::vec3(0.0f, 0.0f, -25.0f)));
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	catch (const std::runtime_error& error) {
 		std::cout << "Error occured during initialization: " << error.what() << std::endl;
@@ -154,7 +157,7 @@ void GameScene::renderScene() {
 
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
-	//m_sphere->render();
+	m_sphere->render();
 
 	outlineProgram.useProgram();
 	outlineProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
