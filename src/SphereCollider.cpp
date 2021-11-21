@@ -20,8 +20,11 @@ SphereCollider::SphereCollider(glm::vec3 pos, float radius, bool drawDebug = fal
 void SphereCollider::drawDebugImpl() {
     for (int i = 0; i < debugResolution; ++i) {
         //theta == 0; phi == 0 -> 360
-        laser.startPoint = spherePoint(0, (float)i * (360.0f/debugResolution));
-        laser.endPoint = spherePoint(0, ((float)i+1.0f) * (360.0f/debugResolution));
+        //laser.startPoint = spherePoint(0, (float)i * (360.0f/debugResolution));
+
+        //laser.endPoint = spherePoint(0, ((float)i+1.0f) * (360.0f/debugResolution));
+        Laser laser = Laser(spherePoint(0, (float)i * (360.0f/debugResolution)),
+                            spherePoint(0, ((float)i+1.0f) * (360.0f/debugResolution)));
         laser.draw();
 //
 //        std::cout   << laser.startPoint.x << " "

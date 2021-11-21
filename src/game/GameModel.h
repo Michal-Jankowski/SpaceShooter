@@ -15,14 +15,12 @@
 class GameModel {
 public:
 
-    explicit GameModel(const std::string& path);
+    explicit GameModel(const std::string& path,glm::vec3 pos = glm::vec3(0));
 
     virtual void update(SetupWindow& gScene);
     virtual void onCollision(GameModel* other);
     void render();
     void moveBy(glm::vec3 distance);
-    void rotateBy(glm::vec4 rotation);
-    void scaleBy(glm::vec3 scale);
     glm::vec3 getPosition();
 
     ShaderProgram shader;

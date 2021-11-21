@@ -17,7 +17,6 @@ public:
 
 private:
     static const int debugResolution = 50;
-    Laser laser = Laser(glm::vec3(0),glm::vec3(0));;
     glm::vec3 spherePoint(float phi, float theta);
 };
 

@@ -63,10 +63,11 @@ void GameScene::initScene() {
 		ObjPicker::getInstance().initialize();
 		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
 
-		std::unique_ptr<GameModel> m_coin = std::make_unique<Collectible>("../res/models/collectible.obj");
-		m_coin->moveBy(glm::vec3(0.0f, 0.0f, -25.0f));
-		gameObjects.push_back(std::make_unique<Ship>("../res/models/ship.obj"));
-		gameObjects.push_back(std::move(m_coin));
+		gameObjects.push_back(std::make_unique<Ship>(
+                "../res/models/ship.obj"));
+		gameObjects.push_back(std::make_unique<Collectible>(
+                "../res/models/collectible.obj",
+                glm::vec3(0.0f, 0.0f, -25.0f)));
 	}
 	catch (const std::runtime_error& error) {
 		std::cout << "Error occured during initialization: " << error.what() << std::endl;
