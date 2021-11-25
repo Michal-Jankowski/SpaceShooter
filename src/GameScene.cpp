@@ -164,13 +164,14 @@ void GameScene::renderScene() {
 	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
 	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
 	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
-	DefaultBuff::bindAsBothReadAndDraw();
-	DefaultBuff::setFullViewport();
 	// draw raycast "Laser" & check for collision with sphere
 	m_raycast->draw();
 	if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 30)) {
-		std::cout<<"Laser HIT"<<std::endl;
+		std::cout << "Laser HIT" << std::endl;
 	}
+
+	DefaultBuff::bindAsBothReadAndDraw();
+	DefaultBuff::setFullViewport();
 }
 void GameScene::onWindowSizeChanged(int width, int height)
 {
