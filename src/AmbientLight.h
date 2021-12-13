@@ -10,10 +10,11 @@ public:
 	glm::vec3 getColorContribution() const;
 	void switchLight(ShaderProgram& shaderProgram, const bool enable);
 	bool getLightState() const;
+	glm::vec3 m_color;
+	bool m_isOn;
 private:
 	std::string constructAttributeName(const std::string& uniformName, const std::string& attributeName);
-	glm::vec3 m_color; 
-	bool m_isOn; 
+	
 
 };
 

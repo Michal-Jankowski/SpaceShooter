@@ -96,7 +96,7 @@ void SetupWindow::setVerticalSynchronization(bool enable) {
 	m_isVerticalSynchronizationEnabled = enable;
 }
 
-bool SetupWindow::isVerticalSynchronizationEnabled() {
+bool SetupWindow::isVerticalSynchronizationEnabled() const {
 	return m_isVerticalSynchronizationEnabled;
 }
 
