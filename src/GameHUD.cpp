@@ -6,6 +6,9 @@
 
 #include <iostream>
 #include <glm/glm.hpp>
+#include "ostreamUtils.h"
+
+using namespace ostream_utils;
 
 
 GameHUD::GameHUD(const SetupWindow& window)
@@ -24,7 +27,8 @@ void GameHUD::renderHUD(const AmbientLight& ambientLight) const
     printBuilder().print(10, 40, "Vertical Synchronization: {} (Press F3 to toggle)", _window.isVerticalSynchronizationEnabled() ? "On" : "Off");
 
     // Print information about ambient light
-    //printBuilder().print(10, 70, "Ambient light: {} (Press '+' and '-' to change)", ambientLight.m_color);
+    printBuilder().print(10, 70, "Ambient light: {} (Press 'Z' to toggle)", ambientLight.m_isOn ? "On" : "Off");
+    printBuilder().print(10, 100, " - color: {} (Press '1' and '2' to change)", ambientLight.m_color);
 
     // Print information about point light properties
     printBuilder()
