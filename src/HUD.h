@@ -7,7 +7,6 @@
 #include <glm/glm.hpp>
 
 // Project
-//#include "stringUtils.h"
 #include "SetupWindow.h"
 #include "Quad.h"
 #include "ShaderProgram.h"

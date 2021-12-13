@@ -5,15 +5,11 @@
 #include "HUD.h"
 #include "AmbientLight.h"
 
-/**
- * HUD for tutorial 020 (fog).
- */
 class GameHUD : public HUD
 {
 public:
     GameHUD(const SetupWindow& window);
 
-    /** \brief  Renders HUD. */
     void renderHUD() const override {} // Don't need this, but had to override, so that class is not abstract
     void renderHUD(const AmbientLight& ambientLight) const;
 };
