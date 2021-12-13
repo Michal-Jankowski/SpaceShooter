@@ -27,4 +27,4 @@ namespace Static_meshes_2D {
         void initializeData() override;
     };
 
-} // namespace static_meshes_2D
+} // namespace Static_meshes_2D
