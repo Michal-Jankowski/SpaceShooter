@@ -50,6 +50,7 @@ void GameScene::initScene() {
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
 		m_raycast = std::make_unique<Laser>(linePositions[0], linePositions[1]);
 		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
+		m_HUD = std::make_unique<GameHUD>(*this);
 		Material shinnyMaterial = Material(1.0f, 32.0f);
 
 		SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
@@ -164,6 +165,8 @@ void GameScene::renderScene() {
 	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
 	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
 	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
+	m_HUD->renderHUD(ambientSkybox);
+
 	// draw raycast "Laser" & check for collision with sphere
 	m_raycast->draw();
 	if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 30)) {
@@ -249,6 +252,7 @@ void GameScene::releaseScene() {
 	SamplerManager::getInstance().clearSamplerKeys();
 	m_cube.reset();
 	m_raycast.reset();
+	m_HUD.reset();
     for (int i = 0; i < gameObjects.size(); ++i) {
         gameObjects[i].reset();
     }
