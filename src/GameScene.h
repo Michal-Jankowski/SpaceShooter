@@ -22,6 +22,7 @@
 #include "Sphere.h"
 #include "game/Ship.h"
 #include "game/Collectible.h"
+#include "GameHUD.h"
 
 class GameScene : public SetupWindow
 {
@@ -44,6 +45,7 @@ private:
     std::unique_ptr<Material> m_material;
     std::unique_ptr<Laser> m_raycast;
     std::unique_ptr<Sphere> m_sphere;
+    std::unique_ptr<GameHUD> m_HUD;
     float m_rotationAngleRad = 0.0f;
 };
 
