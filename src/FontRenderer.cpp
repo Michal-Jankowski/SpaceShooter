@@ -13,11 +13,11 @@
 
 // Project
 #include "FontRenderer.h"
-#include "shaderManager.h"
-#include "shaderProgramManager.h"
-#include "samplerManager.h"
-#include "matrixManager.h"
-#include "textureManager.h"
+#include "ShaderManager.h"
+#include "ShaderProgramManager.h"
+#include "SamplerManager.h"
+#include "MatrixManager.h"
+#include "TextureManager.h"
 
 using namespace std;
 
@@ -31,8 +31,8 @@ FreeTypeFont::FreeTypeFont()
     std::call_once(prepareOnceFlag, []()
         {
             auto& sm = ShaderManager::getInstance();
-            sm.loadVertexShader(FREETYPE_FONT_PROGRAM_KEY, "data/shaders/tut012/font2D.vert");
-            sm.loadFragmentShader(FREETYPE_FONT_PROGRAM_KEY, "data/shaders/tut012/font2D.frag");
+            sm.loadVertexShader(FREETYPE_FONT_PROGRAM_KEY, "../src/shaders/ortho.vert");
+            sm.loadFragmentShader(FREETYPE_FONT_PROGRAM_KEY, "../src/shaders/ortho.frag");
 
             auto& spm = ShaderProgramManager::getInstance();
             auto& shaderProgram = spm.createShaderProgram(FREETYPE_FONT_PROGRAM_KEY);

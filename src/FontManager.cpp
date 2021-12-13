@@ -1,6 +1,8 @@
 // STL
 #include <mutex>
+#include <windows.h>
 #include "sysinfoapi.h"
+
 // Project
 #include "FontManager.h"
 
@@ -65,7 +67,7 @@ const std::string& FreeTypeFontManager::getSystemFontDirectory()
 
 	std::call_once(prepareOnceFlag, []()
 		{
-#ifdef _WIN32
+#ifdef _WIN64
 			char buffer[512]; GetWindowsDirectory(buffer, 512);
 			systemFontsDirectory = buffer;
 			systemFontsDirectory += "\\Fonts\\";

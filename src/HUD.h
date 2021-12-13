@@ -24,7 +24,7 @@ public:
     static const std::string ORTHO_2D_PROGRAM_KEY; // Key for shader program for rendering in 2D
     static const std::string HUD_SAMPLER_KEY; // Key for sampler used for HUD objects
 
-    HUD(const OpenGLWindow& window);
+    HUD(const SetupWindow& window);
 
     /**
      * Renders HUD.
@@ -32,7 +32,7 @@ public:
     virtual void renderHUD() const = 0;
 
 protected:
-    const OpenGLWindow& _window; // OpenGL Window class instance, for which HUD is rendered
+    const SetupWindow& _window; // OpenGL Window class instance, for which HUD is rendered
 
     /**
      * Gets HUD width.
@@ -145,5 +145,5 @@ protected:
      */
     const Sampler& getHUDSampler() const;
 
-    static_meshes_2D::Quad _texturedQuad; // Static mesh for rendering 2D quad
+    Static_meshes_2D::Quad _texturedQuad; // Static mesh for rendering 2D quad
 };

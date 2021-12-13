@@ -29,7 +29,7 @@ public:
 	void closeWindow(bool errorHasOccured = false);
 	bool errorHasOccured() const;
 	void setVerticalSynchronization(bool enable);
-	bool isVerticalSynchronizationEnabled();
+	bool isVerticalSynchronizationEnabled() const;
 	void setWireframeMode(bool enable);
 	bool isWireframeModeEnabled() const;
 	bool isFullScreenEnabled() const;

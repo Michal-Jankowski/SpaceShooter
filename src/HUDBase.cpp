@@ -22,8 +22,8 @@ HUDBase::HUDBase(const SetupWindow& window)
     std::call_once(prepareOnceFlag, []()
         {
             auto& sm = ShaderManager::getInstance();
-            sm.loadVertexShader(ORTHO_2D_PROGRAM_KEY, "data/shaders/tut009/ortho2D.vert");
-            sm.loadFragmentShader(ORTHO_2D_PROGRAM_KEY, "data/shaders/tut009/ortho2D.frag");
+            sm.loadVertexShader(ORTHO_2D_PROGRAM_KEY, "../src/shaders/ortho2D.vert");
+            sm.loadFragmentShader(ORTHO_2D_PROGRAM_KEY, "../src/shaders/ortho2D.frag");
 
             auto& spm = ShaderProgramManager::getInstance();
             auto& shaderProgram = spm.createShaderProgram(ORTHO_2D_PROGRAM_KEY);
