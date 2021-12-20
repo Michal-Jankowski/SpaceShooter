@@ -5,8 +5,9 @@
 #include <glm/ext/matrix_transform.hpp>
 #include "GameModel.h"
 
-GameModel::GameModel(const std::string& path, glm::vec3 pos) {
+GameModel::GameModel(const std::string& path, glm::vec3 pos, glm::vec3 scale) {
     mModelMatrix = glm::translate(glm::mat4(1.0f), pos);
+   // mModelMatrix = glm::scale(mModelMatrix, glm::vec3(scale.x, scale.y, scale.z));
     mesh.loadModelFromFile(path);
 }
 

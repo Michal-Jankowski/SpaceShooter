@@ -15,7 +15,7 @@
 class GameModel {
 public:
 
-    explicit GameModel(const std::string& path,glm::vec3 pos = glm::vec3(0));
+    explicit GameModel(const std::string& path, glm::vec3 scale, glm::vec3 pos = glm::vec3(0));
 
     virtual void update(SetupWindow& gScene);
     virtual void onCollision(GameModel* other);

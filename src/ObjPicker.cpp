@@ -146,7 +146,7 @@ void ObjPicker::performObjectPicking(int x, int y)
     m_pickingFrameBuff.setFullViewport();
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     renderInColorMode();
     const auto colorValues = FrameBuff::readColorValue(x, y); 

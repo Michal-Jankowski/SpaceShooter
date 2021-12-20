@@ -66,7 +66,7 @@ void main() {
     if(texColor.a < 0.05)
         discard;
     vec4 objColor = texColor * color;
-    vec3 lightColour = getAmbientLightColour(ambientLight) + getDiffuseLightColour(diffuseLight, normal)
+    vec3 lightColour = getAmbientLightColour(ambientLight) + getDiffuseLightColour(diffuseLight, normal) 
     + getSpecularMaterialLightColour(diffuseLight, material, IOWorldPosition.xyz, normal, cameraPosition);
-    outputColour =  objColor * vec4(lightColour, 1.0);
+    outputColour = objColor * vec4(lightColour, 1.0);
 }

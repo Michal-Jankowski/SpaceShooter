@@ -10,7 +10,7 @@
 
 class Ship : public GameModel {
 public:
-    explicit Ship(const std::string &modelPath, glm::vec3 pos = glm::vec3(0.0f));
+    explicit Ship(const std::string &modelPath, glm::vec3 scale, glm::vec3 pos = glm::vec3(0.0f));
     void update(SetupWindow& scene) override;
 };
 

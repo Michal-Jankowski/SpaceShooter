@@ -39,6 +39,7 @@ private:
     std::unique_ptr<Camera> m_camera;
     std::unique_ptr<Skybox> m_skybox;
     std::unique_ptr<Cube> m_cube;
+    std::unique_ptr<Cube> m_cube2;
     std::unique_ptr<AmbientLight> m_ambientLight;
     std::unique_ptr<DiffuseLight> m_diffuseLight;
     std::unique_ptr<PlainGround> m_plainGround;

@@ -44,6 +44,7 @@ void GameScene::initScene() {
 		// init objs
 		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
 		m_cube = std::make_unique<Cube>(true, true, true);
+		m_cube2 = std::make_unique<Cube>(true, true, true);
 		m_plainGround = std::make_unique<PlainGround>(true, true, true);
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
@@ -65,7 +66,7 @@ void GameScene::initScene() {
 		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
 
 		gameObjects.push_back(std::make_unique<Ship>(
-                "../res/models/ship.obj"));
+                "../res/models/ship.obj", glm::vec3(1.0, 1.0, 1.0)));
 		gameObjects.push_back(std::make_unique<Collectible>(
                 "../res/models/collectible.obj",
                 glm::vec3(0.0f, 0.0f, -25.0f)));
@@ -79,6 +80,10 @@ void GameScene::initScene() {
 		return;
 	}
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	glClearDepth(1.0);
 	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
 
@@ -91,7 +96,8 @@ void GameScene::renderScene() {
 	auto& textureManager = TextureManager::getInstance();
 
 	DefaultBuff::bindAsBothReadAndDraw();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     auto& mainProgram = shaderProgramManager.getShaderProgram("main");
   	auto& outlineProgram = shaderProgramManager.getShaderProgram("outline");
@@ -116,7 +122,8 @@ void GameScene::renderScene() {
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
 	mainProgram.setUniform("sampler", 0);
-
+	//glStencilMask(0x00); if we don't use stencil, just switch it off
+	
 	auto& objectPicker = ObjPicker::getInstance();
 	objectPicker.renderAllPickableObjects();
 
@@ -134,6 +141,9 @@ void GameScene::renderScene() {
 	Material::none().setUniform(mainProgram, "material");
 	m_skybox->render(m_camera->getEye(), mainProgram);
 	
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
+
 	SamplerManager::getInstance().getSampler("main").bind();
 	m_ambientLight->setUniform(mainProgram, "ambientLight");
 	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
@@ -142,7 +152,7 @@ void GameScene::renderScene() {
 	std::vector<glm::mat4> crateModelMatrices;
 	for (const auto& position : cratePositions)
 	{
-		const auto crateSize = 8.0f;
+		const auto crateSize = 18.0f;
 		auto model = glm::translate(glm::mat4(1.0f), position);
 		float renderedHeight = 5.0f;
 		model = glm::translate(model, glm::vec3(0.0f, 1.5f + crateSize / 2.0f + renderedHeight, 0.0f));
@@ -158,23 +168,44 @@ void GameScene::renderScene() {
 
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
-	m_sphere->render();
-
-	outlineProgram.useProgram();
-	outlineProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
-	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
-	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
-	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
-	m_HUD->renderHUD(ambientSkybox);
+	//m_HUD->renderHUD(ambientSkybox);
 
 	// draw raycast "Laser" & check for collision with sphere
+	// projection, view matrix
 	m_raycast->draw();
-	if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 30)) {
+	if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 40)) {
 		std::cout << "Laser HIT" << std::endl;
 	}
 
+	// 2nd pass
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+	glDisable(GL_DEPTH_TEST);
+
+	model = glm::mat4(1.0);
+	translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
+	outlineProgram.useProgram();
+	outlineProgram.setUniform("matrices.modelMatrix", translated);
+	gameObjectsLoop();
+
+	matrixManager.setProjectionMatrix(getProjectionMatrix());
+	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
+	matrixManager.setViewMatrix(m_camera->getViewMatrix());
+
+	outlineProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
+	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
+	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
+	outlineProgram.setUniform("color", glm::vec4(1.04, 1.28, 0.26, 1.0));
+
+
+	glStencilMask(0xFF);
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glEnable(GL_DEPTH_TEST);
+
 	DefaultBuff::bindAsBothReadAndDraw();
 	DefaultBuff::setFullViewport();
+	m_raycast->draw();
+
 }
 void GameScene::onWindowSizeChanged(int width, int height)
 {
@@ -211,6 +242,16 @@ void GameScene::updateScene() {
 	/* Free floating camera or static camera*/
 	if (keyPressedOnce(GLFW_KEY_2)) {
 		setCameraUpdateEnabled(!isCameraUpdateEnabled());
+	}
+	if (keyPressedOnce(GLFW_MOUSE_BUTTON_LEFT)) {
+		glm::vec3 currPos = m_camera->getEye();
+		linePositions[0] = currPos;
+		if (linePositions[0].x < 0) {
+			linePositions[1] = glm::vec3(linePositions[0].x -20, linePositions[0].y, linePositions[0].z);
+		}
+		else {
+			linePositions[1] = glm::vec3(linePositions[1].x + 20, linePositions[1].y, linePositions[1].z);
+		}
 	}
 	/* Update camera state*/
 	if (isCameraUpdateEnabled()) {
@@ -251,6 +292,7 @@ void GameScene::releaseScene() {
 	TextureManager::getInstance().clearTextureCache();
 	SamplerManager::getInstance().clearSamplerKeys();
 	m_cube.reset();
+	m_cube2.reset();
 	m_raycast.reset();
 	m_HUD.reset();
     for (int i = 0; i < gameObjects.size(); ++i) {
