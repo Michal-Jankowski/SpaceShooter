@@ -6,6 +6,7 @@
 #define SPACESHOOTER_COLLECTIBLE_H
 
 
+#include "../../engine/models/GameModel.h"
 
 class Collectible : public GameModel {
 public:

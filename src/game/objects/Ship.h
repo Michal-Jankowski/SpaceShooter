@@ -6,6 +6,8 @@
 #define SPACESHOOTER_SHIP_H
 
 
+#include "../../engine/models/GameModel.h"
+
 class Ship : public GameModel {
 public:
     explicit Ship(const std::string &modelPath, glm::vec3 pos = glm::vec3(0.0f));

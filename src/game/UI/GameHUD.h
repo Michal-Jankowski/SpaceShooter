@@ -4,6 +4,7 @@
 
 
 #include "../../engine/text/HUD.h"
+#include "../../engine/lighting/AmbientLight.h"
 
 class GameHUD : public HUD
 {

@@ -6,10 +6,11 @@
 #define SPACESHOOTER_GAMEMODEL_H
 
 
-#include <src/engine/core/SetupWindow.h>
-#include <src/engine/shaders/ShaderProgram.h>
-#include <src/engine/collisions/Collider.h>
+#include <string>
+#include "../core/SetupWindow.h"
+#include "../shaders/ShaderProgram.h"
 #include "ModelMesh.h"
+#include "../collisions/Collider.h"
 
 class GameModel {
 public:

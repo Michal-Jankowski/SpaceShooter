@@ -3,9 +3,7 @@
 
 // Project
 #include "GameHUD.h"
-
-#include <iostream>
-#include <glm/glm.hpp>
+#include "../../engine/utils/ostreamUtils.h"
 
 using namespace ostream_utils;
 

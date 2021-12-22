@@ -2,7 +2,9 @@
 // Created by aklin on 15.11.2021.
 //
 
+#include <string>
 #include "Ship.h"
+#include "../../engine/collisions/SphereCollider.h"
 
 Ship::Ship(const std::string &modelPath, glm::vec3 pos) : GameModel(modelPath, pos) {
     col = std::make_unique<SphereCollider>(2.0f, true);
