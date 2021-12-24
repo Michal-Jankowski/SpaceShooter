@@ -33,10 +33,12 @@ void GameScene::initScene() {
 		shaderManager.loadVertexShader("main_part", "../src/shaders/shader.vert");
 		shaderManager.loadFragmentShader("outline_part", "../src/shaders/shaderOutline.frag");
 		shaderManager.loadVertexShader("outline_part", "../src/shaders/shaderOutline.vert");
+		shaderManager.loadFragmentShader("pointFrag", "../src/shaders/pointLight.frag");
 
 		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
 		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("main_part"));
+		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("pointFrag"));
 
 		auto& singleColorShaderProgram = shaderProgramManager.createShaderProgram("outline");
 		singleColorShaderProgram.addShaderToProgram(shaderManager.getVertexShader("outline_part"));
@@ -132,8 +134,11 @@ void GameScene::renderScene() {
 	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
 	Material::none().setUniform(mainProgram, "material");
+	PointLight::none().setUniform(mainProgram, "pointLight"); // ???
 	m_skybox->render(m_camera->getEye(), mainProgram);
 	
+	// Setup PointLight properties
+	m_pointLight->setUniform(mainProgram, "pointLight"); // ???
 	SamplerManager::getInstance().getSampler("main").bind();
 	m_ambientLight->setUniform(mainProgram, "ambientLight");
 	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
@@ -155,7 +160,9 @@ void GameScene::renderScene() {
 		TextureManager::getInstance().getTexture("lava").bind(0);
 		m_cube->render();
 	}
-
+	auto pointLightMatrix = glm::translate(glm::mat4(1.0f), m_pointLight->position);
+	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", pointLightMatrix);
+	mainProgram.setUniform("color", glm::vec4(m_pointLight->color, 1.0f));
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	m_sphere->render();

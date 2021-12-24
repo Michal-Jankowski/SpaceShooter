@@ -42,7 +42,7 @@ GLsizeiptr PointLight::getDataSizeStd140() {
 }
 
 
-const PointLight& PointLight::none() {
+PointLight& PointLight::none() {
     static PointLight nonePointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, 0.0f, false);
     return nonePointLight;
 }
