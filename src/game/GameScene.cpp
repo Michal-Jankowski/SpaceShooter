@@ -36,12 +36,10 @@ void GameScene::initScene() {
 		shaderManager.loadVertexShader("main_part", "../src/shaders/shader.vert");
 		shaderManager.loadFragmentShader("outline_part", "../src/shaders/shaderOutline.frag");
 		shaderManager.loadVertexShader("outline_part", "../src/shaders/shaderOutline.vert");
-		shaderManager.loadFragmentShader("pointFrag", "../src/shaders/pointLight.frag");
 
 		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
 		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("main_part"));
-		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("pointFrag"));
 
 		auto& singleColorShaderProgram = shaderProgramManager.createShaderProgram("outline");
 		singleColorShaderProgram.addShaderToProgram(shaderManager.getVertexShader("outline_part"));
@@ -55,6 +53,7 @@ void GameScene::initScene() {
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
 		m_raycast = std::make_unique<Laser>(linePositions[0], linePositions[1]);
 		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
+		m_pointLight = std::make_unique<PointLight>(glm::vec3(60.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 0.0f, 0.3f, 0.007f, 0.000008f);
 		m_HUD = std::make_unique<GameHUD>(*this);
 		Material shinnyMaterial = Material(1.0f, 32.0f);
 
@@ -137,7 +136,7 @@ void GameScene::renderScene() {
 	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
 	Material::none().setUniform(mainProgram, "material");
-	PointLight::none().setUniform(mainProgram, "pointLight"); // ???
+	//PointLight::none().setUniform(mainProgram, "pointLight"); // ???
 	m_skybox->render(m_camera->getEye(), mainProgram);
 	
 	// Setup PointLight properties

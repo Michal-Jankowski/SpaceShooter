@@ -1,5 +1,7 @@
 #version 440 core
 
+//#include "src/shaders/pointLight.frag"
+
 layout(location = 0) out vec4 outputColour;
 
 smooth in vec2 IOVerTexCoord;
@@ -28,8 +30,24 @@ struct Material {
     float specularStrength;
 };
 
+struct PointLight
+{
+	vec3 position;
+	vec3 color;
+	
+	float ambientFactor;
+
+	float constantAttenuation;
+	float linearAttenuation;
+	float exponentialAttenuation;
+	
+	bool isOn;
+};
+
+
 uniform AmbientLight ambientLight;
 uniform DiffuseLight diffuseLight;
+uniform PointLight pointLight;
 uniform Material material;
 
 vec3 getAmbientLightColour(AmbientLight ambientLight) {
@@ -60,13 +78,35 @@ vec3 getSpecularMaterialLightColour(DiffuseLight diffuseLight, Material material
     return vec3(0.0);
 }
 
+vec3 getPointLightColor(const PointLight pointLight, const vec3 worldPosition, const vec3 normal)
+{
+	if(!pointLight.isOn) {
+		return vec3(0.0);
+	}
+	
+	vec3 positionToLightVector = worldPosition - pointLight.position;
+	float distance = length(positionToLightVector);
+	positionToLightVector = normalize(positionToLightVector);
+	
+	float diffuseFactor = max(0.0, dot(normal, -positionToLightVector));	
+	float totalAttenuation = pointLight.constantAttenuation
+		+ pointLight.linearAttenuation * distance
+		+ pointLight.exponentialAttenuation * pow(distance, 2.0);
+
+	return pointLight.color * (pointLight.ambientFactor + diffuseFactor) / totalAttenuation;
+}
+
+
 void main() {
-    vec3 normal = normalize(IOVerNormal);
+   vec3 normal = normalize(IOVerNormal);
     vec4 texColor = texture(sampler, IOVerTexCoord);
     if(texColor.a < 0.05)
         discard;
     vec4 objColor = texColor * color;
-    vec3 lightColour = getAmbientLightColour(ambientLight) + getDiffuseLightColour(diffuseLight, normal)
-    + getSpecularMaterialLightColour(diffuseLight, material, IOWorldPosition.xyz, normal, cameraPosition);
+    vec3 ambientColour = getAmbientLightColour(ambientLight);
+    vec3 diffuseColour = getDiffuseLightColour(diffuseLight, normal);
+    vec3 specularColour = getSpecularMaterialLightColour(diffuseLight, material, IOWorldPosition.xyz, normal, cameraPosition);
+    vec3 pointLightColour = getPointLightColor(pointLight, IOWorldPosition.xyz, normal);
+    vec3 lightColour = ambientColour + diffuseColour + specularColour + pointLightColour;
     outputColour =  objColor * vec4(lightColour, 1.0);
 }

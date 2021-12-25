@@ -24,7 +24,6 @@ void PointLight::setUniform(ShaderProgram& shaderProgram, const std::string& uni
     shaderProgram.setUniform(constructAttributeName(uniformName, "color"), color);
     shaderProgram.setUniform(constructAttributeName(uniformName, "ambientFactor"), ambientFactor);
     shaderProgram.setUniform(constructAttributeName(uniformName, "constantAttenuation"), constantAttenuation);
-    shaderProgram.setUniform(constructAttributeName(uniformName, "constantAttenuation"), constantAttenuation);
     shaderProgram.setUniform(constructAttributeName(uniformName, "exponentialAttenuation"), exponentialAttenuation);
     shaderProgram.setUniform(constructAttributeName(uniformName, "isOn"), isOn);
 }
