@@ -14,6 +14,7 @@
 #include "../engine/buffers/Laser.h"
 #include "../engine/models/procedural/Sphere.h"
 #include "UI/GameHUD.h"
+#include "../engine/lighting/PointLight.h"
 
 class GameScene : public SetupWindow
 {

@@ -2,7 +2,7 @@
 
 PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, const float ambientFactor,
     const float constantAttenuation, const float linearAttenuation, const float exponentialAttenuation,
-    const bool isOn = true)
+    const bool isOn)
     : position(position)
     , color(color)
     , ambientFactor(ambientFactor)
