@@ -70,8 +70,7 @@ void GameScene::initScene() {
 		gameObjects.push_back(std::make_unique<Ship>(
                 "../res/models/ship.obj"));
 		gameObjects.push_back(std::make_unique<Collectible>(
-                "../res/models/collectible.obj",
-                glm::vec3(0.0f, 0.0f, -25.0f)));
+                "../res/models/collectible.obj" ));
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

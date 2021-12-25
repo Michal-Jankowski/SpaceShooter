@@ -6,13 +6,14 @@
 #include "Ship.h"
 #include "../../engine/collisions/SphereCollider.h"
 
-Ship::Ship(const std::string &modelPath, glm::vec3 pos) : GameModel(modelPath, pos) {
+Ship::Ship(const std::string &modelPath) : GameModel(modelPath) {
     col = std::make_unique<SphereCollider>(2.0f, true);
     useCollision = true;
 }
 
 void Ship::update(SetupWindow &scene) {
     GameModel::update(scene);
-    moveBy(glm::vec3(0.0f, 0.0f, -scene.getDeltaTime()));
+    transform.moveBy(glm::vec3(0.0f, 0.0f, -scene.getDeltaTime()));
+    //scene.keyPressed()
 
 }

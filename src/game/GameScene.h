@@ -5,7 +5,7 @@
 #include <mutex>
 
 #include "../engine/core/SetupWindow.h"
-#include "../engine/core/Camera.h"
+#include "objects/Camera.h"
 #include "../engine/models/GameModel.h"
 #include "../engine/textures/Skybox.h"
 #include "../engine/lighting/DiffuseLight.h"

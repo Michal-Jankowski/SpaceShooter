@@ -10,7 +10,7 @@
 
 class Collectible : public GameModel {
 public:
-    Collectible(const std::string& path,glm::vec3 pos = glm::vec3(0));
+    explicit Collectible(const std::string& path);
     void update(SetupWindow &gScene) override;
     void onCollision(GameModel *other) override;
 };
