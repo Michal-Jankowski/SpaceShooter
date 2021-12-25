@@ -37,6 +37,7 @@ private:
     std::unique_ptr<Laser> m_raycast;
     std::unique_ptr<Sphere> m_sphere;
     std::unique_ptr<GameHUD> m_HUD;
+    std::unique_ptr<PointLight> m_pointLight;
     float m_rotationAngleRad = 0.0f;
 };
 
