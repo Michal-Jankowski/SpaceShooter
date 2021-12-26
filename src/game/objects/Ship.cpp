@@ -7,7 +7,7 @@
 #include "../../engine/collisions/SphereCollider.h"
 
 Ship::Ship(const std::string &modelPath, std::shared_ptr<Camera> &cameraRef) : GameModel(modelPath) {
-    col = std::make_unique<SphereCollider>(2.0f, false);
+    col = std::make_unique<SphereCollider>(transform, 2.0f, false);
     useCollision = true;
 
     this->cameraRef = cameraRef;
@@ -15,9 +15,9 @@ Ship::Ship(const std::string &modelPath, std::shared_ptr<Camera> &cameraRef) : G
 
 void Ship::update(SetupWindow &scene) {
     GameModel::update(scene);
-    transform.setPosition(
+    transform->setPosition(
             cameraRef->getEye() +
             (distCamOffset * cameraRef->getNormalizedViewVector()) +
             heightCamOffset);
-    transform.setLookAt(cameraRef->getNormalizedViewVector());
+    transform->setLookAt(cameraRef->getNormalizedViewVector());
 }

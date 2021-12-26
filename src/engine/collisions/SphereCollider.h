@@ -10,7 +10,7 @@
 class SphereCollider : public Collider {
 
 public:
-    SphereCollider(float radius, bool drawDebug);
+    SphereCollider(std::shared_ptr<Transform> &transformRef, float radius, bool drawDebug);
     bool isColliding(Collider* other) override;
     void drawDebugImpl() override;
     float radius;

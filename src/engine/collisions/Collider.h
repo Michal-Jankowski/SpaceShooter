@@ -6,18 +6,20 @@
 #define SPACESHOOTER_COLLIDER_H
 
 #include <glm/vec3.hpp>
+#include <memory>
+#include "../models/Transform.h"
 
 class Collider {
 public:
-    explicit Collider(bool drawDebug);
+    explicit Collider(std::shared_ptr<Transform> &transformRef, bool drawDebug);
 
     virtual bool isColliding(Collider* other) =0;
     void drawDebug();
-    glm::vec3 pos = glm::vec3(0.0f);
     bool debugEnable;
 
 protected:
     virtual void drawDebugImpl() = 0;
+    std::shared_ptr<Transform> transformRef;
 private:
 
 

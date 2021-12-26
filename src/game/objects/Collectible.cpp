@@ -6,7 +6,7 @@
 #include "../../engine/collisions/SphereCollider.h"
 
 Collectible::Collectible(const std::string &modelPath) : GameModel(modelPath) {
-    col = std::make_unique<SphereCollider>(2.0f, true);
+    col = std::make_unique<SphereCollider>(transform,2.0f, true);
     useCollision = true;
 }
 
@@ -16,5 +16,6 @@ void Collectible::update(SetupWindow &gScene) {
 
 void Collectible::onCollision(GameModel *other) {
     GameModel::onCollision(other);
+    //std::cout << "colliding" << std::endl;
     awaitingDestroy = true;
 }

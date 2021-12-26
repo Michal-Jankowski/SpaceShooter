@@ -4,19 +4,17 @@
 GameModel::GameModel(const std::string& path) {
 
     mesh.loadModelFromFile(path);
+    transform = std::make_shared<Transform>();
 }
 
 void GameModel::render() {
-    mesh.render(transform.getMatrix());
+    mesh.render(transform->getMatrix());
     if(useCollision){
         col->drawDebug();
     }
 }
 
 void GameModel::update(SetupWindow &gScene) {
-    if (col) {
-        col->pos = transform.getPosition();
-    }
 }
 
 void GameModel::onCollision(GameModel *other) {

@@ -28,7 +28,7 @@ public:
     std::unique_ptr<Collider>  col;
     bool awaitingDestroy = false;
 
-    Transform transform;
+    std::shared_ptr<Transform> transform;
 
 
 };

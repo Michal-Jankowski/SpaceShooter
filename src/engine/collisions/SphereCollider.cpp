@@ -4,7 +4,7 @@
 
 bool SphereCollider::isColliding(Collider* other) {
     if(SphereCollider* sCol = dynamic_cast<SphereCollider*>(other)){
-        glm::vec3 diff = pos - sCol->pos;
+        glm::vec3 diff = transformRef->getPosition() - sCol->transformRef->getPosition();
         glm::vec3 sq = glm::vec3(diff.x*diff.x, diff.y*diff.y, diff.z*diff.z);
         float dist = glm::sqrt(sq.x+sq.y+sq.z);
         return dist < sCol->radius + radius;
@@ -12,7 +12,7 @@ bool SphereCollider::isColliding(Collider* other) {
     return false;
 }
 
-SphereCollider::SphereCollider( float radius, bool drawDebug = false) : Collider(drawDebug) {
+SphereCollider::SphereCollider(std::shared_ptr<Transform> &transformRef, float radius, bool drawDebug) : Collider(transformRef, drawDebug) {
     this->radius = radius;
 }
 
