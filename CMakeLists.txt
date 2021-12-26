@@ -35,12 +35,14 @@ option(MOVE_SCRIPT_AUTO_CLOSE "Auto close file moving script" ON)
 
 ## append source files to executable
 file(GLOB FILES_SOURCES 
-"src/*.cpp"
-"src/*.h"
+		"src/*.cpp"
+		"src/*.h"
 		"src/game/*.cpp"
 		"src/game/*.h"
-		"src/game/objects/*.cpp"
-		"src/game/objects/*.h"
+		"src/game/elements/*.cpp"
+		"src/game/elements/*.h"
+		"src/game/models/*.cpp"
+		"src/game/models/*.h"
 		"src/game/UI/*.cpp"
 		"src/game/UI/*.h"
 		"src/engine/buffers/*.cpp"
@@ -65,10 +67,10 @@ file(GLOB FILES_SOURCES
 		"src/engine/textures/*.h"
 		"src/engine/utils/*.cpp"
 		"src/engine/utils/*.h"
-"src/shaders/*.vert"
-"src/shaders/*.frag"
-"${LIB_GLAD_DIR}/include/glad.c"
-"${LIB_STB_DIR}/stb_image.h")
+		"src/shaders/*.vert"
+		"src/shaders/*.frag"
+		"${LIB_GLAD_DIR}/include/glad.c"
+		"${LIB_STB_DIR}/stb_image.h")
     
 add_executable(SpaceShooter ${FILES_SOURCES})
 

@@ -12,23 +12,17 @@
 #include "ModelMesh.h"
 #include "../collisions/Collider.h"
 #include "Transform.h"
+#include "GameObject.h"
 
-class GameModel {
+class GameModel : public GameObject {
 public:
 
     explicit GameModel(const std::string& path);
-    virtual void update(SetupWindow& gScene);
-    virtual void onCollision(GameModel* other);
-    void render();
+    void render() override;
 
     ShaderProgram shader;
     ModelMesh mesh = ModelMesh();
 
-    bool useCollision = false;
-    std::unique_ptr<Collider>  col;
-    bool awaitingDestroy = false;
-
-    std::shared_ptr<Transform> transform;
 
 
 };

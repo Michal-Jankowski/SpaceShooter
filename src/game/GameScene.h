@@ -5,7 +5,7 @@
 #include <mutex>
 
 #include "../engine/core/SetupWindow.h"
-#include "objects/Camera.h"
+#include "elements/Camera.h"
 #include "../engine/models/GameModel.h"
 #include "../engine/textures/Skybox.h"
 #include "../engine/lighting/DiffuseLight.h"
@@ -14,6 +14,7 @@
 #include "../engine/buffers/Line.h"
 #include "../engine/models/procedural/Sphere.h"
 #include "UI/GameHUD.h"
+#include <queue>
 
 class GameScene : public SetupWindow
 {
@@ -24,9 +25,11 @@ public:
     void releaseScene() override;
     void onWindowSizeChanged(int width, int height) override;
     void onMouseButtonPressed(int button, int action) override;
+    void addObject(std::unique_ptr<GameObject> gameObjet);
 private:
     void gameObjectsLoop();
-    std::vector<std::unique_ptr<GameModel>> gameObjects;
+    std::vector<std::unique_ptr<GameObject>> gameObjects;
+    std::queue<std::unique_ptr<GameObject>> creatingGameObjects;
     std::shared_ptr<Camera> m_camera;
     std::unique_ptr<Skybox> m_skybox;
     std::unique_ptr<Cube> m_cube;

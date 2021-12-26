@@ -171,6 +171,10 @@ bool SetupWindow::keyPressed(int keyCode) const {
 	return glfwGetKey(m_window, keyCode) == GLFW_PRESS;
 }
 
+bool SetupWindow::mouseButtonPressed(int keyCode) const {
+    return glfwGetMouseButton(m_window, keyCode) == GLFW_PRESS;
+}
+
 bool SetupWindow::keyPressedOnce(int keyCode) {
 	bool result = false;
 

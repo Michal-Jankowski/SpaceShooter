@@ -13,7 +13,7 @@ ObjPicker& ObjPicker::getInstance()
 
 void ObjPicker::initialize()
 {
-    // Create framebuffer for picking objects
+    // Create framebuffer for picking models
     m_pickingFrameBuff.createFrameBufferWithColorAndDepthWithDefaultScreenSize();
 
     // Create occluder cube - we only need vertices positions here, no texture coordinates or normals
@@ -23,7 +23,7 @@ void ObjPicker::initialize()
     m_meshes.push_back(std::make_unique<Sphere>(4.0f, 20, 20));
     const glm::vec3 sphereOcclusionBoxSize{ 8.0f, 8.0f, 8.0f };
 
-    // Create several pickable objects on the scene
+    // Create several pickable models on the scene
     m_objects.push_back(PickableObject{ glm::vec3(-75.0f, 6.0f, -75.0f), m_meshes[0].get(), sphereOcclusionBoxSize });
     m_objects.push_back(PickableObject{ glm::vec3(-35.0f, 6.0f, 55.0f), m_meshes[0].get(), sphereOcclusionBoxSize });
     m_objects.push_back(PickableObject{ glm::vec3(80.0f, 6.0f, -30.0f), m_meshes[0].get(), sphereOcclusionBoxSize });

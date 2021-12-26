@@ -17,7 +17,7 @@ class HUDBase
 public:
     static const std::string DEFAULT_FONT_KEY;
     static const std::string ORTHO_2D_PROGRAM_KEY; // Key for shader program for rendering in 2D
-    static const std::string HUD_SAMPLER_KEY; // Key for sampler used for HUD objects
+    static const std::string HUD_SAMPLER_KEY; // Key for sampler used for HUD models
 
     HUDBase(const SetupWindow& window);
 

@@ -8,8 +8,8 @@
 #include "../engine/textures/TextureManager.h"
 #include "../engine/textures/SamplerManager.h"
 #include "../engine/buffers/ObjPicker.h"
-#include "objects/Ship.h"
-#include "objects/Collectible.h"
+#include "models/Ship.h"
+#include "models/Collectible.h"
 #include "../engine/maths/MatrixManager.h"
 #include "../engine/buffers/DefaultBuff.h"
 
@@ -267,15 +267,20 @@ void GameScene::releaseScene() {
 }
 
 void GameScene::gameObjectsLoop() {
+    ///SPAWN
+    while(!creatingGameObjects.empty()){
+        gameObjects.push_back(std::move(creatingGameObjects.front()));
+        creatingGameObjects.pop();
+    }
     ///UPDATE
     for (auto & gameObject : gameObjects) {
-        gameObject->update(*this);
+        gameObject->update(this);
     }
     ///COLLISIONS
     for (int i = 0; i < gameObjects.size(); ++i) {
-        if(gameObjects[i]->useCollision){
+        if(gameObjects[i]->useCollision()){
             for (int j = i+1; j < gameObjects.size(); ++j) {
-                if (gameObjects[j]->useCollision) {
+                if (gameObjects[j]->useCollision()) {
                     bool col = gameObjects[i]->col->isColliding(gameObjects[j]->col.get());
                     if(col){
                         gameObjects[i]->onCollision(gameObjects[j].get());
@@ -298,4 +303,9 @@ void GameScene::gameObjectsLoop() {
             i--;
         }
     }
+
+}
+
+void GameScene::addObject(std::unique_ptr<GameObject> go) {
+    creatingGameObjects.push(std::move(go));
 }

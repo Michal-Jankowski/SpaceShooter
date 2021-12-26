@@ -6,8 +6,7 @@
 #include <glm/glm.hpp>
 #include <map>
 
-class SetupWindow
-{
+class SetupWindow {
 public:
 	SetupWindow();
 
@@ -24,6 +23,7 @@ public:
 	virtual void onMouseButtonPressed(int button, int action) {}
 
 	bool keyPressed(int keyCode) const;
+    bool mouseButtonPressed(int keyCode) const;
 	bool keyPressedOnce(int keyCode);
 
 	void closeWindow(bool errorHasOccured = false);
@@ -71,4 +71,6 @@ private:
 	static void onWindowSizeChangedStatic(GLFWwindow* window, int width, int height);
 	void updateDeltaTimeAndFPS();
 	static std::map<GLFWwindow*, SetupWindow*> m_windows;
+
+
 };
