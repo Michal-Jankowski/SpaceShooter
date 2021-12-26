@@ -2,7 +2,6 @@
 #include <array>
 #include "../maths/MatrixManager.h"
 #include "../shaders/ShaderProgramManager.h"
-#include <random>
 
 Line::Line(glm::vec3 start, glm::vec3 end)
 	: m_startPoint(start)

@@ -1,6 +1,5 @@
 #pragma once
 #include "../shaders/ShaderProgram.h"
-#include "../../game/elements/Camera.h"
 #include <glm/glm.hpp>
 class Line
 {

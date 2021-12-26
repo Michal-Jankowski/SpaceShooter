@@ -5,7 +5,6 @@
 
 #include "../../engine/buffers/Line.h"
 #include "../../engine/models/GameObject.h"
-#include "../../game/elements/Camera.h"
 
 class Laser : public GameObject {
 
