@@ -4,6 +4,8 @@
 #define SPACESHOOTER_TRANSFORM_H
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 class Transform {
 public:
@@ -13,10 +15,7 @@ public:
     [[nodiscard]] glm::vec3 getPosition();
     void moveBy(glm::vec3 distance);
 
-//    void setRotation(glm::vec3 axis, float angle);
-//    [[nodiscard]] glm::vec3 getRotationAxis();
-//    [[nodiscard]] float getRotationAngle();
-//    void rotateBy(glm::vec3 axis, float angle);
+    void setLookAt(glm::vec3 direction, glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f));
 
     void setScale(glm::vec3 newScale);
     [[nodiscard]]  glm::vec3 getScale();
@@ -26,8 +25,7 @@ public:
 
 private:
     glm::vec3 pos;
-    glm::vec3 rotAxis;
-    float rotAngle;
+    glm::quat rotation;
     glm::vec3 scale;
 };
 

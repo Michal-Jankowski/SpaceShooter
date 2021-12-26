@@ -4,8 +4,7 @@
 
 Transform::Transform() {
     pos = glm::vec3(0.0f,0.0f,0.0f);
-    rotAxis = glm::vec3(1.0f,0.0f,0.0f);
-    rotAngle = 0;
+    rotation = glm::quat(0.0f,0.0f,0.0f, 1.0f);
     scale =  glm::vec3(1.0f,1.0f,1.0f);
 }
 
@@ -35,8 +34,12 @@ void Transform::scaleTimes(glm::vec3 diff) {
 
 glm::mat4 Transform::getMatrix() {
     glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), pos);
-    modelMatrix = glm::rotate(modelMatrix, rotAngle, rotAxis);
+    modelMatrix = glm::rotate(modelMatrix, angle(rotation), axis(rotation));
     modelMatrix = glm::scale(modelMatrix, scale);
     return modelMatrix;
+}
+
+void Transform::setLookAt(glm::vec3 direction, glm::vec3 up){
+    rotation = glm::quatLookAt(direction, up);
 }
 

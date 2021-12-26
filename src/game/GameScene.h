@@ -27,7 +27,7 @@ public:
 private:
     void gameObjectsLoop();
     std::vector<std::unique_ptr<GameModel>> gameObjects;
-    std::unique_ptr<Camera> m_camera;
+    std::shared_ptr<Camera> m_camera;
     std::unique_ptr<Skybox> m_skybox;
     std::unique_ptr<Cube> m_cube;
     std::unique_ptr<AmbientLight> m_ambientLight;

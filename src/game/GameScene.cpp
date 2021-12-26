@@ -1,5 +1,6 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <array>
+#include <memory>
 #include <vector>
 #include "GameScene.h"
 #include "../engine/shaders/ShaderManager.h"
@@ -65,10 +66,15 @@ void GameScene::initScene() {
 		int width, height;
 		glfwGetWindowSize(getWindow(), &width, &height);
 		ObjPicker::getInstance().initialize();
-		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
+		m_camera = std::make_shared<Camera>(
+                glm::vec3(-120.0f, 8.0f, 120.0f),
+                glm::vec3(-120.0f, 8.0f, 119.0f),
+                glm::vec3(0.0f, 1.0f, 0.f),
+                glm::i32vec2(width / 2, height / 2),
+                15.0f);
 
 		gameObjects.push_back(std::make_unique<Ship>(
-                "../res/models/ship.obj"));
+                "../res/models/ship.obj", m_camera));
 		gameObjects.push_back(std::make_unique<Collectible>(
                 "../res/models/collectible.obj" ));
 
