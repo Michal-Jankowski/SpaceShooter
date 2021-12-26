@@ -17,6 +17,8 @@ SphereCollider::SphereCollider(std::shared_ptr<Transform> &transformRef, float r
 }
 
 void SphereCollider::drawDebugImpl() {
+    // TODO: FIXME ASAP
+    /*
     for (int i = 0; i < debugResolution; ++i) {
         Line laser = Line(spherePoint((float)i * (360.0f / debugResolution), 0),
                           spherePoint(((float)i+1.0f) * (360.0f/debugResolution), 0));
@@ -32,8 +34,7 @@ void SphereCollider::drawDebugImpl() {
                           spherePoint(90,((float)i+1.0f) * (360.0f/debugResolution)));
         laser.draw();
     }
-
-
+    */
 }
 
 

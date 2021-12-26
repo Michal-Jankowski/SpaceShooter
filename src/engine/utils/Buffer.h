@@ -17,11 +17,11 @@ public:
 		addRawData(&ptrObj, sizeof(T), repeat);
 	}
 private:
-	GLuint m_bufferID = 0;
+	GLuint m_bufferID{ 0 };
 	std::vector<unsigned char> m_rawData;
-	size_t m_bytesAdded = 0;
+	size_t m_bytesAdded{ 0 };
 	size_t m_uploadedDataSize;
-	int m_bufferType;
+	int m_bufferType{ 0 };
 	bool m_isBufferInitalized = false;
 	bool m_isDataLoaded = false;
 };

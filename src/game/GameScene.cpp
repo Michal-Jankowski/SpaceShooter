@@ -37,6 +37,9 @@ void GameScene::initScene() {
 		shaderManager.loadVertexShader("main_part", "../src/shaders/shader.vert");
 		shaderManager.loadFragmentShader("outline_part", "../src/shaders/shaderOutline.frag");
 		shaderManager.loadVertexShader("outline_part", "../src/shaders/shaderOutline.vert");
+		shaderManager.loadFragmentShader("laser_part", "../src/shaders/line.frag");
+		shaderManager.loadVertexShader("laser_part", "../src/shaders/line.vert");
+
 
 		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
@@ -45,6 +48,11 @@ void GameScene::initScene() {
 		auto& singleColorShaderProgram = shaderProgramManager.createShaderProgram("outline");
 		singleColorShaderProgram.addShaderToProgram(shaderManager.getVertexShader("outline_part"));
 		singleColorShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("outline_part"));
+		
+		auto& laserShaderProgram = shaderProgramManager.createShaderProgram("laser");
+		laserShaderProgram.addShaderToProgram(shaderManager.getVertexShader("laser_part"));
+		laserShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("laser_part"));
+
 		// init objs
 		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
 		m_cube = std::make_unique<Cube>(true, true, true);
@@ -52,7 +60,6 @@ void GameScene::initScene() {
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
-		m_raycast = std::make_unique<Line>(linePositions[0], linePositions[1]);
 		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
 		m_HUD = std::make_unique<GameHUD>(*this);
 		Material shinnyMaterial = Material(1.0f, 32.0f);
@@ -175,12 +182,6 @@ void GameScene::renderScene() {
 	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
 	m_HUD->renderHUD(ambientSkybox);
 
-	// draw raycast "Line" & check for collision with sphere
-	m_raycast->draw();
-	if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 30)) {
-		std::cout << "Line HIT" << std::endl;
-	}
-
 	DefaultBuff::bindAsBothReadAndDraw();
 	DefaultBuff::setFullViewport();
 }
@@ -259,7 +260,6 @@ void GameScene::releaseScene() {
 	TextureManager::getInstance().clearTextureCache();
 	SamplerManager::getInstance().clearSamplerKeys();
 	m_cube.reset();
-	m_raycast.reset();
 	m_HUD.reset();
     for (int i = 0; i < gameObjects.size(); ++i) {
         gameObjects[i].reset();

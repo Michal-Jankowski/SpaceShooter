@@ -37,7 +37,6 @@ private:
     std::unique_ptr<DiffuseLight> m_diffuseLight;
     std::unique_ptr<PlainGround> m_plainGround;
     std::unique_ptr<Material> m_material;
-    std::unique_ptr<Line> m_raycast;
     std::unique_ptr<Sphere> m_sphere;
     std::unique_ptr<GameHUD> m_HUD;
     float m_rotationAngleRad = 0.0f;

@@ -13,10 +13,10 @@
 
 class Ship : public GameModel {
 public:
-    explicit Ship(const std::string &modelPath, std::shared_ptr<Camera> &cameraRef);
+    explicit Ship(const std::string& modelPath, std::shared_ptr<Camera> cameraRef);
     void update(SetupWindow* scene) override;
 private:
-    std::shared_ptr<Camera> cameraRef;
+    std::shared_ptr<Camera> m_camera;
     float distCamOffset = 5.0f;
     float laserLength = 50.0f;
     glm::vec3 heightCamOffset = glm::vec3(0.0f, -2.0f, 0.0f);
