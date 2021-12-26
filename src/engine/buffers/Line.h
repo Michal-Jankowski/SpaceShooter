@@ -1,11 +1,11 @@
 #pragma once
 #include "../shaders/ShaderProgram.h"
 #include <glm/glm.hpp>
-class Laser
+class Line
 {
 public:
-	Laser(glm::vec3 start, glm::vec3 end);
-	~Laser();
+	Line(glm::vec3 start, glm::vec3 end);
+	~Line();
 	void draw();
 	bool isColliding(std::array<glm::vec3, 2> linePoints, glm::vec3 sphereCoords, float radius);
 

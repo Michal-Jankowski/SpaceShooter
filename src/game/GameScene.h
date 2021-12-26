@@ -11,7 +11,7 @@
 #include "../engine/lighting/DiffuseLight.h"
 #include "../engine/lighting/AmbientLight.h"
 #include "../engine/models/procedural/PlainGround.h"
-#include "../engine/buffers/Laser.h"
+#include "../engine/buffers/Line.h"
 #include "../engine/models/procedural/Sphere.h"
 #include "UI/GameHUD.h"
 
@@ -34,7 +34,7 @@ private:
     std::unique_ptr<DiffuseLight> m_diffuseLight;
     std::unique_ptr<PlainGround> m_plainGround;
     std::unique_ptr<Material> m_material;
-    std::unique_ptr<Laser> m_raycast;
+    std::unique_ptr<Line> m_raycast;
     std::unique_ptr<Sphere> m_sphere;
     std::unique_ptr<GameHUD> m_HUD;
     float m_rotationAngleRad = 0.0f;

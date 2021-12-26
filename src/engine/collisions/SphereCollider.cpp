@@ -18,18 +18,18 @@ SphereCollider::SphereCollider(std::shared_ptr<Transform> &transformRef, float r
 
 void SphereCollider::drawDebugImpl() {
     for (int i = 0; i < debugResolution; ++i) {
-        Laser laser = Laser(spherePoint((float)i * (360.0f/debugResolution), 0),
-                            spherePoint(((float)i+1.0f) * (360.0f/debugResolution), 0));
+        Line laser = Line(spherePoint((float)i * (360.0f / debugResolution), 0),
+                          spherePoint(((float)i+1.0f) * (360.0f/debugResolution), 0));
         laser.draw();
     }
     for (int i = 0; i < debugResolution; ++i) {
-        Laser laser = Laser(spherePoint(0, (float)i * (360.0f/debugResolution)),
-                            spherePoint(0,((float)i+1.0f) * (360.0f/debugResolution)));
+        Line laser = Line(spherePoint(0, (float)i * (360.0f / debugResolution)),
+                          spherePoint(0,((float)i+1.0f) * (360.0f/debugResolution)));
         laser.draw();
     }
     for (int i = 0; i < debugResolution; ++i) {
-        Laser laser = Laser(spherePoint(90, (float)i * (360.0f/debugResolution)),
-                            spherePoint(90,((float)i+1.0f) * (360.0f/debugResolution)));
+        Line laser = Line(spherePoint(90, (float)i * (360.0f / debugResolution)),
+                          spherePoint(90,((float)i+1.0f) * (360.0f/debugResolution)));
         laser.draw();
     }
 

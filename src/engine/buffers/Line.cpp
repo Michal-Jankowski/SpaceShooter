@@ -1,6 +1,6 @@
-#include "Laser.h"
+#include "Line.h"
 #include <array>
-Laser::Laser(glm::vec3 start, glm::vec3 end)
+Line::Line(glm::vec3 start, glm::vec3 end)
 {
 	startPoint = start;
 	endPoint = end;
@@ -25,20 +25,20 @@ Laser::Laser(glm::vec3 start, glm::vec3 end)
 	glBindVertexArray(0);
 }
 
-Laser::~Laser()
+Line::~Line()
 {
 	glDeleteBuffers(1, &VBO);
 	glDeleteVertexArrays(1, &vao);
 }
 
-void Laser::draw()
+void Line::draw()
 {
 	glBindVertexArray(vao);
 	glDrawArrays(GL_LINES, 0, 2);
 }
 // where:
 // linePoints -> start & end coords
-bool Laser::isColliding(std::array<glm::vec3, 2> linePoints, glm::vec3 sphereCoords, float radius)
+bool Line::isColliding(std::array<glm::vec3, 2> linePoints, glm::vec3 sphereCoords, float radius)
 {
 	// solving quadratic equation of the form: au^2 + bu + c = 0
 	glm::vec3 diffValues = glm::vec3(linePoints[1].x - linePoints[0].x, linePoints[1].y - linePoints[0].y, linePoints[1].z - linePoints[0].z);

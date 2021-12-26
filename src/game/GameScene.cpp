@@ -52,7 +52,7 @@ void GameScene::initScene() {
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
-		m_raycast = std::make_unique<Laser>(linePositions[0], linePositions[1]);
+		m_raycast = std::make_unique<Line>(linePositions[0], linePositions[1]);
 		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
 		m_HUD = std::make_unique<GameHUD>(*this);
 		Material shinnyMaterial = Material(1.0f, 32.0f);
@@ -175,10 +175,10 @@ void GameScene::renderScene() {
 	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
 	m_HUD->renderHUD(ambientSkybox);
 
-	// draw raycast "Laser" & check for collision with sphere
+	// draw raycast "Line" & check for collision with sphere
 	m_raycast->draw();
 	if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 30)) {
-		std::cout << "Laser HIT" << std::endl;
+		std::cout << "Line HIT" << std::endl;
 	}
 
 	DefaultBuff::bindAsBothReadAndDraw();
