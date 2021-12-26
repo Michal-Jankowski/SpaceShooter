@@ -2,7 +2,7 @@
 
 #include <GLAD/glad.h>
 #include <glm/common.hpp>
-#include "../shaders/ShaderProgram.h"
+#include "../../shaders/ShaderProgram.h"
 
 
 class PointLight {

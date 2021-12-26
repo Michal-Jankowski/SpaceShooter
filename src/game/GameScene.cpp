@@ -1,4 +1,6 @@
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <array>
 #include <vector>
 #include "GameScene.h"
@@ -45,6 +47,14 @@ void GameScene::initScene() {
 		singleColorShaderProgram.addShaderToProgram(shaderManager.getVertexShader("outline_part"));
 		singleColorShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("outline_part"));
 		// init objs
+		m_UBOMatrices = std::make_unique<UniformBufferObject>();
+		m_UBOMatrices->createUBO(sizeof(glm::mat4) * 2);
+		m_UBOMatrices->bindBufferBaseToBindingPoint(UniformBlockBindingPoints::MATRICES);
+
+		m_UBOPointLights = std::make_unique<UniformBufferObject>();
+		m_UBOPointLights->createUBO(MAX_POINT_LIGHTS * PointLight::getDataSizeStd140());
+		m_UBOPointLights->bindBufferBaseToBindingPoint(UniformBlockBindingPoints::POINT_LIGHTS);
+
 		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
 		m_cube = std::make_unique<Cube>(true, true, true);
 		m_plainGround = std::make_unique<PlainGround>(true, true, true);
@@ -53,7 +63,6 @@ void GameScene::initScene() {
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
 		m_raycast = std::make_unique<Laser>(linePositions[0], linePositions[1]);
 		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
-		m_pointLight = std::make_unique<PointLight>(glm::vec3(60.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 0.0f, 0.3f, 0.007f, 0.000008f);
 		m_HUD = std::make_unique<GameHUD>(*this);
 		Material shinnyMaterial = Material(1.0f, 32.0f);
 
@@ -82,6 +91,11 @@ void GameScene::initScene() {
 		closeWindow(true);
 		return;
 	}
+
+	// Create two initial point lights
+	m_pointLights.push_back(MovingPointLight::createRandomPointLight(glm::vec3(-60.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)));
+	m_pointLights.push_back(MovingPointLight::createRandomPointLight(glm::vec3(60.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0);
 	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
@@ -108,6 +122,17 @@ void GameScene::renderScene() {
   	mainProgram.useProgram();
     mainProgram.setUniform("matrices.modelMatrix",translated);
     gameObjectsLoop();
+
+	m_UBOMatrices->bindUBO();
+	m_UBOMatrices->setBufferData(0, glm::value_ptr(getProjectionMatrix()), sizeof(glm::mat4));
+	m_UBOMatrices->setBufferData(sizeof(glm::mat4), glm::value_ptr(m_camera->getViewMatrix()), sizeof(glm::mat4));
+
+	m_UBOPointLights->bindUBO();
+	GLsizeiptr offset = 0;
+	for (const auto& pointLight : m_pointLights) {
+		m_UBOPointLights->setBufferData(offset, pointLight.getDataPointer(), pointLight.getDataSizeStd140());
+		offset += pointLight.getDataSizeStd140();
+	}
 	
 	matrixManager.setProjectionMatrix(getProjectionMatrix());
 	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
@@ -131,16 +156,14 @@ void GameScene::renderScene() {
 		objectPicker.copyColorToDefaultFrameBuffer();
 	}
 
-	// TODO: render skybox only with AmbientLight, do we need that?
+	// render skybox only with AmbientLight
 	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
 	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
 	Material::none().setUniform(mainProgram, "material");
-	//PointLight::none().setUniform(mainProgram, "pointLight"); // ???
+	mainProgram.setUniform("numPointLights", 0); // point light number, if not set skybox is illuminated
 	m_skybox->render(m_camera->getEye(), mainProgram);
 	
-	// Setup PointLight properties
-	m_pointLight->setUniform(mainProgram, "pointLight"); // ???
 	SamplerManager::getInstance().getSampler("main").bind();
 	m_ambientLight->setUniform(mainProgram, "ambientLight");
 	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
@@ -159,12 +182,22 @@ void GameScene::renderScene() {
 		model = glm::scale(model, glm::vec3(crateSize, crateSize, crateSize));
 		crateModelMatrices.push_back(model);
 		mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
-		TextureManager::getInstance().getTexture("lava").bind(0);
+		TextureManager::getInstance().getTexture("lava").bind();
 		m_cube->render();
 	}
-	auto pointLightMatrix = glm::translate(glm::mat4(1.0f), m_pointLight->position);
-	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", pointLightMatrix);
-	mainProgram.setUniform("color", glm::vec4(m_pointLight->color, 1.0f));
+
+	// Render all point lights
+	for (auto& pointLight : m_pointLights)
+	{
+		auto pointLightModelMatrix = glm::translate(glm::mat4(1.0f), pointLight.position);
+		mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", pointLightModelMatrix);
+		mainProgram.setUniform("color", glm::vec4(pointLight.color, 1.0f));
+		textureManager.getTexture("lava").bind();
+		m_sphere->render();
+		pointLight.update(getValueByTime(20.0f), m_sphere->getRadius() + 1.0f); // heightmap???
+	}
+
+
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	m_sphere->render();

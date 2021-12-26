@@ -1,4 +1,5 @@
 #pragma once
+
 #include <memory>
 #include <thread>
 #include <deque>
@@ -14,7 +15,9 @@
 #include "../engine/buffers/Laser.h"
 #include "../engine/models/procedural/Sphere.h"
 #include "UI/GameHUD.h"
-#include "../engine/lighting/PointLight.h"
+#include "../engine/lighting/pointLight/PointLight.h"
+#include "../engine/lighting/pointLight/MovingPointLight.h"
+#include "../engine/buffers/UniformBufferObject.h"
 
 class GameScene : public SetupWindow
 {
@@ -38,7 +41,10 @@ private:
     std::unique_ptr<Laser> m_raycast;
     std::unique_ptr<Sphere> m_sphere;
     std::unique_ptr<GameHUD> m_HUD;
-    std::unique_ptr<PointLight> m_pointLight;
+    std::unique_ptr<UniformBufferObject> m_UBOMatrices;
+    std::unique_ptr<UniformBufferObject> m_UBOPointLights;
+    std::deque<MovingPointLight> m_pointLights;
     float m_rotationAngleRad = 0.0f;
+    const int MAX_POINT_LIGHTS = 5;
 };
 

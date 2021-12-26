@@ -47,8 +47,13 @@ struct PointLight
 
 uniform AmbientLight ambientLight;
 uniform DiffuseLight diffuseLight;
-uniform PointLight pointLight;
 uniform Material material;
+
+uniform int numPointLights;
+layout(std140, binding = 1) uniform pointLightBlock
+{
+    PointLight lights[5];
+} pointLights_block;
 
 vec3 getAmbientLightColour(AmbientLight ambientLight) {
     if(!ambientLight.isOn) { return vec3(0.0);}
@@ -106,7 +111,10 @@ void main() {
     vec3 ambientColour = getAmbientLightColour(ambientLight);
     vec3 diffuseColour = getDiffuseLightColour(diffuseLight, normal);
     vec3 specularColour = getSpecularMaterialLightColour(diffuseLight, material, IOWorldPosition.xyz, normal, cameraPosition);
-    vec3 pointLightColour = getPointLightColor(pointLight, IOWorldPosition.xyz, normal);
-    vec3 lightColour = ambientColour + diffuseColour + specularColour + pointLightColour;
+    vec3 lightColour = ambientColour + diffuseColour + specularColour;
+    for(int i = 0; i < numPointLights; ++i) {
+            vec3 pointLightColour = getPointLightColor(pointLights_block.lights[i], IOWorldPosition.xyz, normal);
+            lightColour += pointLightColour;
+    }
     outputColour =  objColor * vec4(lightColour, 1.0);
 }

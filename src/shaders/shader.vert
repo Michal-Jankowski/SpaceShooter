@@ -1,9 +1,13 @@
 #version 440 core
 
-uniform struct
+layout(std140, binding = 0) uniform matricesBlock
 {
 	mat4 projectionMatrix;
 	mat4 viewMatrix;
+} matrices_block;
+
+uniform struct
+{
 	mat4 modelMatrix;
 	mat3 normalMatrix;
 } matrices;
@@ -19,8 +23,8 @@ smooth out vec4 IOCameraSpacePosition;
 
 void main() 
 {
-	mat4 MV_Matrix = matrices.viewMatrix * matrices.modelMatrix;
-	mat4 MVP_matrix = matrices.projectionMatrix * MV_Matrix;
+	mat4 MV_Matrix = matrices_block.viewMatrix * matrices.modelMatrix;
+	mat4 MVP_matrix = matrices_block.projectionMatrix * MV_Matrix;
 	IOVerTexCoord = verTexCoord;
 	IOVerNormal = matrices.normalMatrix * verNormal;
 	IOWorldPosition = matrices.modelMatrix * vec4(verTexPos, 1.0);

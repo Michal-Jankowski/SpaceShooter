@@ -51,6 +51,8 @@ file(GLOB FILES_SOURCES
 		"src/engine/core/*.h"
 		"src/engine/lighting/*.cpp"
 		"src/engine/lighting/*.h"
+		"src/engine/lighting/pointLight/*.cpp"
+		"src/engine/lighting/pointLight/*.h"
 		"src/engine/maths/*.cpp"
 		"src/engine/maths/*.h"
 		"src/engine/models/*.cpp"
