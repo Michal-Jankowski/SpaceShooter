@@ -9,7 +9,7 @@
 
 // FreeType
 #include <ft2build.h>
-#include FT_FREETYPE_H"freetype/freetype.h"
+#include FT_FREETYPE_H
 
 // Project
 #include "FontRenderer.h"
@@ -83,9 +83,9 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
     _pixelSize = pixelSize;
 
     std::vector<unsigned char> textureData(CHARACTERS_TEXTURE_SIZE * CHARACTERS_TEXTURE_SIZE, 0);
-    auto currentPixelPositionRow = 0;
+    long long currentPixelPositionRow = 0;
     auto currentPixelPositionCol = 0;
-    auto rowHeight = 0;
+    long long rowHeight = 0;
     auto currentRenderIndex = 0;
     std::unique_ptr<TextureLoader> texture = std::make_unique<TextureLoader>();
 
@@ -118,7 +118,7 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
             const auto rowsLeft = CHARACTERS_TEXTURE_SIZE - currentPixelPositionRow;
             const auto colsLeft = CHARACTERS_TEXTURE_SIZE - currentPixelPositionCol;
 
-            rowHeight = std::max(rowHeight, static_cast<int>(bmpHeight));
+            rowHeight = std::max(rowHeight, static_cast<long long>(bmpHeight));
 
             if (colsLeft < bmpWidth)
             {
@@ -155,8 +155,8 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
 
             for (auto i = 0; i < bmpHeight; i++)
             {
-                int globalRow = currentPixelPositionRow + i;
-                int reversedRow = bmpHeight - i - 1;
+                long long globalRow = currentPixelPositionRow + i;
+                long long reversedRow = bmpHeight - i - 1;
                 memcpy(textureData.data() + globalRow * CHARACTERS_TEXTURE_SIZE + currentPixelPositionCol, ptrBitmap->buffer + reversedRow * bmpWidth, bmpWidth);
             }
 
@@ -286,7 +286,7 @@ int FreeTypeFont::getTextWidth(const std::string& text, int pixelSize) const
     const auto scale = static_cast<float>(usedPixelSize) / static_cast<float>(_pixelSize);
 
     // TODO: would be nice to handle invalid characters here as well
-    for (int i = 0; i < static_cast<int>(text.length()); i++)
+    for (auto i = 0; i < static_cast<int>(text.length()); i++)
     {
         if (text[i] == '\n' || text[i] == '\r') {
             continue;

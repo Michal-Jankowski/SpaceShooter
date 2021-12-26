@@ -38,7 +38,7 @@ private:
     GLuint vao_ind = 0;
     Buffer vbo;
 
-    bool isInitialized;
+    bool isInitialized = false;
 
     void setVertexAttributesPointers(int numVertices);
 
