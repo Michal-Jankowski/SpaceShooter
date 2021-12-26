@@ -2,7 +2,7 @@
 
 #include "Laser.h"
 
-Laser::Laser(glm::vec3 from, glm::vec3 to, float lifetime, std::shared_ptr<Camera> camera) : line(from,to, camera) {
+Laser::Laser(glm::vec3 from, glm::vec3 to, float lifetime) : line(from,to) {
     timer = lifetime;
     std::cout << "creating laser"  << std::endl;
 }

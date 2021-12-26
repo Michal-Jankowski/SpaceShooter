@@ -27,7 +27,7 @@ void Ship::update(SetupWindow* scene) {
         GameScene* gScene = dynamic_cast<GameScene*>(scene);
         glm::vec3 startPos = transform->getPosition();
         glm::vec3 endPos = startPos +(m_camera->getNormalizedViewVector() * laserLength);
-        gScene->addObject(std::make_unique<Laser>(startPos, endPos, 10.0f, m_camera));
+        gScene->addObject(std::make_unique<Laser>(startPos, endPos, 10.0f));
 
 
     }

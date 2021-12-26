@@ -10,7 +10,7 @@
 class Laser : public GameObject {
 
 public:
-    Laser(glm::vec3 from, glm::vec3 to, float lifetime, std::shared_ptr<Camera> camera);
+    Laser(glm::vec3 from, glm::vec3 to, float lifetime);
     void update(SetupWindow *gScene) override;
     void render() override;
 

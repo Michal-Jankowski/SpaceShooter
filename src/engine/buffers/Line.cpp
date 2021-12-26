@@ -2,12 +2,11 @@
 #include <array>
 #include "../maths/MatrixManager.h"
 #include "../shaders/ShaderProgramManager.h"
-Line::Line(glm::vec3 start, glm::vec3 end, std::shared_ptr<Camera> camera)
+Line::Line(glm::vec3 start, glm::vec3 end)
 	: m_startPoint(start)
 	, m_endPoint(end)
 	, m_lineColor(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f))
 	, m_vertices({ start.x, start.y, start.z, end.x, end.y, end.z })
-	, m_camera(std::move(camera))
 {
 	glGenVertexArrays(1, &m_VAO);
 	glGenBuffers(1, &m_VBO);
@@ -37,7 +36,7 @@ void Line::updateShader() {
 
 	laserProgram.useProgram();
 	laserProgram.setUniform("matrices.projectionMatrix", matrixManager.getProjectionMatrix());
-	laserProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
+	laserProgram.setUniform("matrices.viewMatrix", matrixManager.getViewMatrix());
 	laserProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
 	laserProgram.setUniform("color", m_lineColor);
 }
