@@ -48,12 +48,7 @@ void Line::draw()
 {
 	updateShader();
 	glBindVertexArray(m_VAO);
-	glEnable(GL_LINE_WIDTH);
-	GLfloat lineWidthRange[2];
-	glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
-	glLineWidth(static_cast<GLfloat>(lineWidthRange[1]));
 	glDrawArrays(GL_LINES, 0, 2);
-	glDisable(GL_LINE_WIDTH);
 }
 // where:
 // linePoints -> start & end coords
