@@ -16,7 +16,7 @@ public:
 private:
     Line line;
     float timer;
-
+    float speed = 50.0f;
 };
 
 

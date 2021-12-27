@@ -22,13 +22,21 @@ void Ship::update(SetupWindow* scene) {
             heightCamOffset);
     transform->setLookAt(m_camera->getNormalizedViewVector());
 
-    ///LASER
+    shootCheck(scene);
+}
+
+void Ship::shootCheck(SetupWindow* scene) {
+
+    if(shootTimer > 0.0f){
+        shootTimer -= (float)scene->getDeltaTime();
+        return;
+    }
+
     if(scene->mouseButtonPressed(m_shootMouseKeyCode)){
-        GameScene* gScene = dynamic_cast<GameScene*>(scene);
-        glm::vec3 startPos = transform->getPosition();
+        auto* gScene = dynamic_cast<GameScene*>(scene);
+        glm::vec3 startPos = transform->getPosition() - (m_camera->getNormalizedViewVector() * laserSpeedStartCompensation);
         glm::vec3 endPos = startPos +(m_camera->getNormalizedViewVector() * laserLength);
-        gScene->addObject(std::make_unique<Laser>(startPos, endPos, 10.0f));
-
-
+        gScene->addObject(std::make_unique<Laser>(startPos, endPos, laserLifetime));
+        shootTimer = shootTimeout;
     }
 }

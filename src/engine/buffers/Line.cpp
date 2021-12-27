@@ -75,9 +75,19 @@ void Line::setColor(glm::vec4 color) {
 	m_lineColor = color;
 }
 
-void Line::setPosition(glm::vec3 start, glm::vec3 end)
-{
+void Line::setPosition(glm::vec3 start, glm::vec3 end){
+    m_startPoint = start;
+    m_endPoint = end;
+
 	m_vertices.clear();
 	m_vertices.insert(m_vertices.end(), { start.x, start.y, start.z, end.x, end.y, end.z });
 	setupBuffers();
+}
+
+glm::vec3 Line::getStartPosition() const {
+    return m_startPoint;
+}
+
+glm::vec3 Line::getEndPosition() const {
+    return m_endPoint;
 }
