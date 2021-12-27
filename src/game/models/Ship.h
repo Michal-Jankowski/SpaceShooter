@@ -16,6 +16,7 @@ class Ship : public GameModel {
 public:
     explicit Ship(std::shared_ptr<Camera> cameraRef);
     void update(SetupWindow* scene) override;
+    void drawHud(GameHUD* hud) override;
 private:
     inline static const std::string MODEL_PATH = "../res/models/ship.obj";
 

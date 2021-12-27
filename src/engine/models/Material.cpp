@@ -100,6 +100,7 @@ void Material::generateMappings() {
     materialShaderMappings["main-ship"] = "main";
     materialShaderMappings["side-ship"] = "main";
     materialShaderMappings["collectible"] = "main";
+    materialShaderMappings["planet"] = "main";
 }
 
 void Material::setup(const glm::mat4 model) const{

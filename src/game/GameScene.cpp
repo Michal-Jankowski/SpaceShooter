@@ -13,6 +13,7 @@
 #include "../engine/maths/MatrixManager.h"
 #include "../engine/buffers/DefaultBuff.h"
 #include "models/Enemy.h"
+#include "models/Planet.h"
 
 
 std::vector<glm::vec3> cratePositions
@@ -81,10 +82,10 @@ void GameScene::initScene() {
                 15.0f);
 
 		gameObjects.push_back(std::make_unique<Ship>(m_camera));
-        auto enemy1 = std::make_unique<Enemy>();
-        enemy1->transform->setPosition(0.0f, 0.0f, -20.0f);
-		gameObjects.push_back(std::move(enemy1));
-		gameObjects.push_back(std::make_unique<Collectible>());
+        auto planet1 = std::make_unique<Planet>(30.0f, this);
+        planet1->transform->setPosition(-50.0f, 0.0f, -50.0f);
+		gameObjects.push_back(std::move(planet1));
+		gameObjects.push_back(std::make_unique<Planet>(1.0f, this));
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -181,7 +182,7 @@ void GameScene::renderScene() {
 	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
 	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
 	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
-	m_HUD->renderHUD(ambientSkybox);
+	//m_HUD->renderHUD(ambientSkybox);
 
 	DefaultBuff::bindAsBothReadAndDraw();
 	DefaultBuff::setFullViewport();
@@ -295,7 +296,9 @@ void GameScene::gameObjectsLoop() {
     ///RENDER
     for (auto & gameObject : gameObjects) {
         gameObject->render();
+        gameObject->drawHud(m_HUD.get());
     }
+    m_HUD->clearLines();
     ///REMOVE
     for (int i = 0; i < gameObjects.size(); ++i) {
         if(gameObjects[i]->awaitingDestroy){

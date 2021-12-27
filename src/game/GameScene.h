@@ -13,7 +13,6 @@
 #include "../engine/models/procedural/PlainGround.h"
 #include "../engine/buffers/Line.h"
 #include "../engine/models/procedural/Sphere.h"
-#include "UI/GameHUD.h"
 #include <queue>
 
 class GameScene : public SetupWindow

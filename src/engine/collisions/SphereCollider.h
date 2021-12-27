@@ -5,7 +5,7 @@
 #include "Collider.h"
 #include "../buffers/Line.h"
 
-#define PI 3.14159265
+
 
 class SphereCollider : public Collider {
 
@@ -16,7 +16,6 @@ public:
     float radius;
 private:
     static const int debugResolution = 20;
-    glm::vec3 spherePoint(float phi, float theta);
     void drawDebugImpl() override;
 };
 

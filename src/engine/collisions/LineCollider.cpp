@@ -12,7 +12,7 @@ LineCollider::LineCollider(std::shared_ptr<Transform> &transformRef, const glm::
 
 bool LineCollider::isColliding(Collider *other) {
     if(auto* sCol = dynamic_cast<SphereCollider*>(other)){
-        return CollisionMath::LineSphereCollision(getStart(),getEnd(), sCol->transformRef->getPosition(), sCol->radius);
+        return CollisionMath::lineSphereCollision(getStart(), getEnd(), sCol->transformRef->getPosition(), sCol->radius);
     }
     return false;
 }

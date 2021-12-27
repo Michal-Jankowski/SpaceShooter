@@ -3,6 +3,7 @@
 #include "SphereCollider.h"
 #include "LineCollider.h"
 #include "CollisionMath.h"
+#include "../utils/MathUtils.h"
 
 bool SphereCollider::isColliding(Collider* other) {
     if(auto* sCol = dynamic_cast<SphereCollider*>(other)){
@@ -11,7 +12,7 @@ bool SphereCollider::isColliding(Collider* other) {
         float dist = glm::sqrt(sq.x+sq.y+sq.z);
         return dist < sCol->radius + radius;
     } else if(auto* lCol = dynamic_cast<LineCollider*>(other)){
-        return CollisionMath::LineSphereCollision(lCol->getStart(),lCol->getEnd(), transformRef->getPosition(), radius);
+        return CollisionMath::lineSphereCollision(lCol->getStart(), lCol->getEnd(), transformRef->getPosition(), radius);
     }
     return false;
 }
@@ -21,31 +22,27 @@ SphereCollider::SphereCollider(std::shared_ptr<Transform> &transformRef, float r
 }
 
 void SphereCollider::drawDebugImpl() {
+    Line laser = Line(glm::vec3(0), glm::vec3(0));
     for (int i = 0; i < debugResolution; ++i) {
-        Line laser = Line(spherePoint((float)i * (360.0f / debugResolution), 0),
-                          spherePoint(((float)i+1.0f) * (360.0f/debugResolution), 0));
+        glm::vec3 start = MathUtils::sphericalToCartesian(radius, (float)i * (360.0f / debugResolution), 0);
+        glm::vec3 end = MathUtils::sphericalToCartesian(radius, ((float)i+1.0f) * (360.0f/debugResolution), 0);
+        laser.setPosition(start,end);
         laser.draw();
     }
     for (int i = 0; i < debugResolution; ++i) {
-        Line laser = Line(spherePoint(0, (float)i * (360.0f / debugResolution)),
-                          spherePoint(0,((float)i+1.0f) * (360.0f/debugResolution)));
+        glm::vec3 start = MathUtils::sphericalToCartesian(radius, 0, (float)i * (360.0f / debugResolution));
+        glm::vec3 end = MathUtils::sphericalToCartesian(radius, 0,((float)i+1.0f) * (360.0f/debugResolution));
+        laser.setPosition(start,end);
         laser.draw();
     }
     for (int i = 0; i < debugResolution; ++i) {
-        Line laser = Line(spherePoint(90, (float)i * (360.0f / debugResolution)),
-                          spherePoint(90,((float)i+1.0f) * (360.0f/debugResolution)));
+        glm::vec3 start = MathUtils::sphericalToCartesian(radius, 90, (float)i * (360.0f / debugResolution));
+        glm::vec3 end = MathUtils::sphericalToCartesian(radius, 90,((float)i+1.0f) * (360.0f/debugResolution));
+        laser.setPosition(start,end);
         laser.draw();
     }
 }
 
-
-glm::vec3 SphereCollider::spherePoint(float phi, float theta) {
-    return glm::vec3(
-            cos(theta * PI / 180.0) * cos(phi * PI / 180.0),
-            cos(theta * PI / 180.0) * sin(phi * PI / 180.0),
-            sin(theta * PI / 180.0)
-    ) * radius;
-}
 
 
 

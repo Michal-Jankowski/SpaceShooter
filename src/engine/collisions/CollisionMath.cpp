@@ -2,7 +2,7 @@
 #include "CollisionMath.h"
 
 
-bool CollisionMath::LineSphereCollision(glm::vec3 lineStart, glm::vec3 lineEnd, glm::vec3 spherePos, float sphereRadius) {
+bool CollisionMath::lineSphereCollision(glm::vec3 lineStart, glm::vec3 lineEnd, glm::vec3 spherePos, float sphereRadius) {
     std::array<glm::vec3, 2> linePoints{lineStart, lineEnd};
 
     // solving quadratic equation of the form: au^2 + bu + c = 0

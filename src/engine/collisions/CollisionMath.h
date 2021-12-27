@@ -8,7 +8,7 @@
 
 class CollisionMath {
 public:
-    static bool LineSphereCollision(glm::vec3 lineStart, glm::vec3 lineEnd, glm::vec3 spherePos, float sphereRadius);
+    static bool lineSphereCollision(glm::vec3 lineStart, glm::vec3 lineEnd, glm::vec3 spherePos, float sphereRadius);
 };
 
 

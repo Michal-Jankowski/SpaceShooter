@@ -40,3 +40,7 @@ void Ship::shootCheck(SetupWindow* scene) {
         shootTimer = shootTimeout;
     }
 }
+
+void Ship::drawHud(GameHUD *hud) {
+    hud->addLines("aaaaaaa from Ship", 1);
+}
