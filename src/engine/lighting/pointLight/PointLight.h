@@ -32,15 +32,16 @@ public:
     glm::vec3 position; // Position of the point light
     glm::vec3 color; // Color of the point light
     static PointLight& none();
+    float ambientFactor; // Ambient factor (how much this light contributes to the global lighting in any case)
+    float constantAttenuation; // Constant attenuation factor of light with rising distance
+    float linearAttenuation; // Lienar attenuation factor of light with rising distance
+    float exponentialAttenuation; // Constant attenuation factor of light with rising distance
+    GLint isOn; // Flag telling, if the light is on
+
 private:
     std::string constructAttributeName(const std::string& uniformName, const std::string& attributeName);
 
     float __DUMMY_PADDING0__; // This is just needed because of std140 layout padding rules
 
-    float ambientFactor; // Ambient factor (how much this light contributes to the global lighting in any case)
-
-    float constantAttenuation; // Constant attenuation factor of light with rising distance
-    float linearAttenuation; // Lienar attenuation factor of light with rising distance
-    float exponentialAttenuation; // Constant attenuation factor of light with rising distance
-    GLint isOn; // Flag telling, if the light is on
+  
 };

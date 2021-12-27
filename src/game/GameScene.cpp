@@ -93,8 +93,8 @@ void GameScene::initScene() {
 	}
 
 	// Create two initial point lights
-	m_pointLights.push_back(MovingPointLight::createRandomPointLight(glm::vec3(-60.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)));
-	m_pointLights.push_back(MovingPointLight::createRandomPointLight(glm::vec3(60.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+	m_pointLights.push_back(MovingPointLight::createRandomPointLight(glm::vec3(20.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, -.10f)));
+	//m_pointLights.push_back(MovingPointLight::createRandomPointLight(glm::vec3(60.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
 
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0);
@@ -140,8 +140,8 @@ void GameScene::renderScene() {
 
 	mainProgram = shaderProgramManager.getShaderProgram("main");
 	mainProgram.useProgram();
-	mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
-	mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
+	//mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
+	//mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
 	mainProgram.setUniform("sampler", 0);
@@ -161,7 +161,7 @@ void GameScene::renderScene() {
 	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
 	Material::none().setUniform(mainProgram, "material");
-	mainProgram.setUniform("numPointLights", 0); // point light number, if not set skybox is illuminated
+	//mainProgram.setUniform("numPointLights", 0); // point light number, if not set skybox is illuminated
 	m_skybox->render(m_camera->getEye(), mainProgram);
 	
 	SamplerManager::getInstance().getSampler("main").bind();
@@ -169,6 +169,18 @@ void GameScene::renderScene() {
 	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
 	mainProgram.setUniform("cameraPosition", m_camera->getEye());
 	m_material->setUniform(mainProgram, "material");
+
+	// Render all point lights
+	for (auto& pointLight : m_pointLights)
+	{
+		auto pointLightModelMatrix = glm::translate(glm::mat4(1.0f), pointLight.position);
+		mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", pointLightModelMatrix);
+		mainProgram.setUniform("color", glm::vec4(pointLight.color, 1.0f));
+		textureManager.getTexture("lava").bind();
+		m_sphere->render();
+		pointLight.update(getValueByTime(10.0f), m_sphere->getRadius() + 1.0f); // heightmap???
+	}
+
 	std::vector<glm::mat4> crateModelMatrices;
 	for (const auto& position : cratePositions)
 	{
@@ -185,18 +197,6 @@ void GameScene::renderScene() {
 		TextureManager::getInstance().getTexture("lava").bind();
 		m_cube->render();
 	}
-
-	// Render all point lights
-	for (auto& pointLight : m_pointLights)
-	{
-		auto pointLightModelMatrix = glm::translate(glm::mat4(1.0f), pointLight.position);
-		mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", pointLightModelMatrix);
-		mainProgram.setUniform("color", glm::vec4(pointLight.color, 1.0f));
-		textureManager.getTexture("lava").bind();
-		m_sphere->render();
-		pointLight.update(getValueByTime(20.0f), m_sphere->getRadius() + 1.0f); // heightmap???
-	}
-
 
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
@@ -276,7 +276,24 @@ void GameScene::updateScene() {
 	}
 	if (keyPressedOnce(GLFW_KEY_5)) {
 		visualizeColorFrameBuffer = !visualizeColorFrameBuffer;
+	}
 
+	auto& firstPointLight = *m_pointLights.begin();
+
+	auto syncPointLightsAttenuations = [this, &firstPointLight]() {
+		for (auto& pointLight : m_pointLights)
+		{
+			pointLight.constantAttenuation = firstPointLight.constantAttenuation;
+			pointLight.linearAttenuation = firstPointLight.linearAttenuation;
+			pointLight.exponentialAttenuation = firstPointLight.exponentialAttenuation;
+		}
+	};
+
+	if (keyPressedOnce(GLFW_KEY_6)) {
+		m_ambientLight->m_color += getValueByTime(0.2f);
+		if (m_ambientLight->m_color.r > 1.0f) {
+			m_ambientLight->m_color = glm::vec3(0.3f);
+		}
 	}
 	
 	ObjPicker::getInstance().updateAllPickableObjects(getValueByTime(1.0f));
@@ -294,6 +311,7 @@ void GameScene::releaseScene() {
 	SamplerManager::getInstance().clearSamplerKeys();
 	m_cube.reset();
 	m_raycast.reset();
+	m_UBOPointLights.reset();
 	m_HUD.reset();
     for (int i = 0; i < gameObjects.size(); ++i) {
         gameObjects[i].reset();

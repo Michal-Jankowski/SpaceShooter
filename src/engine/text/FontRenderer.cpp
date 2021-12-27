@@ -233,7 +233,6 @@ void FreeTypeFont::printInternal(int x, int y, const std::string& text, int pixe
 
     getFreetypeFontSampler().bind();
     shaderProgram.setUniform("sampler", 0);
-    //shaderProgram[ShaderConstants::sampler()] = 0;
 
     glm::vec2 currentPos(x, y);
     const auto usedPixelSize = pixelSize == -1 ? _pixelSize : pixelSize;
