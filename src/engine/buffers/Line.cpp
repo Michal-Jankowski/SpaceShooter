@@ -51,11 +51,11 @@ void Line::draw()
 	glDrawArrays(GL_LINES, 0, 2);
 }
 
-void Line::setColor(glm::vec4 color) {
+void Line::setColor(const glm::vec4& color) {
 	m_lineColor = color;
 }
 
-void Line::setPosition(glm::vec3 start, glm::vec3 end){
+void Line::setPosition(const glm::vec3& start, const glm::vec3& end){
     m_startPoint = start;
     m_endPoint = end;
 
