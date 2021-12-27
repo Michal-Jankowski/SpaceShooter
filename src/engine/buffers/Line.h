@@ -8,8 +8,8 @@ public:
 	~Line();
 	void draw();
 	bool isColliding(std::array<glm::vec3, 2> linePoints, glm::vec3 sphereCoords, float radius);
-	void setColor(glm::vec4 color);
-	void setPosition(glm::vec3 start, glm::vec3 end);
+	void setColor(const glm::vec4& color);
+	void setPosition(const glm::vec3& start, const glm::vec3& end);
     [[nodiscard]] glm::vec3 getStartPosition() const;
     [[nodiscard]] glm::vec3 getEndPosition() const;
 private:

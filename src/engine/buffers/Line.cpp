@@ -48,7 +48,12 @@ void Line::draw()
 {
 	updateShader();
 	glBindVertexArray(m_VAO);
+	glEnable(GL_LINE_WIDTH);
+	GLfloat lineWidthRange[2];
+	glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, lineWidthRange);
+	glLineWidth(static_cast<GLfloat>(lineWidthRange[1]));
 	glDrawArrays(GL_LINES, 0, 2);
+	glDisable(GL_LINE_WIDTH);
 }
 // where:
 // linePoints -> start & end coords
@@ -71,11 +76,11 @@ bool Line::isColliding(std::array<glm::vec3, 2> linePoints, glm::vec3 sphereCoor
 	return true; // line intersects or touches the sphere
 }
 
-void Line::setColor(glm::vec4 color) {
+void Line::setColor(const glm::vec4& color) {
 	m_lineColor = color;
 }
 
-void Line::setPosition(glm::vec3 start, glm::vec3 end){
+void Line::setPosition(const glm::vec3& start, const glm::vec3& end){
     m_startPoint = start;
     m_endPoint = end;
 
