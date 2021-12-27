@@ -12,6 +12,7 @@ public:
     Transform();
 
     void setPosition(glm::vec3 newPos);
+    void setPosition(float x , float y, float z);
     [[nodiscard]] glm::vec3 getPosition();
     void moveBy(glm::vec3 distance);
 

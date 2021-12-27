@@ -25,7 +25,6 @@ private:
     float shootTimeout = 0.25f;
     float shootTimer = 0.0f;
     glm::vec3 heightCamOffset = glm::vec3(0.0f, -2.0f, 0.0f);
-
     int m_shootMouseKeyCode = GLFW_MOUSE_BUTTON_LEFT;
 };
 

@@ -1,7 +1,3 @@
-//
-// Created by aklin on 15.11.2021.
-//
-
 #include "Collectible.h"
 #include "../../engine/collisions/SphereCollider.h"
 
@@ -17,5 +13,6 @@ void Collectible::update(SetupWindow* gScene) {
 void Collectible::onCollision(GameObject *other) {
     GameModel::onCollision(other);
     //std::cout << "colliding" << std::endl;
+    //std::cout << col->debugEnable << std::endl;
     awaitingDestroy = true;
 }

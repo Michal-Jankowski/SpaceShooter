@@ -14,7 +14,6 @@ public:
     bool isColliding(Collider* other) override;
     void drawDebugImpl() override;
     float radius;
-
 private:
     static const int debugResolution = 20;
     glm::vec3 spherePoint(float phi, float theta);

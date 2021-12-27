@@ -16,10 +16,10 @@ public:
     virtual bool isColliding(Collider* other) =0;
     void drawDebug();
     bool debugEnable;
-
+    std::shared_ptr<Transform> transformRef;
 protected:
     virtual void drawDebugImpl() = 0;
-    std::shared_ptr<Transform> transformRef;
+
 private:
 
 

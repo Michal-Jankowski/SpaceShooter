@@ -16,6 +16,11 @@ void Transform::setPosition(glm::vec3 newPos) {
     pos = newPos;
 }
 
+void Transform::setPosition(float x , float y, float z) {
+    setPosition(glm::vec3(x,y,z));
+}
+
+
 void Transform::moveBy(glm::vec3 distance) {
     pos += distance;
 }
@@ -42,4 +47,5 @@ glm::mat4 Transform::getMatrix() {
 void Transform::setLookAt(glm::vec3 direction, glm::vec3 up){
     rotation = glm::quatLookAt(direction, up);
 }
+
 

@@ -50,26 +50,6 @@ void Line::draw()
 	glBindVertexArray(m_VAO);
 	glDrawArrays(GL_LINES, 0, 2);
 }
-// where:
-// linePoints -> start & end coords
-bool Line::isColliding(std::array<glm::vec3, 2> linePoints, glm::vec3 sphereCoords, float radius)
-{
-	// solving quadratic equation of the form: au^2 + bu + c = 0
-	glm::vec3 diffValues = glm::vec3(linePoints[1].x - linePoints[0].x, linePoints[1].y - linePoints[0].y, linePoints[1].z - linePoints[0].z);
-
-	auto a = diffValues.x * diffValues.x + diffValues.y * diffValues.y + diffValues.z * diffValues.z;
-	auto b = 2 * (diffValues.x * (linePoints[0].x - sphereCoords.x) + diffValues.y * (linePoints[0].y - sphereCoords.y) + diffValues.z * (linePoints[0].z - sphereCoords.z));
-	auto c = sphereCoords.x * sphereCoords.x + sphereCoords.y * sphereCoords.y + sphereCoords.z * sphereCoords.z;
-	c += linePoints[0].x * linePoints[0].x + linePoints[0].y * linePoints[0].y + linePoints[0].z * linePoints[0].z;
-	c -= 2 * (sphereCoords.x * linePoints[0].x + sphereCoords.y * linePoints[0].y + sphereCoords.z * linePoints[0].z);
-	c -= radius * radius;
-	auto delta = b * b - 4 * a * c;
-
-	if (abs(a) < std::numeric_limits<float>::epsilon() || delta < 0) {
-		return false; // line does not intersect
-	}
-	return true; // line intersects or touches the sphere
-}
 
 void Line::setColor(glm::vec4 color) {
 	m_lineColor = color;

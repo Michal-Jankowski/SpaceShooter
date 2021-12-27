@@ -12,6 +12,7 @@
 #include "models/Collectible.h"
 #include "../engine/maths/MatrixManager.h"
 #include "../engine/buffers/DefaultBuff.h"
+#include "models/Enemy.h"
 
 
 std::vector<glm::vec3> cratePositions
@@ -82,6 +83,9 @@ void GameScene::initScene() {
 
 		gameObjects.push_back(std::make_unique<Ship>(
                 "../res/models/ship.obj", m_camera));
+        auto enemy1 = std::make_unique<Enemy>("../res/models/enemy.obj" );
+        enemy1->transform->setPosition(0.0f, 0.0f, -20.0f);
+		gameObjects.push_back(std::move(enemy1));
 		gameObjects.push_back(std::make_unique<Collectible>(
                 "../res/models/collectible.obj" ));
 
