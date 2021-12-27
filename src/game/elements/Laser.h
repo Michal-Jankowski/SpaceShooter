@@ -16,7 +16,8 @@ public:
 private:
     Line line;
     float timer;
-    float speed = 50.0f;
+    float speed = 500.0f;
+    float lineCollisionCheckLength = 1000.0f;
 };
 
 

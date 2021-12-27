@@ -69,7 +69,6 @@ void GameScene::initScene() {
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
 
-
 		shaderProgramManager.linkAllPrograms();
 		int width, height;
 		glfwGetWindowSize(getWindow(), &width, &height);
@@ -81,13 +80,11 @@ void GameScene::initScene() {
                 glm::i32vec2(width / 2, height / 2),
                 15.0f);
 
-		gameObjects.push_back(std::make_unique<Ship>(
-                "../res/models/ship.obj", m_camera));
-        auto enemy1 = std::make_unique<Enemy>("../res/models/enemy.obj" );
+		gameObjects.push_back(std::make_unique<Ship>(m_camera));
+        auto enemy1 = std::make_unique<Enemy>();
         enemy1->transform->setPosition(0.0f, 0.0f, -20.0f);
 		gameObjects.push_back(std::move(enemy1));
-		gameObjects.push_back(std::make_unique<Collectible>(
-                "../res/models/collectible.obj" ));
+		gameObjects.push_back(std::make_unique<Collectible>());
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

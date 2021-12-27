@@ -71,3 +71,7 @@ glm::vec3 Line::getStartPosition() const {
 glm::vec3 Line::getEndPosition() const {
     return m_endPoint;
 }
+
+glm::vec3 Line::getNormalisedDir() const {
+    return glm::normalize(m_endPoint-m_startPoint);
+}

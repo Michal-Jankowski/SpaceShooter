@@ -12,11 +12,12 @@ class SphereCollider : public Collider {
 public:
     SphereCollider(std::shared_ptr<Transform> &transformRef, float radius, bool drawDebug);
     bool isColliding(Collider* other) override;
-    void drawDebugImpl() override;
+
     float radius;
 private:
     static const int debugResolution = 20;
     glm::vec3 spherePoint(float phi, float theta);
+    void drawDebugImpl() override;
 };
 
 

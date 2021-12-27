@@ -4,8 +4,10 @@
 #include "CollisionMath.h"
 #include "SphereCollider.h"
 
-LineCollider::LineCollider(std::shared_ptr<Transform> &transformRef, Line *lineRef) : Collider(transformRef, false)  {
-    this->lineRef = lineRef;
+LineCollider::LineCollider(std::shared_ptr<Transform> &transformRef, const glm::vec3 &lineStart, const glm::vec3 &lineEnd)
+                           : Collider(transformRef, false),
+                           lineStart(lineStart), lineEnd(lineEnd){
+
 }
 
 bool LineCollider::isColliding(Collider *other) {
@@ -16,9 +18,11 @@ bool LineCollider::isColliding(Collider *other) {
 }
 
 glm::vec3 LineCollider::getStart() {
-    return lineRef->getStartPosition();
+    return lineStart;
 }
 
 glm::vec3 LineCollider::getEnd() {
-    return lineRef->getEndPosition();
+    return lineEnd;
 }
+
+

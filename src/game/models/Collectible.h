@@ -10,9 +10,11 @@
 
 class Collectible : public GameModel {
 public:
-    explicit Collectible(const std::string& path);
+    explicit Collectible();
     void update(SetupWindow* gScene) override;
     void onCollision(GameObject *other) override;
+private:
+    inline static const std::string MODEL_PATH = "../res/models/collectible.obj";
 };
 
 

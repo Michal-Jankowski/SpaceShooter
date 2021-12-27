@@ -4,7 +4,7 @@
 #include "../elements/Laser.h"
 
 
-Enemy::Enemy(const std::string &modelPath) : GameModel(modelPath) {
+Enemy::Enemy() : GameModel(MODEL_PATH) {
     col = std::make_unique<SphereCollider>(transform,2.0f, true);
 
 }

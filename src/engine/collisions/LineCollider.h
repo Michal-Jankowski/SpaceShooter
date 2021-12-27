@@ -9,12 +9,15 @@
 
 class LineCollider : public Collider {
 public:
-    LineCollider(std::shared_ptr<Transform> &transformRef, Line* lineRef);
+    LineCollider(std::shared_ptr<Transform> &transformRef, const glm::vec3 &lineStart, const glm::vec3 &lineEnd);
     bool isColliding(Collider* other) override;
     glm::vec3 getStart();
     glm::vec3 getEnd();
+
 private:
-    Line* lineRef;
+    glm::vec3 lineStart;
+    glm::vec3 lineEnd;
+    void drawDebugImpl() override {}
 };
 
 

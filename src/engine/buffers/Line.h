@@ -11,6 +11,7 @@ public:
 	void setPosition(const glm::vec3& start, const glm::vec3& end);
     [[nodiscard]] glm::vec3 getStartPosition() const;
     [[nodiscard]] glm::vec3 getEndPosition() const;
+    [[nodiscard]] glm::vec3 getNormalisedDir() const;
 private:
 	void setupBuffers();
 	void updateShader();
