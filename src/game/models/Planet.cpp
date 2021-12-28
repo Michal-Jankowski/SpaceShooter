@@ -25,9 +25,9 @@ Planet::Planet(float size, SetupWindow* scene) : GameModel(MODEL_PATH) {
         float phi = TWO_PI * std::rand();
         glm::vec3 pos = MathUtils::sphericalToCartesianRadians(size,phi,theta);
 
-        auto collectible = std::make_unique<Collectible>();
-        collectible->transform->setPosition(pos);
-        gScene->addObject(std::move(collectible));
+        //auto collectible = std::make_unique<Collectible>();
+        //collectible->transform->setPosition(pos);
+        //gScene->addObject(std::move(collectible));
     }
 
     //transform->setScale(glm::vec3(size));
