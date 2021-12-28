@@ -182,7 +182,9 @@ void GameScene::renderScene() {
 	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
 	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
 	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
-	//m_HUD->renderHUD(ambientSkybox);
+
+    m_HUD->renderHUD(ambientSkybox);
+    drawGameObjectsHUD();
 
 	DefaultBuff::bindAsBothReadAndDraw();
 	DefaultBuff::setFullViewport();
@@ -296,9 +298,9 @@ void GameScene::gameObjectsLoop() {
     ///RENDER
     for (auto & gameObject : gameObjects) {
         gameObject->render();
-        gameObject->drawHud(m_HUD.get());
+
     }
-    m_HUD->clearLines();
+
     ///REMOVE
     for (int i = 0; i < gameObjects.size(); ++i) {
         if(gameObjects[i]->awaitingDestroy){
@@ -312,4 +314,11 @@ void GameScene::gameObjectsLoop() {
 
 void GameScene::addObject(std::unique_ptr<GameObject> go) {
     creatingGameObjects.push(std::move(go));
+}
+
+void GameScene::drawGameObjectsHUD() {
+    for (auto & gameObject : gameObjects) {
+        gameObject->drawHud(m_HUD.get());
+    }
+    m_HUD->clearLines();
 }

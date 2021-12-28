@@ -5,8 +5,9 @@
 #include <glm/ext.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-Laser::Laser(glm::vec3 from, glm::vec3 to, float lifetime) : line(from,to) {
+Laser::Laser(glm::vec3 from, glm::vec3 to, float lifetime,GameObject* shotFrom) : line(from,to) {
     timer = lifetime;
+    this->shotFrom = shotFrom;
     glm::vec3 dir = line.getNormalisedDir();
     col = std::make_unique<LineCollider>(transform,
                                          line.getStartPosition(),
@@ -30,6 +31,10 @@ void Laser::update(SetupWindow *gScene) {
 void Laser::render() {
     GameObject::render();
     line.draw();
+}
+
+GameObject *Laser::getShooter() {
+    return shotFrom;
 }
 
 

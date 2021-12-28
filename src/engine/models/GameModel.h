@@ -19,6 +19,7 @@ public:
 
     explicit GameModel(const std::string& path);
     void render() override;
+    void drawHud(GameHUD *hud) override {}
 
     ShaderProgram shader;
     ModelMesh mesh = ModelMesh();

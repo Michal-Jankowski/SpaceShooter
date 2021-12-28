@@ -12,8 +12,8 @@ public:
     void onCollision(GameObject *other) override;
 private:
     inline static const std::string MODEL_PATH = "../res/models/planet.obj";
-    int maxEnemies = 100;
-    int maxCollectibles = 100;
+    int maxEnemies = 10;
+    int maxCollectibles = 10;
 };
 
 

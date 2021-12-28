@@ -36,11 +36,24 @@ void Ship::shootCheck(SetupWindow* scene) {
         auto* gScene = dynamic_cast<GameScene*>(scene);
         glm::vec3 startPos = transform->getPosition() - (m_camera->getNormalizedViewVector() * laserSpeedStartCompensation);
         glm::vec3 endPos = startPos +(m_camera->getNormalizedViewVector() * laserLength);
-        gScene->addObject(std::make_unique<Laser>(startPos, endPos, laserLifetime));
+        gScene->addObject(std::make_unique<Laser>(startPos, endPos, laserLifetime, this));
         shootTimer = shootTimeout;
     }
 }
 
 void Ship::drawHud(GameHUD *hud) {
-    hud->addLines("aaaaaaa from Ship", 1);
+    hud->addLines(string_utils::formatString("Enemies shot: {}", enemiesShot), 1);
+    hud->addLines(string_utils::formatString("Collectibles found: {}", collectiblesFound), 1);
 }
+
+void Ship::addPoint(Ship::PointType type) {
+    switch(type){
+        case enemyPoint:
+            enemiesShot++;
+            break;
+        case collectiblePoint:
+            collectiblesFound++;
+            break;
+    }
+}
+

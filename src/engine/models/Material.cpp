@@ -99,7 +99,7 @@ void Material::generateMappings() {
     materialShaderMappings["DefaultMaterial"] = "";
     materialShaderMappings["main-ship"] = "main";
     materialShaderMappings["side-ship"] = "main";
-    materialShaderMappings["collectible"] = "main";
+    materialShaderMappings["collectiblePoint"] = "main";
     materialShaderMappings["planet"] = "main";
 }
 

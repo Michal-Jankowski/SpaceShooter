@@ -27,6 +27,7 @@ public:
     void addObject(std::unique_ptr<GameObject> gameObjet);
 private:
     void gameObjectsLoop();
+    void drawGameObjectsHUD();
     std::vector<std::unique_ptr<GameObject>> gameObjects;
     std::queue<std::unique_ptr<GameObject>> creatingGameObjects;
     std::shared_ptr<Camera> m_camera;

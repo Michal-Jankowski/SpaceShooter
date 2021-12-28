@@ -63,8 +63,6 @@ file(GLOB FILES_SOURCES
 		"src/engine/text/*.h"
 		"src/engine/textures/*.cpp"
 		"src/engine/textures/*.h"
-		"src/engine/UI/*.cpp"
-		"src/engine/UI/*.h"
 		"src/engine/utils/*.cpp"
 		"src/engine/utils/*.h"
 		"src/shaders/*.vert"

@@ -1,15 +1,12 @@
 
-
 #ifndef SPACESHOOTER_GAMEOBJECT_H
 #define SPACESHOOTER_GAMEOBJECT_H
-
 
 #include <memory>
 #include "Transform.h"
 #include "../collisions/Collider.h"
 #include "../core/SetupWindow.h"
-#include "../UI/GameHUD.h"
-
+#include "../text/GameHUD.h"
 
 class GameObject {
 public:
