@@ -26,3 +26,7 @@ void Collectible::drawHud(GameHUD *hud) {
     glm::vec3 pos = transform->getPosition();
     hud->addLines(string_utils::formatString("Collectible spawned at: {} {} {}", pos.x, pos.y, pos.z), 1);
 }
+
+bool Collectible::isValidCollisionTarget(GameObject *other) const {
+    return dynamic_cast<Ship*>(other) != nullptr;
+}

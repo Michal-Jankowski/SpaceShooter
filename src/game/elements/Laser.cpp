@@ -37,4 +37,8 @@ GameObject *Laser::getShooter() {
     return shotFrom;
 }
 
+bool Laser::isValidCollisionTarget(GameObject *other) const {
+    return false;
+}
+
 

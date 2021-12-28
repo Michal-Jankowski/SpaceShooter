@@ -17,6 +17,7 @@ public:
     explicit Ship(std::shared_ptr<Camera> cameraRef);
     void update(SetupWindow* scene) override;
     void drawHud(GameHUD *hud) override;
+    bool isValidCollisionTarget(GameObject *other) const override;
 
     enum PointType { enemyPoint, collectiblePoint };
     void addPoint(PointType type);

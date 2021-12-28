@@ -12,11 +12,10 @@ class GameObject {
 public:
     virtual void update(SetupWindow* scene) {};
     virtual void drawHud(GameHUD* hud) {};
-
     virtual void render();
 
-    [[nodiscard]] bool useCollision() const;
-    //TODO: filter col by target pairs
+    [[nodiscard]] bool useCollision(GameObject* other) const;
+    virtual bool isValidCollisionTarget(GameObject* other) const = 0;
     virtual void onCollision(GameObject* other);
     std::unique_ptr<Collider> col;
     bool awaitingDestroy = false;

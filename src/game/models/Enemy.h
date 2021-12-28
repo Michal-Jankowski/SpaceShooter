@@ -10,6 +10,7 @@ public:
     void update(SetupWindow *gScene) override;
     void onCollision(GameObject *other) override;
     void drawHud(GameHUD *hud) override;
+    bool isValidCollisionTarget(GameObject *other) const override;
 private:
     inline static const std::string MODEL_PATH = "../res/models/enemy.obj";
 };

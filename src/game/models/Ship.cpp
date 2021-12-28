@@ -57,3 +57,7 @@ void Ship::addPoint(Ship::PointType type) {
     }
 }
 
+bool Ship::isValidCollisionTarget(GameObject *other) const {
+     return false;
+}
+

@@ -282,14 +282,13 @@ void GameScene::gameObjectsLoop() {
     }
     ///COLLISIONS
     for (int i = 0; i < gameObjects.size(); ++i) {
-        if(gameObjects[i]->useCollision()){
-            for (int j = i+1; j < gameObjects.size(); ++j) {
-                if (gameObjects[j]->useCollision()) {
-                    bool col = gameObjects[i]->col->isColliding(gameObjects[j]->col.get());
-                    if(col){
-                        gameObjects[i]->onCollision(gameObjects[j].get());
-                        gameObjects[j]->onCollision(gameObjects[i].get());
-                    }
+        for (int j = i+1; j < gameObjects.size(); ++j) {
+            if (gameObjects[i]->useCollision(gameObjects[j].get())
+             || gameObjects[j]->useCollision(gameObjects[i].get())) {
+                bool col = gameObjects[i]->col->isColliding(gameObjects[j]->col.get());
+                if(col){
+                    gameObjects[i]->onCollision(gameObjects[j].get());
+                    gameObjects[j]->onCollision(gameObjects[i].get());
                 }
             }
         }

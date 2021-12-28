@@ -12,6 +12,7 @@ public:
     Laser(glm::vec3 from, glm::vec3 to, float lifetime, GameObject* shotFrom);
     void update(SetupWindow *gScene) override;
     void render() override;
+    bool isValidCollisionTarget(GameObject *other) const override;
     GameObject* getShooter();
 private:
     GameObject* shotFrom;

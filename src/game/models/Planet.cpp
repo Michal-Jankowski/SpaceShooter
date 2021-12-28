@@ -16,7 +16,7 @@ Planet::Planet(float size, SetupWindow* scene) : GameModel(MODEL_PATH) {
         glm::vec3 pos = MathUtils::sphericalToCartesianRadians(size,phi,theta);
 
         auto enemy = std::make_unique<Enemy>();
-        enemy->transform->setPosition(pos);
+        enemy->transform->setPosition(pos + transform->getPosition());
         gScene->addObject(std::move(enemy));
     }
 
@@ -26,7 +26,7 @@ Planet::Planet(float size, SetupWindow* scene) : GameModel(MODEL_PATH) {
         glm::vec3 pos = MathUtils::sphericalToCartesianRadians(size,phi,theta);
 
         auto collectible = std::make_unique<Collectible>();
-        collectible->transform->setPosition(pos);
+        collectible->transform->setPosition(pos + transform->getPosition());
         gScene->addObject(std::move(collectible));
     }
 
@@ -39,4 +39,8 @@ void Planet::update(SetupWindow *gScene) {
 
 void Planet::onCollision(GameObject *other) {
     GameObject::onCollision(other);
+}
+
+bool Planet::isValidCollisionTarget(GameObject *other) const {
+    return false;
 }

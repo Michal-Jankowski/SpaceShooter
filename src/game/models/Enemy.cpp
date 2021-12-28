@@ -29,3 +29,8 @@ void Enemy::drawHud(GameHUD *hud) {
     glm::vec3 pos = transform->getPosition();
     hud->addLines(string_utils::formatString("Enemy spawned at: {} {} {}", pos.x, pos.y, pos.z), 1);
 }
+
+bool Enemy::isValidCollisionTarget(GameObject *other) const {
+    return dynamic_cast<Ship*>(other) != nullptr
+        || dynamic_cast<Laser*>(other) != nullptr;
+}

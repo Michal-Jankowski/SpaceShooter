@@ -21,6 +21,7 @@ public:
     void render() override;
     void drawHud(GameHUD *hud) override {}
 
+
     ShaderProgram shader;
     ModelMesh mesh = ModelMesh();
 
