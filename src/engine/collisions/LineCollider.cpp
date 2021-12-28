@@ -4,7 +4,7 @@
 #include "CollisionMath.h"
 #include "SphereCollider.h"
 
-LineCollider::LineCollider(std::shared_ptr<Transform> &transformRef, const glm::vec3 &lineStart, const glm::vec3 &lineEnd)
+LineCollider::LineCollider(Transform* transformRef, const glm::vec3 &lineStart, const glm::vec3 &lineEnd)
                            : Collider(transformRef, false),
                            lineStart(lineStart), lineEnd(lineEnd){
 

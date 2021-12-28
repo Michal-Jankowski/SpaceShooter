@@ -9,7 +9,7 @@
 #include "../elements/Laser.h"
 
 Ship::Ship(std::shared_ptr<Camera> cameraRef) : GameModel(MODEL_PATH), m_camera(std::move(cameraRef)) {
-    col = std::make_unique<SphereCollider>(transform, 2.0f, true);
+    col = std::make_unique<SphereCollider>(transform.get(), 2.0f, true);
 }
 
 void Ship::update(SetupWindow* scene) {

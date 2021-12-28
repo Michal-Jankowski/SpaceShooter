@@ -3,7 +3,7 @@
 #include "Ship.h"
 
 Collectible::Collectible() : GameModel(MODEL_PATH) {
-    col = std::make_unique<SphereCollider>(transform,2.0f, true);
+    col = std::make_unique<SphereCollider>(transform.get(),2.0f, true);
 
 }
 
@@ -24,7 +24,7 @@ void Collectible::onCollision(GameObject *other) {
 void Collectible::drawHud(GameHUD *hud) {
     GameModel::drawHud(hud);
     glm::vec3 pos = transform->getPosition();
-    hud->addLines(string_utils::formatString("Collectible spawned at: {} {} {}", pos.x, pos.y, pos.z), 1);
+    hud->addLines(string_utils::formatString("Collectible spawned at: ({}; {}; {})", pos.x, pos.y, pos.z), 1);
 }
 
 bool Collectible::isValidCollisionTarget(GameObject *other) const {

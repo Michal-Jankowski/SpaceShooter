@@ -4,7 +4,7 @@
 
 #include "Collider.h"
 
-Collider::Collider(std::shared_ptr<Transform> &transformRef,bool drawDebug) {
+Collider::Collider(Transform *transformRef,bool drawDebug) {
     this->debugEnable = drawDebug;
     this->transformRef = transformRef;
 }

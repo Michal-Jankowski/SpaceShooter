@@ -17,7 +17,7 @@
 class GameModel : public GameObject {
 public:
 
-    explicit GameModel(const std::string& path);
+    explicit GameModel(const std::string& path, glm::vec3 position = glm::vec3(0));
     void render() override;
     void drawHud(GameHUD *hud) override {}
 
@@ -25,7 +25,7 @@ public:
     ShaderProgram shader;
     ModelMesh mesh = ModelMesh();
 
-
+    std::unique_ptr<Transform> transform;
 
 };
 

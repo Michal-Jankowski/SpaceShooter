@@ -9,7 +9,7 @@ Laser::Laser(glm::vec3 from, glm::vec3 to, float lifetime,GameObject* shotFrom) 
     timer = lifetime;
     this->shotFrom = shotFrom;
     glm::vec3 dir = line.getNormalisedDir();
-    col = std::make_unique<LineCollider>(transform,
+    col = std::make_unique<LineCollider>(nullptr,
                                          line.getStartPosition(),
                                          line.getStartPosition() + (dir * lineCollisionCheckLength));
 }

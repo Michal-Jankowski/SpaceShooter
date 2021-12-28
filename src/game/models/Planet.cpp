@@ -7,12 +7,16 @@
 #include "Collectible.h"
 #include <random>
 
-Planet::Planet(float size, SetupWindow* scene) : GameModel(MODEL_PATH) {
+Planet::Planet(float size, SetupWindow* scene, const glm::vec3 &position) : GameModel(MODEL_PATH, position) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist(0,100);
+
     auto* gScene = dynamic_cast<GameScene*>(scene);
 
     for (int i = 0; i < enemies; ++i) {
-        float theta = PI *std::rand();
-        float phi = TWO_PI * std::rand();
+        float theta = PI * (float)dist(rng)/100.0f;
+        float phi = TWO_PI * (float)dist(rng)/100.0f;
         glm::vec3 pos = MathUtils::sphericalToCartesianRadians(size,phi,theta);
 
         auto enemy = std::make_unique<Enemy>();
@@ -21,8 +25,8 @@ Planet::Planet(float size, SetupWindow* scene) : GameModel(MODEL_PATH) {
     }
 
     for (int i = 0; i < maxCollectibles; ++i) {
-        float theta = PI *std::rand();
-        float phi = TWO_PI * std::rand();
+        float theta = PI * (float)dist(rng)/100.0f;
+        float phi = TWO_PI * (float)dist(rng)/100.0f;
         glm::vec3 pos = MathUtils::sphericalToCartesianRadians(size,phi,theta);
 
         auto collectible = std::make_unique<Collectible>();
@@ -30,7 +34,7 @@ Planet::Planet(float size, SetupWindow* scene) : GameModel(MODEL_PATH) {
         gScene->addObject(std::move(collectible));
     }
 
-    //transform->setScale(glm::vec3(size));
+    transform->setScale(glm::vec3(size));
 }
 
 void Planet::update(SetupWindow *gScene) {

@@ -5,7 +5,7 @@
 
 
 Enemy::Enemy() : GameModel(MODEL_PATH) {
-    col = std::make_unique<SphereCollider>(transform,2.0f, true);
+    col = std::make_unique<SphereCollider>(transform.get(),2.0f, true);
 }
 
 void Enemy::update(SetupWindow* gScene) {
@@ -27,7 +27,7 @@ void Enemy::onCollision(GameObject *other) {
 
 void Enemy::drawHud(GameHUD *hud) {
     glm::vec3 pos = transform->getPosition();
-    hud->addLines(string_utils::formatString("Enemy spawned at: {} {} {}", pos.x, pos.y, pos.z), 1);
+    hud->addLines(string_utils::formatString("Enemy spawned at: ({}; {}; {})", pos.x, pos.y, pos.z), 1);
 }
 
 bool Enemy::isValidCollisionTarget(GameObject *other) const {

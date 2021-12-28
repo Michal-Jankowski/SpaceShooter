@@ -42,7 +42,6 @@ void GameScene::initScene() {
 		shaderManager.loadFragmentShader("laser_part", "../src/shaders/line.frag");
 		shaderManager.loadVertexShader("laser_part", "../src/shaders/line.vert");
 
-
 		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
 		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("main_part"));
@@ -82,10 +81,9 @@ void GameScene::initScene() {
                 15.0f);
 
 		gameObjects.push_back(std::make_unique<Ship>(m_camera));
-        auto planet1 = std::make_unique<Planet>(30.0f, this);
-        planet1->transform->setPosition(-50.0f, 0.0f, -50.0f);
+        auto planet1 = std::make_unique<Planet>(30.0f, this, glm::vec3(-50.0f, 0.0f, -50.0f));
 		gameObjects.push_back(std::move(planet1));
-		gameObjects.push_back(std::make_unique<Planet>(1.0f, this));
+		//gameObjects.push_back(std::make_unique<Planet>(1.0f, this));
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

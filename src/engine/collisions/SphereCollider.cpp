@@ -17,7 +17,7 @@ bool SphereCollider::isColliding(Collider* other) {
     return false;
 }
 
-SphereCollider::SphereCollider(std::shared_ptr<Transform> &transformRef, float radius, bool drawDebug) : Collider(transformRef, drawDebug) {
+SphereCollider::SphereCollider(Transform* transformRef, float radius, bool drawDebug) : Collider(transformRef, drawDebug) {
     this->radius = radius;
 }
 
