@@ -11,7 +11,7 @@ public:
     void onCollision(GameObject *other) override;
     void drawHud(GameHUD *hud) override;
 private:
-    inline static const std::string MODEL_PATH = "../res/models/enemyPoint.obj";
+    inline static const std::string MODEL_PATH = "../res/models/enemy.obj";
 };
 
 
