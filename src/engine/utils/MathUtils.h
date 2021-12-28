@@ -11,7 +11,8 @@
 
 class MathUtils {
 public:
-    static glm::vec3 sphericalToCartesian(float radius, float phi, float theta);
+    static glm::vec3 sphericalToCartesianAngles(float radius, float phi, float theta);
+    static glm::vec3 sphericalToCartesianRadians(float radius, float phi, float theta);
 };
 
 
