@@ -26,7 +26,6 @@ std::vector<glm::vec3> cratePositions
 };
 
 bool visualizeColorFrameBuffer = false;
-std::array<glm::vec3, 2> linePositions = {glm::vec3(-50, 1, 120), glm::vec3(-32, 1, 8) };
 
 void GameScene::initScene() {
 
@@ -95,7 +94,7 @@ void GameScene::initScene() {
 	}
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0);
-	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 }
 
@@ -105,9 +104,10 @@ void GameScene::renderScene() {
 	auto& shaderProgramManager = ShaderProgramManager::getInstance();
 	auto& textureManager = TextureManager::getInstance();
 
-	DefaultBuff::bindAsBothReadAndDraw();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	DefaultBuff::bindAsBothReadAndDraw();
 
+	gameObjectsLoop();
     auto& mainProgram = shaderProgramManager.getShaderProgram("main");
   	auto& outlineProgram = shaderProgramManager.getShaderProgram("outline");
     matrixManager.setProjectionMatrix(getProjectionMatrix());
@@ -118,7 +118,6 @@ void GameScene::renderScene() {
     glm::mat4 translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
   	mainProgram.useProgram();
     mainProgram.setUniform("matrices.modelMatrix",translated);
-    gameObjectsLoop();
 	
 	matrixManager.setProjectionMatrix(getProjectionMatrix());
 	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
@@ -141,8 +140,7 @@ void GameScene::renderScene() {
 		objectPicker.performObjectPicking(cursorPosition.x, cursorPosition.y);
 		objectPicker.copyColorToDefaultFrameBuffer();
 	}
-
-	// TODO: render skybox only with AmbientLight, do we need that?
+	// Set Light properties for skybox, instead we would have illuminated sky
 	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
 	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
@@ -183,7 +181,6 @@ void GameScene::renderScene() {
 
     m_HUD->renderHUD(ambientSkybox);
     drawGameObjectsHUD();
-
 	DefaultBuff::bindAsBothReadAndDraw();
 	DefaultBuff::setFullViewport();
 }
