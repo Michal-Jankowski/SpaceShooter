@@ -17,7 +17,6 @@ private:
 	ShaderProgramManager(const ShaderProgramManager&) = delete; 
 	void operator=(const ShaderProgramManager&) = delete; 
 
-
 	bool containsShaderProgram(const std::string& key) const;
 
 	std::map<std::string, std::unique_ptr<ShaderProgram>> m_shaderProgramKeys; 

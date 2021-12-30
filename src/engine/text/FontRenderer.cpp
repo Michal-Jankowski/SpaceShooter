@@ -55,7 +55,7 @@ FreeTypeFont::~FreeTypeFont()
 
 void FreeTypeFont::addCharacterRange(unsigned int characterFrom, unsigned int characterTo)
 {
-    _characterRanges.push_back(CharacterRange(characterFrom, characterTo));
+    m_characterRanges.push_back(CharacterRange(characterFrom, characterTo));
 }
 
 bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
@@ -80,7 +80,7 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
     }
 
     FT_Set_Pixel_Sizes(freeTypeFace, 0, pixelSize);
-    _pixelSize = pixelSize;
+    m_pixelSize = pixelSize;
 
     std::vector<unsigned char> textureData(CHARACTERS_TEXTURE_SIZE * CHARACTERS_TEXTURE_SIZE, 0);
     long long currentPixelPositionRow = 0;
@@ -89,15 +89,15 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
     auto currentRenderIndex = 0;
     std::unique_ptr<TextureLoader> texture = std::make_unique<TextureLoader>();
 
-    glGenVertexArrays(1, &_vao);
-    glBindVertexArray(_vao);
-    _vbo.createVBO();
-    _vbo.bindVBO();
+    glGenVertexArrays(1, &m_vao);
+    glBindVertexArray(m_vao);
+    m_vbo.createVBO();
+    m_vbo.bindVBO();
 
     auto finalizeTexture = [this, &texture, &textureData](bool createNext)
     {
         texture->createFromData(textureData.data(), CHARACTERS_TEXTURE_SIZE, CHARACTERS_TEXTURE_SIZE, GL_DEPTH_COMPONENT, true);
-        _textures.push_back(std::move(texture));
+        m_textures.push_back(std::move(texture));
         if (createNext)
         {
             texture = std::make_unique<TextureLoader>();
@@ -105,9 +105,9 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
         }
     };
 
-    for (const auto& characterRange : _characterRanges)
+    for (const auto& characterRange : m_characterRanges)
     {
-        for (auto c = characterRange.characterCodeFrom; c <= characterRange.characterCodeTo;)
+        for (auto c = characterRange.m_characterCodeFrom; c <= characterRange.m_characterCodeTo;)
         {
             FT_Load_Glyph(freeTypeFace, FT_Get_Char_Index(freeTypeFace, c), FT_LOAD_DEFAULT);
             FT_Render_Glyph(freeTypeFace->glyph, FT_RENDER_MODE_NORMAL);
@@ -137,7 +137,7 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
                 continue;
             }
 
-            auto& charProps = _characterProperties[c]; // This also creates entry, if it does not exist
+            auto& charProps = m_characterProperties[c]; // This also creates entry, if it does not exist
             charProps.characterCode = c;
             charProps.width = freeTypeFace->glyph->metrics.width >> 6;
             charProps.bearingX = freeTypeFace->glyph->metrics.horiBearingX >> 6;
@@ -180,12 +180,12 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
 
             for (int i = 0; i < 4; i++)
             {
-                _vbo.addRawData(&vertices[i], sizeof(glm::vec2));
-                _vbo.addRawData(&textureCoordinates[i], sizeof(glm::vec2));
+                m_vbo.addRawData(&vertices[i], sizeof(glm::vec2));
+                m_vbo.addRawData(&textureCoordinates[i], sizeof(glm::vec2));
             }
 
             charProps.renderIndex = currentRenderIndex;
-            charProps.textureIndex = static_cast<int>(_textures.size());
+            charProps.textureIndex = static_cast<int>(m_textures.size());
             currentPixelPositionCol += bmpWidth + 1;
             currentRenderIndex += 4;
             c++;
@@ -197,7 +197,7 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
         finalizeTexture(false);
     }
 
-    _vbo.uploadDataToGPU(GL_STATIC_DRAW);
+    m_vbo.uploadDataToGPU(GL_STATIC_DRAW);
     // Setup vertex positions pointers
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2) * 2, reinterpret_cast<void*>(0));
@@ -210,14 +210,14 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
     FT_Done_Face(freeTypeFace);
     FT_Done_FreeType(freeTypeLibrary);
 
-    _isLoaded = true;
+    m_isLoaded = true;
     return true;
 }
 
 void FreeTypeFont::printInternal(int x, int y, const std::string& text, int pixelSize) const
 {
     // Don't print, if the font hasn't been loaded successfully
-    if (!_isLoaded) {
+    if (!m_isLoaded) {
         return;
     }
 
@@ -229,18 +229,18 @@ void FreeTypeFont::printInternal(int x, int y, const std::string& text, int pixe
     auto& shaderProgram = getFreetypeFontShaderProgram();
     shaderProgram.useProgram();
     shaderProgram.setUniform("matrices.projectionMatrix", MatrixManager::getInstance().getOrthoProjectionMatrix());
-    shaderProgram.setUniform("color", _color);
+    shaderProgram.setUniform("color", m_color);
 
     getFreetypeFontSampler().bind();
     shaderProgram.setUniform("sampler", 0);
     //shaderProgram[ShaderConstants::sampler()] = 0;
 
     glm::vec2 currentPos(x, y);
-    const auto usedPixelSize = pixelSize == -1 ? _pixelSize : pixelSize;
+    const auto usedPixelSize = pixelSize == -1 ? m_pixelSize : pixelSize;
     auto lastBoundTextureIndex = -1;
-    const auto scale = static_cast<float>(usedPixelSize) / static_cast<float>(_pixelSize);
+    const auto scale = static_cast<float>(usedPixelSize) / static_cast<float>(m_pixelSize);
 
-    glBindVertexArray(_vao);
+    glBindVertexArray(m_vao);
     for (const auto& c : text)
     {
         if (c == '\n' || c == '\r')
@@ -251,17 +251,17 @@ void FreeTypeFont::printInternal(int x, int y, const std::string& text, int pixe
         }
 
         // If we somehow stumble upon unknown character, ignore it
-        if (_characterProperties.count(c) == 0) {
+        if (m_characterProperties.count(c) == 0) {
             continue;
         }
 
-        const auto& props = _characterProperties.at(c);
+        const auto& props = m_characterProperties.at(c);
         if (props.renderIndex != -1)
         {
             if (lastBoundTextureIndex != props.textureIndex)
             {
                 lastBoundTextureIndex = props.textureIndex;
-                _textures.at(props.textureIndex)->bind();
+                m_textures.at(props.textureIndex)->bind();
             }
 
             glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(currentPos.x, currentPos.y, 0.0f));
@@ -282,8 +282,8 @@ int FreeTypeFont::getTextWidth(const std::string& text, int pixelSize) const
 {
     float result = 0.0f;
     float rowWidth = 0.0f;
-    const auto usedPixelSize = pixelSize == -1 ? _pixelSize : pixelSize;
-    const auto scale = static_cast<float>(usedPixelSize) / static_cast<float>(_pixelSize);
+    const auto usedPixelSize = pixelSize == -1 ? m_pixelSize : pixelSize;
+    const auto scale = static_cast<float>(usedPixelSize) / static_cast<float>(m_pixelSize);
 
     // TODO: would be nice to handle invalid characters here as well
     for (auto i = 0; i < static_cast<int>(text.length()); i++)
@@ -293,7 +293,7 @@ int FreeTypeFont::getTextWidth(const std::string& text, int pixelSize) const
         }
 
         bool lastCharacterInRow = i == text.length() - 1 || text[i + 1] == '\n' || text[i + 1] == '\r';
-        const auto& props = _characterProperties.at(text[i]);
+        const auto& props = m_characterProperties.at(text[i]);
         if (!lastCharacterInRow)
         {
             rowWidth += props.advanceX * scale;
@@ -312,15 +312,15 @@ int FreeTypeFont::getTextWidth(const std::string& text, int pixelSize) const
 
 int FreeTypeFont::getTextHeight(int pixelSize) const
 {
-    const auto usedPixelSize = pixelSize == -1 ? _pixelSize : pixelSize;
-    const auto scale = static_cast<float>(usedPixelSize) / static_cast<float>(_pixelSize);
+    const auto usedPixelSize = pixelSize == -1 ? m_pixelSize : pixelSize;
+    const auto scale = static_cast<float>(usedPixelSize) / static_cast<float>(m_pixelSize);
 
     return static_cast<int>(ceil(usedPixelSize * scale));
 }
 
 void FreeTypeFont::setTextColor(const glm::vec4& color)
 {
-    _color = color;
+    m_color = color;
 }
 
 ShaderProgram& FreeTypeFont::getFreetypeFontShaderProgram() const
@@ -335,16 +335,16 @@ const Sampler& FreeTypeFont::getFreetypeFontSampler() const
 
 void FreeTypeFont::deleteFont()
 {
-    if (!_isLoaded) {
+    if (!m_isLoaded) {
         return;
     }
 
-    _textures.clear();
-    _characterProperties.clear();
-    _characterRanges.clear();
+    m_textures.clear();
+    m_characterProperties.clear();
+    m_characterRanges.clear();
 
-    _vbo.deleteVBO();
-    glDeleteVertexArrays(1, &_vao);
+    m_vbo.deleteVBO();
+    glDeleteVertexArrays(1, &m_vao);
 
-    _isLoaded = false;
+   m_isLoaded = false;
 }

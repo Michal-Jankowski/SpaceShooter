@@ -47,11 +47,11 @@ private:
     std::unique_ptr<RenderBuff> m_depthRenderBuffer;
     std::unique_ptr<TextureLoader> m_texture;
 
-    GLuint m_frameBufferID = 0;
-    GLsizei m_width = 0; 
-    GLsizei m_height = 0; 
-    GLint m_depth = -1; 
-    GLint m_stencil = -1; 
+    GLuint m_frameBufferID{0};
+    GLsizei m_width{0};
+    GLsizei m_height{0};
+    GLint m_depth {-1};
+    GLint m_stencil{-1};
 
 
     void deleteOnlyFrameBuffer();
