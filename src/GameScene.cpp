@@ -62,7 +62,7 @@ void GameScene::initScene() {
 		shaderProgramManager.linkAllPrograms();
 		int width, height;
 		glfwGetWindowSize(getWindow(), &width, &height);
-		ObjPicker::getInstance().initialize();
+		//ObjPicker::getInstance().initialize();
 		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
 
 		gameObjects.push_back(std::make_unique<Ship>(
@@ -96,7 +96,7 @@ void GameScene::renderScene() {
 	auto& textureManager = TextureManager::getInstance();
 
 	DefaultBuff::bindAsBothReadAndDraw();
-	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
+	//glClearColor(0.2, 0.7f, 0.2f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     auto& mainProgram = shaderProgramManager.getShaderProgram("main");
@@ -109,7 +109,7 @@ void GameScene::renderScene() {
     glm::mat4 translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
   	mainProgram.useProgram();
     mainProgram.setUniform("matrices.modelMatrix",translated);
-    gameObjectsLoop();
+    //gameObjectsLoop();
 	
 	matrixManager.setProjectionMatrix(getProjectionMatrix());
 	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
@@ -117,6 +117,7 @@ void GameScene::renderScene() {
 
 	mainProgram = shaderProgramManager.getShaderProgram("main");
 	mainProgram.useProgram();
+	mainProgram.setUniform("isStencil", false);
 	mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
 	mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
@@ -124,15 +125,15 @@ void GameScene::renderScene() {
 	mainProgram.setUniform("sampler", 0);
 	//glStencilMask(0x00); if we don't use stencil, just switch it off
 	
-	auto& objectPicker = ObjPicker::getInstance();
-	objectPicker.renderAllPickableObjects();
+	//auto& objectPicker = ObjPicker::getInstance();
+	//objectPicker.renderAllPickableObjects();
 
-	if (visualizeColorFrameBuffer)
-	{
-		const auto cursorPosition = getOpenGLCursorPosition();
-		objectPicker.performObjectPicking(cursorPosition.x, cursorPosition.y);
-		objectPicker.copyColorToDefaultFrameBuffer();
-	}
+	//if (visualizeColorFrameBuffer)
+	//{
+	//	const auto cursorPosition = getOpenGLCursorPosition();
+	//	objectPicker.performObjectPicking(cursorPosition.x, cursorPosition.y);
+	//	objectPicker.copyColorToDefaultFrameBuffer();
+	//}
 
 	// TODO: render skybox only with AmbientLight, do we need that?
 	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
@@ -144,67 +145,44 @@ void GameScene::renderScene() {
 	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 	glStencilMask(0xFF);
 
-	SamplerManager::getInstance().getSampler("main").bind();
-	m_ambientLight->setUniform(mainProgram, "ambientLight");
-	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
-	mainProgram.setUniform("cameraPosition", m_camera->getEye());
-	m_material->setUniform(mainProgram, "material");
-	std::vector<glm::mat4> crateModelMatrices;
-	for (const auto& position : cratePositions)
-	{
-		const auto crateSize = 18.0f;
-		auto model = glm::translate(glm::mat4(1.0f), position);
-		float renderedHeight = 5.0f;
-		model = glm::translate(model, glm::vec3(0.0f, 1.5f + crateSize / 2.0f + renderedHeight, 0.0f));
-		model = glm::rotate(model, m_rotationAngleRad, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, m_rotationAngleRad, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, m_rotationAngleRad, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(crateSize, crateSize, crateSize));
-		crateModelMatrices.push_back(model);
-		mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
-		TextureManager::getInstance().getTexture("lava").bind(0);
-		m_cube->render();
-	}
-
+	Cube cube1 = Cube();
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(-60.0f, 0.0f, 0.0f));
+	auto crateSize = 18.0f;
+	float renderedHeight = 5.0f;
+	model = glm::translate(model, glm::vec3(0.0f, 1.5f + crateSize / 2.0f + renderedHeight, 0.0f));
+	model = glm::scale(model, glm::vec3(crateSize, crateSize, crateSize));
+	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
+	TextureManager::getInstance().getTexture("lava").bind(0);
+	cube1.render();
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	//m_HUD->renderHUD(ambientSkybox);
-
-	// draw raycast "Laser" & check for collision with sphere
-	// projection, view matrix
-	m_raycast->draw();
-	if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 40)) {
-		std::cout << "Laser HIT" << std::endl;
-	}
 
 	// 2nd pass
 	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 	glStencilMask(0x00);
 	glDisable(GL_DEPTH_TEST);
 
-	model = glm::mat4(1.0);
-	translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
-	outlineProgram.useProgram();
-	outlineProgram.setUniform("matrices.modelMatrix", translated);
-	gameObjectsLoop();
-
-	matrixManager.setProjectionMatrix(getProjectionMatrix());
-	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
-	matrixManager.setViewMatrix(m_camera->getViewMatrix());
-
-	outlineProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
-	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
-	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
-	outlineProgram.setUniform("color", glm::vec4(1.04, 1.28, 0.26, 1.0));
-
+	mainProgram.useProgram();
+	Cube cube2 = Cube();
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(-60.0f, 0.0f, 0.0f));
+	crateSize = 19.0f;
+	renderedHeight = 5.0f;
+	model = glm::translate(model, glm::vec3(0.0f, 1.5f + crateSize / 2.0f + renderedHeight, 0.0f));
+	model = glm::scale(model, glm::vec3(crateSize, crateSize, crateSize));
+	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
+	TextureManager::getInstance().getTexture("lava").bind(0);
+	mainProgram.setUniform("isStencil", true);
+	cube2.render();
+	//gameObjectsLoop();
 
 	glStencilMask(0xFF);
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilFunc(GL_ALWAYS, 0, 0xFF);
 	glEnable(GL_DEPTH_TEST);
 
 	DefaultBuff::bindAsBothReadAndDraw();
 	DefaultBuff::setFullViewport();
-	m_raycast->draw();
+	//m_raycast->draw();
 
 }
 void GameScene::onWindowSizeChanged(int width, int height)

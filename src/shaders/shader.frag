@@ -9,6 +9,7 @@ smooth in vec4 IOCameraSpacePosition;
 uniform sampler2D sampler;
 uniform vec4 color;
 uniform vec3 cameraPosition;
+uniform bool isStencil;
 
 struct AmbientLight {
     vec3 color;
@@ -68,5 +69,9 @@ void main() {
     vec4 objColor = texColor * color;
     vec3 lightColour = getAmbientLightColour(ambientLight) + getDiffuseLightColour(diffuseLight, normal) 
     + getSpecularMaterialLightColour(diffuseLight, material, IOWorldPosition.xyz, normal, cameraPosition);
-    outputColour = objColor * vec4(lightColour, 1.0);
+    if (isStencil) {
+        outputColour = color;
+    } else {
+        outputColour = objColor * vec4(lightColour, 1.0);
+    }
 }
