@@ -36,6 +36,9 @@ void Sampler::setFilterOptions(FilterOptions filterOption, GLenum pname) const {
     }
     GLint param = GL_NEAREST;
     switch (filterOption) {
+    case FilterOptions::MIN_FILTER_NEAREST:
+        param = GL_NEAREST;
+        break;
     case FilterOptions::MIN_FILTER_BILINEAR:
         param = GL_LINEAR;
         break;
@@ -55,7 +58,7 @@ void Sampler::setFilterOptions(FilterOptions filterOption, GLenum pname) const {
         param = GL_LINEAR;
         break;
     default:
-        std::cerr << "Invalid texture filtering option!" << std::endl;
+        throw std::runtime_error("Invalid texture filtering option!");
     }
         
     glSamplerParameteri(m_samplerID, pname, param);
