@@ -25,7 +25,7 @@ void Line::setupBuffers()
 	glBindVertexArray(m_VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices) * m_vertices.size(), m_vertices.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices) * m_vertices.size(), m_vertices.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), reinterpret_cast<void*>(0));
 	glEnableVertexAttribArray(0);
 
@@ -33,22 +33,25 @@ void Line::setupBuffers()
 	glBindVertexArray(0);
 }
 
-void Line::updateShader() {
-	auto& matrixManager = MatrixManager::getInstance();
-	auto& shaderProgramManager = ShaderProgramManager::getInstance();
-	auto& laserProgram = shaderProgramManager.getShaderProgram("laser");
-
-	laserProgram.useProgram();
-	laserProgram.setUniform("matrices.projectionMatrix", matrixManager.getProjectionMatrix());
-	laserProgram.setUniform("matrices.viewMatrix", matrixManager.getViewMatrix());
-	laserProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
-	laserProgram.setUniform("color", m_lineColor);
-}
 void Line::draw()
 {
-	updateShader();
+	auto& matrixManager = MatrixManager::getInstance();
+	auto& shaderProgramManager = ShaderProgramManager::getInstance();
+	auto& mainProgram = shaderProgramManager.getShaderProgram("main");
+
+
+	mainProgram.useProgram();
+	mainProgram.setUniform("matrices.projectionMatrix", matrixManager.getProjectionMatrix());
+	mainProgram.setUniform("matrices.viewMatrix", matrixManager.getViewMatrix());
+	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
+	mainProgram.setUniform("laser.color", m_lineColor);
+	mainProgram.setUniform("laser.isOn", true);
+
 	glBindVertexArray(m_VAO);
 	glDrawArrays(GL_LINES, 0, 2);
+
+	mainProgram.setUniform("laser.isOn", false);
+
 }
 
 void Line::setColor(const glm::vec4& color) {

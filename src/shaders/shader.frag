@@ -10,6 +10,11 @@ uniform sampler2D sampler;
 uniform vec4 color;
 uniform vec3 cameraPosition;
 
+struct Laser {
+    vec4 color;
+    bool isOn;
+};
+
 struct AmbientLight {
     vec3 color;
     bool isOn;
@@ -31,6 +36,7 @@ struct Material {
 uniform AmbientLight ambientLight;
 uniform DiffuseLight diffuseLight;
 uniform Material material;
+uniform Laser laser;
 
 vec3 getAmbientLightColour(AmbientLight ambientLight) {
     if(!ambientLight.isOn) { return vec3(0.0);}
@@ -63,10 +69,15 @@ vec3 getSpecularMaterialLightColour(DiffuseLight diffuseLight, Material material
 void main() {
     vec3 normal = normalize(IOVerNormal);
     vec4 texColor = texture(sampler, IOVerTexCoord);
-    if(texColor.a < 0.05)
+    if(texColor.a < 0.05) {
         discard;
+    }
     vec4 objColor = texColor * color;
     vec3 lightColour = getAmbientLightColour(ambientLight) + getDiffuseLightColour(diffuseLight, normal)
     + getSpecularMaterialLightColour(diffuseLight, material, IOWorldPosition.xyz, normal, cameraPosition);
-    outputColour =  objColor * vec4(lightColour, 1.0);
+    if(laser.isOn) {
+        outputColour = laser.color;
+    } else {
+        outputColour =  objColor * vec4(lightColour, 1.0);
+    }
 }

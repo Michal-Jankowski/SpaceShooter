@@ -14,7 +14,6 @@ public:
     [[nodiscard]] glm::vec3 getNormalisedDir() const;
 private:
 	void setupBuffers();
-	void updateShader();
 	unsigned int m_VBO{ 0 }, m_VAO{ 0 };
 	std::vector<float> m_vertices;
     glm::vec3 m_startPoint;
