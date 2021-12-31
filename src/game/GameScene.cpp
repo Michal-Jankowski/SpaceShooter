@@ -16,15 +16,6 @@
 #include "models/Planet.h"
 
 
-std::vector<glm::vec3> cratePositions
-{
-	glm::vec3(-30.0f, 0.0f, -80.0f),
-	glm::vec3(30.0f, 0.0f, -40.0f),
-	glm::vec3(-30.0f, 0.0f, 0.0f),
-	glm::vec3(30.0f, 0.0f, 40.0f),
-	glm::vec3(-30.0f, 0.0f, 80.0f),
-};
-
 bool visualizeColorFrameBuffer = false;
 
 void GameScene::initScene() {
@@ -40,6 +31,7 @@ void GameScene::initScene() {
 		shaderManager.loadVertexShader("outline_part", "../src/shaders/shaderOutline.vert");
 		shaderManager.loadFragmentShader("laser_part", "../src/shaders/line.frag");
 		shaderManager.loadVertexShader("laser_part", "../src/shaders/line.vert");
+
 
 		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
@@ -92,10 +84,14 @@ void GameScene::initScene() {
 		closeWindow(true);
 		return;
 	}
-	glEnable(GL_DEPTH_TEST);
-	glClearDepth(1.0);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glClearDepth(1.0);
+	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
 }
 
 void GameScene::renderScene() {
@@ -104,7 +100,7 @@ void GameScene::renderScene() {
 	auto& shaderProgramManager = ShaderProgramManager::getInstance();
 	auto& textureManager = TextureManager::getInstance();
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	DefaultBuff::bindAsBothReadAndDraw();
 
 	gameObjectsLoop();
@@ -130,6 +126,7 @@ void GameScene::renderScene() {
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
 	mainProgram.setUniform("sampler", 0);
+	mainProgram.setUniform("isStencil", false);
 
 	auto& objectPicker = ObjPicker::getInstance();
 	objectPicker.renderAllPickableObjects();
@@ -152,35 +149,46 @@ void GameScene::renderScene() {
 	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
 	mainProgram.setUniform("cameraPosition", m_camera->getEye());
 	m_material->setUniform(mainProgram, "material");
-	std::vector<glm::mat4> crateModelMatrices;
-	for (const auto& position : cratePositions)
-	{
-		const auto crateSize = 8.0f;
-		auto model = glm::translate(glm::mat4(1.0f), position);
-		float renderedHeight = 5.0f;
-		model = glm::translate(model, glm::vec3(0.0f, 1.5f + crateSize / 2.0f + renderedHeight, 0.0f));
-		model = glm::rotate(model, m_rotationAngleRad, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, m_rotationAngleRad, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, m_rotationAngleRad, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(crateSize, crateSize, crateSize));
-		crateModelMatrices.push_back(model);
-		mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
-		TextureManager::getInstance().getTexture("lava").bind(0);
-		m_cube->render();
-	}
+
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
+
+	Cube cub1 = Cube();
+	auto crateSize = 8.0f;
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 0.0f, -80.0f));
+	float renderedHeight = 5.0f;
+	model = glm::translate(model, glm::vec3(0.0f, 1.5f + crateSize / 2.0f + renderedHeight, 0.0f));
+	model = glm::scale(model, glm::vec3(crateSize, crateSize, crateSize));
+	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
+	TextureManager::getInstance().getTexture("lava").bind(0);
+	m_cube->render();
+	
 
 	textureManager.getTexture("snow").bind(0);
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	m_sphere->render();
 
-	outlineProgram.useProgram();
-	outlineProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
-	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
-	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
-	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+
+	mainProgram.setUniform("isStencil", true);
+	crateSize = 10.0f;
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 0.0f, -80.0f));
+	renderedHeight = 5.0f;
+	model = glm::translate(model, glm::vec3(0.0f, 1.5f + crateSize / 2.0f + renderedHeight, 0.0f));
+	model = glm::scale(model, glm::vec3(crateSize, crateSize + 5.0f, crateSize ));
+	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
+	TextureManager::getInstance().getTexture("lava").bind(0);
+	m_cube->render();
+	mainProgram.setUniform("isStencil", false);
 
     m_HUD->renderHUD(ambientSkybox);
     drawGameObjectsHUD();
+
+	glStencilMask(0xFF);
+	glStencilFunc(GL_ALWAYS, 0, 0xFF);
+	glEnable(GL_DEPTH_TEST);
+
 	DefaultBuff::bindAsBothReadAndDraw();
 	DefaultBuff::setFullViewport();
 }

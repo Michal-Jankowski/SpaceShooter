@@ -50,7 +50,7 @@ Material::Material(const aiMaterial *assimpMat) {
     float spec;
     assimpMat->Get(AI_MATKEY_SHININESS, spec);
     m_specularIntensity = spec;
-    float specStr = 1.0f;
+    float specStr = 259.0f;
     assimpMat->Get(AI_MATKEY_SHININESS_STRENGTH, specStr);
     m_specularStrength = specStr;
 

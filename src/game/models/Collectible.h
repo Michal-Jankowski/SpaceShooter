@@ -7,6 +7,7 @@
 
 
 #include "../../engine/models/GameModel.h"
+#include "../../engine/buffers/StencilOutline.h"
 
 class Collectible : public GameModel {
 public:
@@ -17,6 +18,7 @@ public:
     bool isValidCollisionTarget(GameObject *other) const override;
 private:
     inline static const std::string MODEL_PATH = "../res/models/collectible.obj";
+    StencilOutline m_outline;
 };
 
 

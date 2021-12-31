@@ -3,12 +3,13 @@
 #include "Ship.h"
 
 Collectible::Collectible() : GameModel(MODEL_PATH) {
+    m_outline = StencilOutline(this, this, glm::mat4(1.0f), glm::vec4(1.0f, 0.0f, 1.0f, 0.0f), glm::vec3(10.0f, 10.0f, 10.0f));
     col = std::make_unique<SphereCollider>(transform.get(),2.0f, true);
-
 }
 
 void Collectible::update(SetupWindow* gScene) {
-    GameModel::update(gScene);
+     m_outline.render();
+    //GameModel::update(gScene);
 }
 
 void Collectible::onCollision(GameObject *other) {

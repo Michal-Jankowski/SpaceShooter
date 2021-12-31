@@ -39,7 +39,6 @@ void Line::draw()
 	auto& shaderProgramManager = ShaderProgramManager::getInstance();
 	auto& mainProgram = shaderProgramManager.getShaderProgram("main");
 
-
 	mainProgram.useProgram();
 	mainProgram.setUniform("matrices.projectionMatrix", matrixManager.getProjectionMatrix());
 	mainProgram.setUniform("matrices.viewMatrix", matrixManager.getViewMatrix());
