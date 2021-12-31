@@ -2,6 +2,7 @@
 #include "../utils/PathHelper.h"
 #include "../textures/TextureManager.h"
 #include "../shaders/ShaderProgramManager.h"
+#include "../textures/SamplerManager.h"
 #include <assimp/types.h>
 #include <map>
 
@@ -107,6 +108,7 @@ void Material::setup(const glm::mat4 model) const{
 
 
     TextureManager::getInstance().getTexture(mainTextureKey).bind();
+    SamplerManager::getInstance().getSampler("main").bind();
     auto shader = ShaderProgramManager::getInstance().getShaderProgram(shaderProgramKey);
     shader.useProgram();
     shader.setUniform("matrices.modelMatrix", model);

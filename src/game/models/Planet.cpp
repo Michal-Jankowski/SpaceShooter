@@ -21,6 +21,7 @@ Planet::Planet(float size, SetupWindow* scene, const glm::vec3 &position) : Game
 
         auto enemy = std::make_unique<Enemy>();
         enemy->transform->setPosition(pos + transform->getPosition());
+        enemy->transform->setLookAt(pos);
         gScene->addObject(std::move(enemy));
     }
 
