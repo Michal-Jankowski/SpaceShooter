@@ -40,9 +40,15 @@ public:
 	void setUniform(const std::string&  sName, glm::mat4* mMatrices, int iCount);
 	void setUniform(const std::string&  sName, const glm::mat4 mMatrix);
 
-
 	// Model and normal matrix setting
 	void SetModelAndNormalMatrix(const std::string& sModelMatrixName, const std::string& sNormalMatrixName, glm::mat4 mModelMatrix);
+
+	GLuint getUniformBlockIndex(const std::string& uniformBlockName) const;
+
+	void bindUniformBlockToBindingPoint(const std::string& uniformBlockName, GLuint bindingPoint) const;
+
+	void setTransformFeedbackRecordedVariables(const std::vector<std::string>& recordedVariablesNames, GLenum bufferMode = GL_INTERLEAVED_ATTRIBS) const;
+
 
 private:
 	GLuint m_programID;

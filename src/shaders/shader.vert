@@ -1,6 +1,6 @@
 #version 440 core
 
-layout(std140, binding = 0) uniform matricesBlock
+layout(std140, binding = 0) uniform MatricesBlock
 {
 	mat4 projectionMatrix;
 	mat4 viewMatrix;

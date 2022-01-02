@@ -50,7 +50,7 @@ uniform DiffuseLight diffuseLight;
 uniform Material material;
 
 uniform int numPointLights;
-layout(std140, binding = 1) uniform pointLightBlock
+layout(std140, binding = 1) uniform PointLightsBlock
 {
     PointLight lights[5];
 } pointLights_block;

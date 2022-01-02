@@ -59,7 +59,7 @@ void GameScene::initScene() {
 		m_cube = std::make_unique<Cube>(true, true, true);
 		m_plainGround = std::make_unique<PlainGround>(true, true, true);
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
-		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
+		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 5.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
 		m_raycast = std::make_unique<Laser>(linePositions[0], linePositions[1]);
 		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
@@ -77,6 +77,9 @@ void GameScene::initScene() {
 		ObjPicker::getInstance().initialize();
 		m_camera = std::make_unique<Camera>(glm::vec3(-120.0f, 8.0f, 120.0f), glm::vec3(-120.0f, 8.0f, 119.0f), glm::vec3(0.0f, 1.0f, 0.f), glm::i32vec2(width / 2, height / 2), 15.0f);
 
+		mainShaderProgram.bindUniformBlockToBindingPoint("MatricesBlock", UniformBlockBindingPoints::MATRICES);
+		mainShaderProgram.bindUniformBlockToBindingPoint("PointLightsBlock", UniformBlockBindingPoints::POINT_LIGHTS);
+
 		gameObjects.push_back(std::make_unique<Ship>(
                 "../res/models/ship.obj"));
 		gameObjects.push_back(std::make_unique<Collectible>(
@@ -93,7 +96,7 @@ void GameScene::initScene() {
 	}
 
 	// Create two initial point lights
-	m_pointLights.push_back(MovingPointLight::createRandomPointLight(glm::vec3(20.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, -.10f)));
+	m_pointLights.push_back(MovingPointLight::createRandomPointLight(glm::vec3(20.0f, 40.0f, 0.0f), glm::vec3(0.0f, 0.0f, -0.10f)));
 	//m_pointLights.push_back(MovingPointLight::createRandomPointLight(glm::vec3(60.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
 
 	glEnable(GL_DEPTH_TEST);
@@ -133,10 +136,6 @@ void GameScene::renderScene() {
 		m_UBOPointLights->setBufferData(offset, pointLight.getDataPointer(), pointLight.getDataSizeStd140());
 		offset += pointLight.getDataSizeStd140();
 	}
-	
-	matrixManager.setProjectionMatrix(getProjectionMatrix());
-	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
-	matrixManager.setViewMatrix(m_camera->getViewMatrix());
 
 	mainProgram = shaderProgramManager.getShaderProgram("main");
 	mainProgram.useProgram();
@@ -146,22 +145,22 @@ void GameScene::renderScene() {
 	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
 	mainProgram.setUniform("sampler", 0);
 
-	auto& objectPicker = ObjPicker::getInstance();
-	objectPicker.renderAllPickableObjects();
+	//auto& objectPicker = ObjPicker::getInstance();
+	//objectPicker.renderAllPickableObjects();
 
-	if (visualizeColorFrameBuffer)
-	{
-		const auto cursorPosition = getOpenGLCursorPosition();
-		objectPicker.performObjectPicking(cursorPosition.x, cursorPosition.y);
-		objectPicker.copyColorToDefaultFrameBuffer();
-	}
+	//if (visualizeColorFrameBuffer)
+	//{
+	//	const auto cursorPosition = getOpenGLCursorPosition();
+	//	objectPicker.performObjectPicking(cursorPosition.x, cursorPosition.y);
+	//	objectPicker.copyColorToDefaultFrameBuffer();
+	//}
 
 	// render skybox only with AmbientLight
 	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
 	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
 	Material::none().setUniform(mainProgram, "material");
-	//mainProgram.setUniform("numPointLights", 0); // point light number, if not set skybox is illuminated
+	mainProgram.setUniform("numPointLights", 0); // point light number, if not set skybox is illuminated 1
 	m_skybox->render(m_camera->getEye(), mainProgram);
 	
 	SamplerManager::getInstance().getSampler("main").bind();
@@ -169,16 +168,21 @@ void GameScene::renderScene() {
 	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
 	mainProgram.setUniform("cameraPosition", m_camera->getEye());
 	m_material->setUniform(mainProgram, "material");
+	mainProgram.setUniform("numPointLights", 1); // point light number 2
 
 	// Render all point lights
 	for (auto& pointLight : m_pointLights)
 	{
 		auto pointLightModelMatrix = glm::translate(glm::mat4(1.0f), pointLight.position);
 		mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", pointLightModelMatrix);
-		mainProgram.setUniform("color", glm::vec4(pointLight.color, 1.0f));
+		mainProgram.setUniform("color", glm::vec4(pointLight.color, 0.2f));
 		textureManager.getTexture("lava").bind();
 		m_sphere->render();
-		pointLight.update(getValueByTime(10.0f), m_sphere->getRadius() + 1.0f); // heightmap???
+		pointLight.linearAttenuation = 0.1f;
+		pointLight.ambientFactor = 0.3f;
+		pointLight.exponentialAttenuation = 0.3f;
+		pointLight.isOn = true;
+		//pointLight.update(getValueByTime(10.0f), 1.0f); // heightmap???
 	}
 
 	std::vector<glm::mat4> crateModelMatrices;
@@ -198,22 +202,22 @@ void GameScene::renderScene() {
 		m_cube->render();
 	}
 
-	textureManager.getTexture("snow").bind(0);
-	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
-	m_sphere->render();
+	//textureManager.getTexture("snow").bind(0);
+	//mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
+	//m_sphere->render();
 
-	outlineProgram.useProgram();
-	outlineProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
-	outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
-	outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
-	outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
-	m_HUD->renderHUD(ambientSkybox);
+	//outlineProgram.useProgram();
+	//outlineProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
+	//outlineProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
+	//outlineProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
+	//outlineProgram.setUniform("color", glm::vec4(1.0, 0.0, 0.0, 1.0));
+	//m_HUD->renderHUD(ambientSkybox);
 
 	// draw raycast "Laser" & check for collision with sphere
-	m_raycast->draw();
-	if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 30)) {
-		std::cout << "Laser HIT" << std::endl;
-	}
+	//m_raycast->draw();
+	//if (m_raycast->isColliding(linePositions, glm::vec3(0, 0, 0), 30)) {
+	//	std::cout << "Laser HIT" << std::endl;
+	//}
 
 	DefaultBuff::bindAsBothReadAndDraw();
 	DefaultBuff::setFullViewport();
@@ -288,13 +292,6 @@ void GameScene::updateScene() {
 			pointLight.exponentialAttenuation = firstPointLight.exponentialAttenuation;
 		}
 	};
-
-	if (keyPressedOnce(GLFW_KEY_6)) {
-		m_ambientLight->m_color += getValueByTime(0.2f);
-		if (m_ambientLight->m_color.r > 1.0f) {
-			m_ambientLight->m_color = glm::vec3(0.3f);
-		}
-	}
 	
 	ObjPicker::getInstance().updateAllPickableObjects(getValueByTime(1.0f));
 	m_rotationAngleRad += getValueByTime(glm::radians(5.0f));

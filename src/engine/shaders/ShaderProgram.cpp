@@ -186,3 +186,31 @@ void ShaderProgram::SetModelAndNormalMatrix(const std::string& sModelMatrixName,
 	setUniform(sNormalMatrixName, glm::transpose(glm::inverse(glm::mat3(mModelMatrix))));
 }
 
+GLuint ShaderProgram::getUniformBlockIndex(const std::string& uniformBlockName) const {
+	if (!m_isLinked) {
+		std::cerr << "Cannot get index of uniform block " << uniformBlockName << " when program has not been linked!" << std::endl;
+		return GL_INVALID_INDEX;
+	}
+	const auto result = glGetUniformBlockIndex(m_programID, uniformBlockName.c_str());
+	if (result == GL_INVALID_INDEX) {
+		std::cerr << "Could not get index of uniform block " << uniformBlockName << ", check if such uniform block really exists!" << std::endl;
+	}
+	return result;
+}
+
+void ShaderProgram::bindUniformBlockToBindingPoint(const std::string& uniformBlockName, GLuint bindingPoint) const {
+	const auto blockIndex = getUniformBlockIndex(uniformBlockName);
+	if (blockIndex != GL_INVALID_INDEX) {
+		glUniformBlockBinding(m_programID, blockIndex, bindingPoint);
+	}
+}
+
+void ShaderProgram::setTransformFeedbackRecordedVariables(const std::vector<std::string>& recordedVariablesNames, GLenum bufferMode) const {
+	std::vector<const char*> recordedVariablesNamesPtrs;
+	for (const auto& recordedVariableName : recordedVariablesNames) {
+		recordedVariablesNamesPtrs.push_back(recordedVariableName.c_str());
+	}
+
+	glTransformFeedbackVaryings(m_programID, static_cast<GLsizei>(recordedVariablesNamesPtrs.size()), recordedVariablesNamesPtrs.data(), bufferMode);
+}
+
