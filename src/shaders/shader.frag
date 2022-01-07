@@ -6,7 +6,8 @@ smooth in vec2 IOVerTexCoord;
 smooth in vec3 IOVerNormal;
 smooth in vec4 IOWorldPosition;
 smooth in vec4 IOCameraSpacePosition;
-uniform sampler2D sampler;
+uniform sampler2D diffTex;
+uniform sampler2D normTex;
 uniform vec4 color;
 uniform vec3 cameraPosition;
 uniform bool isStencil;
@@ -68,8 +69,11 @@ vec3 getSpecularMaterialLightColour(DiffuseLight diffuseLight, Material material
 }
 
 void main() {
-    vec3 normal = normalize(IOVerNormal);
-    vec4 texColor = texture(sampler, IOVerTexCoord);
+    //vec3 normal = normalize(IOVerNormal);
+    vec3 normal = texture(normTex, IOVerTexCoord).rgb;
+    normal = normalize(normal * 2.0 - 1.0);
+    vec4 texColor = texture(diffTex, IOVerTexCoord);
+    //texColor += texture(diffTex, IOVerTexCoord);
     if(texColor.a < 0.05) {
         discard;
     }

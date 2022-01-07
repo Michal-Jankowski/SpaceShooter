@@ -71,6 +71,18 @@ Material::Material(const aiMaterial *assimpMat) {
             const std::string textureFileName = aiStringToStdString(aiTexturePath);
             mainTextureKey = loadMaterialTexture(textureFileName);
         }
+
+    }
+    if (assimpMat->GetTextureCount(aiTextureType_HEIGHT ) > 0) {
+        if (assimpMat->GetTexture(aiTextureType_HEIGHT, 0, &aiTexturePath) == AI_SUCCESS) {
+            aiBlendMode blendMode;
+            assimpMat->Get(AI_MATKEY_BLEND_FUNC, blendMode);
+            const std::string textureFileName = aiStringToStdString(aiTexturePath);
+            normalTextureKey = loadMaterialTexture(textureFileName);
+            if(!normalTextureKey.empty()) {
+                hasNormal = true;
+            }
+        }
     }
 
 }
@@ -106,12 +118,21 @@ void Material::generateMappings() {
 
 void Material::setup(const glm::mat4 model) const{
 
-
-    TextureManager::getInstance().getTexture(mainTextureKey).bind();
-    SamplerManager::getInstance().getSampler("main").bind();
     auto shader = ShaderProgramManager::getInstance().getShaderProgram(shaderProgramKey);
     shader.useProgram();
+
+    TextureManager::getInstance().getTexture(mainTextureKey).bind(0);
+    SamplerManager::getInstance().getSampler("main").bind(0);
+    if(hasNormal) {
+        TextureManager::getInstance().getTexture(normalTextureKey).bind(1);
+        SamplerManager::getInstance().getSampler("main").bind(1);
+    }
+
+    shader.setUniform("diffTex", 0);
+    shader.setUniform("normTex", 1);
+
     shader.setUniform("matrices.modelMatrix", model);
+
     ///specular
     shader.setUniform("material.isOn", m_isEnabled);
     if (!m_isEnabled) {

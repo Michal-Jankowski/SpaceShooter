@@ -28,7 +28,7 @@ Planet::Planet(float size, SetupWindow* scene, const glm::vec3 &position) : Game
     for (int i = 0; i < maxCollectibles; ++i) {
         float theta = PI * (float)dist(rng)/100.0f;
         float phi = TWO_PI * (float)dist(rng)/100.0f;
-        glm::vec3 pos = MathUtils::sphericalToCartesianRadians(size,phi,theta);
+        glm::vec3 pos = MathUtils::sphericalToCartesianRadians(size * collectiblesOffset,phi,theta);
 
         auto collectible = std::make_unique<Collectible>();
         collectible->transform->setPosition(pos + transform->getPosition());

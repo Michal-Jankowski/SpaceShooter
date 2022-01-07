@@ -125,7 +125,7 @@ void GameScene::renderScene() {
 	mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
-	mainProgram.setUniform("sampler", 0);
+	//mainProgram.setUniform("sampler", 0);
 	mainProgram.setUniform("isStencil", false);
 
 	auto& objectPicker = ObjPicker::getInstance();

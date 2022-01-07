@@ -18,6 +18,8 @@ private:
 	float m_specularStrength;
 
     std::string mainTextureKey;
+    bool hasNormal = false;
+    std::string normalTextureKey;
     std::string shaderProgramKey;
 
     void generateMappings();
