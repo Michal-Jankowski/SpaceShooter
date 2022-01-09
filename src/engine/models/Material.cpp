@@ -6,6 +6,8 @@
 #include <assimp/types.h>
 #include <map>
 
+const std::string Material::assimpModelsShaderKey = "assimp";
+
 Material::Material(const float intensity, const float strength, const bool isEnabled)
     : m_specularIntensity(intensity)
     , m_specularStrength(strength)
@@ -32,19 +34,10 @@ std::string Material::constructAttributeName(const std::string& uniformName, con
 }
 
 Material::Material(const aiMaterial *assimpMat) {
-    generateMappings();
-
     aiString name;
     assimpMat->Get(AI_MATKEY_NAME, name);
 
     auto nameStr = name.C_Str();
-
-    if (!materialShaderMappings.count(nameStr))    {
-        auto msg = "Shader material mapping non-defined!";
-        throw std::runtime_error(msg);
-    }
-
-    shaderProgramKey = materialShaderMappings[name.C_Str()];
 
     ///SPECULARITY
     m_isEnabled = true;
@@ -108,17 +101,9 @@ std::string Material::aiStringToStdString(const aiString& aiStringStruct)
     return dataPtr;
 }
 
-void Material::generateMappings() {
-    materialShaderMappings["DefaultMaterial"] = "";
-    materialShaderMappings["main-ship"] = "main";
-    materialShaderMappings["side-ship"] = "main";
-    materialShaderMappings["collectible"] = "main";
-    materialShaderMappings["planet"] = "main";
-}
-
 void Material::setup(const glm::mat4 model) const{
 
-    auto shader = ShaderProgramManager::getInstance().getShaderProgram(shaderProgramKey);
+    auto shader = ShaderProgramManager::getInstance().getShaderProgram(assimpModelsShaderKey);
     shader.useProgram();
 
     TextureManager::getInstance().getTexture(mainTextureKey).bind(0);

@@ -1,0 +1,27 @@
+vec3 getAmbientLightColour(AmbientLight ambientLight) {
+    if(!ambientLight.isOn) { return vec3(0.0);}
+    return ambientLight.color;
+}
+
+vec3 getDiffuseLightColour(DiffuseLight diffuseLight, vec3 normal) {
+    if(!diffuseLight.isOn) { return vec3(0.0);}
+    float lightIntensity = max(0.0, dot(normal, -diffuseLight.direction));
+    lightIntensity = clamp(lightIntensity * diffuseLight.factor, 0.0, 1.0);
+    vec3 intensityByColor = diffuseLight.color * lightIntensity;
+    return intensityByColor;
+}
+
+vec3 getSpecularMaterialLightColour(DiffuseLight diffuseLight, Material material, vec3 worldPosition, vec3 normal, vec3 cameraPosition) {
+
+    if(!material.isOn) {
+        return vec3(0.0);
+    }
+    vec3 reflectedVector = normalize(reflect(diffuseLight.direction, normal));
+    vec3 worldTocameraVector = normalize(cameraPosition - worldPosition);
+    float specularThreshold = dot(worldTocameraVector, reflectedVector);
+    if(specularThreshold > 0) {
+        specularThreshold = pow(specularThreshold, material.specularStrength);
+        return diffuseLight.color * material.specularIntensity * specularThreshold;
+    }
+    return vec3(0.0);
+}

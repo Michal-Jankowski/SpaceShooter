@@ -1,0 +1,22 @@
+struct Laser {
+    vec4 color;
+    bool isOn;
+};
+
+struct AmbientLight {
+    vec3 color;
+    bool isOn;
+};
+
+struct DiffuseLight {
+    vec3 color;
+    vec3 direction;
+    float factor;
+    bool isOn;
+};
+
+struct Material {
+    bool isOn;
+    float specularIntensity;
+    float specularStrength;
+};

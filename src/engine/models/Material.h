@@ -20,10 +20,7 @@ private:
     std::string mainTextureKey;
     bool hasNormal = false;
     std::string normalTextureKey;
-    std::string shaderProgramKey;
-
-    void generateMappings();
-    std::map<std::string, std::string> materialShaderMappings;
+    static const std::string assimpModelsShaderKey;
 
     std::string loadMaterialTexture(const std::string &textureFileName);
     static std::string aiStringToStdString(const aiString& aiStringStruct);

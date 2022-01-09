@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include "../utils/Shadinclude.hpp"
 
 Shader::~Shader() {
     deleteShader();
@@ -14,16 +15,12 @@ bool Shader::loadShaderFromFile(const std::string& file, GLenum shaderType) {
     if (!getLinesFromFile(file, shaderLines))
         return false;
 
-    const char** programSource = new const char* [shaderLines.size()];
-    for (size_t i = 0; i < shaderLines.size(); i++)
-        programSource[i] = shaderLines[i].c_str();
-
+    std::string shaderSource = Shadinclude::load(file);
     m_shaderID = glCreateShader(shaderType);
+    const char *c_str = shaderSource.c_str();
 
-    glShaderSource(m_shaderID, static_cast<GLsizei>(shaderLines.size()), programSource, nullptr);
+    glShaderSource(m_shaderID, 1, &c_str, nullptr);
     glCompileShader(m_shaderID);
-
-    delete[] programSource;
 
     int compilationStatus;
     glGetShaderiv(m_shaderID, GL_COMPILE_STATUS, &compilationStatus);

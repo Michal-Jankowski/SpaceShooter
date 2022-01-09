@@ -26,6 +26,7 @@ void GameScene::initScene() {
 		auto& textureManager = TextureManager::getInstance();
 
 		shaderManager.loadFragmentShader("main_part", "../src/shaders/shader.frag");
+		shaderManager.loadFragmentShader("assimp_part", "../src/shaders/assimp.frag");
 		shaderManager.loadVertexShader("main_part", "../src/shaders/shader.vert");
 		shaderManager.loadFragmentShader("outline_part", "../src/shaders/shaderOutline.frag");
 		shaderManager.loadVertexShader("outline_part", "../src/shaders/shaderOutline.vert");
@@ -37,7 +38,11 @@ void GameScene::initScene() {
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
 		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("main_part"));
 
-		auto& singleColorShaderProgram = shaderProgramManager.createShaderProgram("outline");
+        auto& assimpShaderProgram = shaderProgramManager.createShaderProgram("assimp");
+        assimpShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
+        assimpShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("assimp_part"));
+
+        auto& singleColorShaderProgram = shaderProgramManager.createShaderProgram("outline");
 		singleColorShaderProgram.addShaderToProgram(shaderManager.getVertexShader("outline_part"));
 		singleColorShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("outline_part"));
 		
@@ -94,39 +99,56 @@ void GameScene::initScene() {
 	glClearColor(0.2, 0.7f, 0.2f, 1.0f);
 }
 
+void GameScene::updateMatrices(){
+    auto& matrixManager = MatrixManager::getInstance();
+
+    matrixManager.setProjectionMatrix(getProjectionMatrix());
+    matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
+    matrixManager.setViewMatrix(m_camera->getViewMatrix());
+}
+
+void GameScene::updateShaderMatrices(const std::string &shaderKey){
+    auto& shaderProgramManager = ShaderProgramManager::getInstance();
+    auto& mainProgram = shaderProgramManager.getShaderProgram(shaderKey);
+    mainProgram.useProgram();
+    mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
+    mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
+    mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
+    mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
+    mainProgram.setUniform("isStencil", false);
+}
+
+void GameScene::updateLights(const std::string &shaderKey){
+    auto& shaderProgramManager = ShaderProgramManager::getInstance();
+    auto& mainProgram = shaderProgramManager.getShaderProgram(shaderKey);
+    mainProgram.useProgram();
+    m_ambientLight->setUniform(mainProgram, "ambientLight");
+    m_diffuseLight->setUniform(mainProgram, "diffuseLight");
+}
+
 void GameScene::renderScene() {
 
-	auto& matrixManager = MatrixManager::getInstance();
+
 	auto& shaderProgramManager = ShaderProgramManager::getInstance();
 	auto& textureManager = TextureManager::getInstance();
+
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	DefaultBuff::bindAsBothReadAndDraw();
 
+    updateMatrices();
+    updateShaderMatrices("main");
+    updateShaderMatrices("assimp");
+    updateLights("assimp");
 	gameObjectsLoop();
     auto& mainProgram = shaderProgramManager.getShaderProgram("main");
   	auto& outlineProgram = shaderProgramManager.getShaderProgram("outline");
-    matrixManager.setProjectionMatrix(getProjectionMatrix());
-    matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
-    matrixManager.setViewMatrix(m_camera->getViewMatrix());
 
     glm::mat4 model = glm::mat4( 1.0 );
     glm::mat4 translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
   	mainProgram.useProgram();
     mainProgram.setUniform("matrices.modelMatrix",translated);
-	
-	matrixManager.setProjectionMatrix(getProjectionMatrix());
-	matrixManager.setOrthoProjectionMatrix(getOrthoProjectionMatrix());
-	matrixManager.setViewMatrix(m_camera->getViewMatrix());
 
-	mainProgram = shaderProgramManager.getShaderProgram("main");
-	mainProgram.useProgram();
-	mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
-	mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
-	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
-	mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
-	//mainProgram.setUniform("sampler", 0);
-	mainProgram.setUniform("isStencil", false);
 
 	auto& objectPicker = ObjPicker::getInstance();
 	objectPicker.renderAllPickableObjects();
@@ -143,7 +165,7 @@ void GameScene::renderScene() {
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
 	Material::none().setUniform(mainProgram, "material");
 	m_skybox->render(m_camera->getEye(), mainProgram);
-	
+
 	SamplerManager::getInstance().getSampler("main").bind();
 	m_ambientLight->setUniform(mainProgram, "ambientLight");
 	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
@@ -297,12 +319,6 @@ void GameScene::gameObjectsLoop() {
         }
 
     }
-    ///RENDER
-    for (auto & gameObject : gameObjects) {
-        gameObject->render();
-
-    }
-
     ///REMOVE
     for (int i = 0; i < gameObjects.size(); ++i) {
         if(gameObjects[i]->awaitingDestroy){
@@ -311,7 +327,11 @@ void GameScene::gameObjectsLoop() {
             i--;
         }
     }
+    ///RENDER
+    for (auto & gameObject : gameObjects) {
+        gameObject->render();
 
+    }
 }
 
 void GameScene::addObject(std::unique_ptr<GameObject> go) {

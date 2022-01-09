@@ -28,6 +28,9 @@ public:
 private:
     void gameObjectsLoop();
     void drawGameObjectsHUD();
+    void updateMatrices();
+    void updateShaderMatrices(const std::string &shaderKey);
+    void updateLights(const std::string &shaderKey);
     std::vector<std::unique_ptr<GameObject>> gameObjects;
     std::queue<std::unique_ptr<GameObject>> creatingGameObjects;
     std::shared_ptr<Camera> m_camera;
