@@ -1,9 +1,9 @@
-vec3 getAmbientLightColour(AmbientLight ambientLight) {
+vec3 getAmbientLightColour(const AmbientLight ambientLight) {
     if(!ambientLight.isOn) { return vec3(0.0);}
     return ambientLight.color;
 }
 
-vec3 getDiffuseLightColour(DiffuseLight diffuseLight, vec3 normal) {
+vec3 getDiffuseLightColour(const DiffuseLight diffuseLight, const vec3 normal) {
     if(!diffuseLight.isOn) { return vec3(0.0);}
     float lightIntensity = max(0.0, dot(normal, -diffuseLight.direction));
     lightIntensity = clamp(lightIntensity * diffuseLight.factor, 0.0, 1.0);
@@ -11,7 +11,24 @@ vec3 getDiffuseLightColour(DiffuseLight diffuseLight, vec3 normal) {
     return intensityByColor;
 }
 
-vec3 getSpecularMaterialLightColour(DiffuseLight diffuseLight, Material material, vec3 worldPosition, vec3 normal, vec3 cameraPosition) {
+vec3 getPointLightColour(const PointLight pointLight, const vec3 worldPosition, const vec3 normal)
+{
+	if(!pointLight.isOn) {
+		return vec3(0.0);
+	}
+	vec3 positionToLightVector = worldPosition - pointLight.position;
+	float distance = length(positionToLightVector);
+	positionToLightVector = normalize(positionToLightVector);
+	
+	float diffuseFactor = max(0.0, dot(normal, -positionToLightVector));	
+	float totalAttenuation = pointLight.constantAttenuation
+		+ pointLight.linearAttenuation * distance
+		+ pointLight.exponentialAttenuation * pow(distance, 2.0);
+
+	return pointLight.color * (pointLight.ambientFactor + diffuseFactor) / totalAttenuation;
+}
+
+vec3 getSpecularMaterialLightColour(const DiffuseLight diffuseLight, const Material material, const vec3 worldPosition, const vec3 normal, const vec3 cameraPosition) {
 
     if(!material.isOn) {
         return vec3(0.0);

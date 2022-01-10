@@ -15,6 +15,17 @@ struct DiffuseLight {
     bool isOn;
 };
 
+struct PointLight
+{
+	vec3 position;
+	vec3 color;
+	float ambientFactor;
+	float constantAttenuation;
+	float linearAttenuation;
+	float exponentialAttenuation;
+	bool isOn;
+};
+
 struct Material {
     bool isOn;
     float specularIntensity;

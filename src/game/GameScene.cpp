@@ -63,6 +63,9 @@ void GameScene::initScene() {
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
 		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
 		m_HUD = std::make_unique<GameHUD>(*this);
+		m_pointLightOne = std::make_unique<PointLight>(glm::vec3(-60.0f, 20.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 0.3f, 0.3f, 0.004f, 0.0001f);
+		m_pointLightTwo = std::make_unique<PointLight>(glm::vec3(60.0f, 20.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.3f, 0.3f, 0.0005f, 0.0005f);
+
 		Material shinnyMaterial = Material(1.0f, 32.0f);
 
 		SamplerManager::getInstance().createSampler("main", FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
@@ -82,7 +85,15 @@ void GameScene::initScene() {
 
 		gameObjects.push_back(std::make_unique<Ship>(m_camera));
         auto planet1 = std::make_unique<Planet>(30.0f, this, glm::vec3(-50.0f, 0.0f, -50.0f));
+		// Need a way to represent pointLight object, Planet is non-ideal solution
+		auto sourceLightOne = std::make_unique<Planet>(3.0f, this, glm::vec3(-60.0f, 20.0f, 0.0f));
+		auto sourceLightTwo = std::make_unique<Planet>(3.0f, this, glm::vec3(60.0f, 20.0f, 0.0f));
+
 		gameObjects.push_back(std::move(planet1));
+		gameObjects.push_back(std::move(sourceLightOne));
+		gameObjects.push_back(std::move(sourceLightTwo));
+
+
 		//gameObjects.push_back(std::make_unique<Planet>(1.0f, this));
 
         glEnable(GL_BLEND);
@@ -168,11 +179,16 @@ void GameScene::renderScene() {
 	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
 	Material::none().setUniform(mainProgram, "material");
+	PointLight::none().setUniform(mainProgram, "pointLightOne");
+	PointLight::none().setUniform(mainProgram, "pointLightTwo");
 	m_skybox->render(m_camera->getEye(), mainProgram);
 
 	SamplerManager::getInstance().getSampler("main").bind();
 	m_ambientLight->setUniform(mainProgram, "ambientLight");
 	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
+	m_pointLightOne->setUniform(mainProgram, "pointLightOne");
+	m_pointLightTwo->setUniform(mainProgram, "pointLightTwo");
+
 	mainProgram.setUniform("cameraPosition", m_camera->getEye());
 	m_material->setUniform(mainProgram, "material");
 
