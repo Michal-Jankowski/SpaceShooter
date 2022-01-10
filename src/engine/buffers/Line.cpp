@@ -9,8 +9,6 @@ Line::Line(glm::vec3 start, glm::vec3 end)
 	, m_lineColor(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f))
 	, m_vertices({ start.x, start.y, start.z, end.x, end.y, end.z })
 {
-	glGenVertexArrays(1, &m_VAO);
-	glGenBuffers(1, &m_VBO);
 	setupBuffers();
 }
 
@@ -22,15 +20,14 @@ Line::~Line()
 
 void Line::setupBuffers()
 {
-	glBindVertexArray(m_VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	glCreateVertexArrays(1, &m_VAO);
+	glCreateBuffers(1, &m_VBO);
+	glNamedBufferData(m_VBO, sizeof(m_vertices) * m_vertices.size(), m_vertices.data(), GL_STATIC_DRAW);
+	glEnableVertexArrayAttrib(m_VAO, 0);
+	glVertexArrayAttribBinding(m_VAO, 0, 0);
+	glVertexArrayAttribFormat(m_VAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayVertexBuffer(m_VAO, 0, m_VBO, 0, 3 * sizeof(GLfloat));
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices) * m_vertices.size(), m_vertices.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), reinterpret_cast<void*>(0));
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
 }
 
 void Line::draw()

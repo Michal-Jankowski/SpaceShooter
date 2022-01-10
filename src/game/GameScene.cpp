@@ -14,13 +14,19 @@
 #include "../engine/buffers/DefaultBuff.h"
 #include "models/Enemy.h"
 #include "models/Planet.h"
-
+#include "../engine/utils/ErrorCallback.h"
 
 bool visualizeColorFrameBuffer = false;
 
 void GameScene::initScene() {
 
 	try {
+		// Related info: https://github.com/fendevel/Guide-to-Modern-OpenGL-Functions#glbuffer
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glDebugMessageCallback(err_callback::message_callback, nullptr);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+
 		auto& shaderManager = ShaderManager::getInstance();
 		auto& shaderProgramManager = ShaderProgramManager::getInstance();
 		auto& textureManager = TextureManager::getInstance();
@@ -32,7 +38,6 @@ void GameScene::initScene() {
 		shaderManager.loadVertexShader("outline_part", "../src/shaders/shaderOutline.vert");
 		shaderManager.loadFragmentShader("laser_part", "../src/shaders/line.frag");
 		shaderManager.loadVertexShader("laser_part", "../src/shaders/line.vert");
-
 
 		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
@@ -53,7 +58,6 @@ void GameScene::initScene() {
 		// init objs
 		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
 		m_cube = std::make_unique<Cube>(true, true, true);
-		m_plainGround = std::make_unique<PlainGround>(true, true, true);
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
@@ -283,7 +287,6 @@ void GameScene::updateScene() {
 void GameScene::releaseScene() {
 	ObjPicker::getInstance().release();
 	m_skybox.reset();
-	m_plainGround.reset();
 	ShaderManager::getInstance().clearShaderCache();
 	ShaderProgramManager::getInstance().clearShaderProgramCache();
 	TextureManager::getInstance().clearTextureCache();

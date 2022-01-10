@@ -6,7 +6,7 @@
 int main(void) {
 	const std::string& windowTitle = "SpaceShooter";
 	int majorVersion = 4;
-	int minorVersion = 4;
+	int minorVersion = 6;
 	GameScene gameScene;
 	if (!gameScene.createWindow(windowTitle, majorVersion, minorVersion))
 	{

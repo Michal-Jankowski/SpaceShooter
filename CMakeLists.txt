@@ -28,7 +28,8 @@ set(LIB_FREETYPE_INCLUDE_DIR "" CACHE PATH "Assimp include dir")
 set(LIB_FREETYPE_BINARY_DIR "" CACHE PATH "Assimp build results")
 
 option(CONFIGURE_WITH_ASSIMP "Add assimp to project" OFF)
-option(DOWNLOAD_ASSIMP "Download assimp to project" OFF)
+option(DOWNLOAD_ASSIMP_RELEASE "Download assimp to project" OFF)
+option(DOWNLOAD_ASSIMP_DEBUG "Download assimp to project" OFF)
 option(DOWNLOAD_FREETYPE "Download freetype to project" OFF)
 option(CONFIGURE_WITH_FREETYPE "Add freetype to project" OFF)
 option(MOVE_SCRIPT_AUTO_CLOSE "Auto close file moving script" ON)
@@ -67,7 +68,7 @@ file(GLOB FILES_SOURCES
 		"src/engine/utils/*.h"
 		"src/shaders/*.vert"
 		"src/shaders/*.frag"
-		"${LIB_GLAD_DIR}/include/glad.c"
+		"${LIB_GLAD_DIR}/src/glad.c"
 		"${LIB_STB_DIR}/stb_image.h")
     
 add_executable(SpaceShooter ${FILES_SOURCES})
@@ -123,7 +124,7 @@ file(REMOVE_RECURSE ${TEMP_DIR}/FreeType2)
 file(REMOVE_RECURSE ${TEMP_DIR}/x64/Release/FreeType2)
 endif()
 
-if(${DOWNLOAD_ASSIMP})
+if(${DOWNLOAD_ASSIMP_RELEASE})
 ##Assimp
 include(ExternalProject)
 ExternalProject_Add(Assimp 
@@ -132,6 +133,21 @@ ExternalProject_Add(Assimp
 	INSTALL_DIR  ${CMAKE_CURRENT_BINARY_DIR}/lib/assimp
 	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DASSIMP_BUILD_TESTS:BOOL=OFF -DASSIMP_BIN_INSTALL_DIR:PATH=lib -DCMAKE_BUILD_TYPE=Release
 	BUILD_COMMAND ${CMAKE_COMMAND}  --build <BINARY_DIR> --target install --config Release)
+ExternalProject_Get_Property(Assimp install_dir)
+set(LIB_ASSIMP_INCLUDE_DIR "${install_dir}/include" CACHE PATH "Assimp include dir"  FORCE)
+set(LIB_ASSIMP_BINARY_DIR "${install_dir}/lib" CACHE PATH "Assimp build results" FORCE)
+message("Generate project and build Assimp project (as release), then reconfigure again with CONFIGURE_WITH_ASSIMP")
+endif()
+
+if(${DOWNLOAD_ASSIMP_DEBUG})
+##Assimp
+include(ExternalProject)
+ExternalProject_Add(Assimp 
+	URL https://github.com/assimp/assimp/archive/master.zip
+	PREFIX  ${TEMP_DIR}/Assimp
+	INSTALL_DIR  ${CMAKE_CURRENT_BINARY_DIR}/lib/assimp
+	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DASSIMP_BUILD_TESTS:BOOL=OFF -DASSIMP_BIN_INSTALL_DIR:PATH=lib -DCMAKE_BUILD_TYPE=Debug
+	BUILD_COMMAND ${CMAKE_COMMAND}  --build <BINARY_DIR> --target install --config Debug)
 ExternalProject_Get_Property(Assimp install_dir)
 set(LIB_ASSIMP_INCLUDE_DIR "${install_dir}/include" CACHE PATH "Assimp include dir"  FORCE)
 set(LIB_ASSIMP_BINARY_DIR "${install_dir}/lib" CACHE PATH "Assimp build results" FORCE)
