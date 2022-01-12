@@ -34,6 +34,7 @@ void GameScene::initScene() {
 		shaderManager.loadFragmentShader("main_part", "../src/shaders/shader.frag");
 		shaderManager.loadFragmentShader("assimp_part", "../src/shaders/assimp.frag");
 		shaderManager.loadVertexShader("main_part", "../src/shaders/shader.vert");
+		shaderManager.loadVertexShader("assimp_part", "../src/shaders/assimp.vert");
 		shaderManager.loadFragmentShader("outline_part", "../src/shaders/shaderOutline.frag");
 		shaderManager.loadVertexShader("outline_part", "../src/shaders/shaderOutline.vert");
 		shaderManager.loadFragmentShader("laser_part", "../src/shaders/line.frag");
@@ -44,7 +45,7 @@ void GameScene::initScene() {
 		mainShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("main_part"));
 
         auto& assimpShaderProgram = shaderProgramManager.createShaderProgram("assimp");
-        assimpShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
+        assimpShaderProgram.addShaderToProgram(shaderManager.getVertexShader("assimp_part"));
         assimpShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("assimp_part"));
 
         auto& singleColorShaderProgram = shaderProgramManager.createShaderProgram("outline");
@@ -128,7 +129,6 @@ void GameScene::updateShaderMatrices(const std::string &shaderKey){
     mainProgram.useProgram();
     mainProgram.setUniform("matrices.projectionMatrix", getProjectionMatrix());
     mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
-    mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
     mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
     mainProgram.setUniform("isStencil", false);
 }
@@ -162,8 +162,8 @@ void GameScene::renderScene() {
     glm::mat4 model = glm::mat4( 1.0 );
     glm::mat4 translated = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
   	mainProgram.useProgram();
+    mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
     mainProgram.setUniform("matrices.modelMatrix",translated);
-
 
 	auto& objectPicker = ObjPicker::getInstance();
 	objectPicker.renderAllPickableObjects();

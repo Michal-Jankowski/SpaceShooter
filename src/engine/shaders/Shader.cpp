@@ -12,10 +12,10 @@ Shader::~Shader() {
 bool Shader::loadShaderFromFile(const std::string& file, GLenum shaderType) {
     std::vector<std::string> shaderLines;
 
-    if (!getLinesFromFile(file, shaderLines))
-        return false;
-
     std::string shaderSource = Shadinclude::load(file);
+    if(shaderSource.empty()){
+        return false;
+    }
     m_shaderID = glCreateShader(shaderType);
     const char *c_str = shaderSource.c_str();
 

@@ -11,6 +11,8 @@
 const int ModelMesh::POSITION_ATTRIBUTE_INDEX           = 0;
 const int ModelMesh::TEXTURE_COORDINATE_ATTRIBUTE_INDEX = 1;
 const int ModelMesh::NORMAL_ATTRIBUTE_INDEX             = 2;
+const int ModelMesh::TANGENT_ATTRIBUTE_INDEX            = 3;
+const int ModelMesh::BITANGENT_ATTRIBUTE_INDEX          = 4;
 
 
 bool ModelMesh::loadModelFromFile(const std::string &path) {
@@ -129,7 +131,43 @@ void ModelMesh::ReadMeshNormals(const aiScene *scene) {
             for (size_t k = 0; k < face.mNumIndices; k++)
             {
                 const auto& normal = meshPtr->HasNormals() ? meshPtr->mNormals[face.mIndices[k]] : aiVector3D(0.0f, 1.0f, 0.0f);
+                const auto& tangent = meshPtr->HasTangentsAndBitangents() ? meshPtr->mTangents[face.mIndices[k]] : aiVector3D(1.0f, 0.0f, 0.0f);
+                const auto& bitangent = meshPtr->HasTangentsAndBitangents() ? meshPtr->mBitangents[face.mIndices[k]] : aiVector3D(0.0f, 0.0f, 1.0f);
                 vbo.addData(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
+            }
+        }
+    }
+    for (size_t i = 0; i < scene->mNumMeshes; i++)
+    {
+        const auto meshPtr = scene->mMeshes[i];
+        for (size_t j = 0; j < meshPtr->mNumFaces; j++)
+        {
+            const auto& face = meshPtr->mFaces[j];
+            if (face.mNumIndices != 3) {
+                continue; // Skip non-triangle faces for now
+            }
+
+            for (size_t k = 0; k < face.mNumIndices; k++)
+            {
+                const auto& tangent = meshPtr->HasTangentsAndBitangents() ? meshPtr->mTangents[face.mIndices[k]] : aiVector3D(1.0f, 0.0f, 0.0f);
+                vbo.addData(glm::normalize(glm::vec3(tangent.x, tangent.y, tangent.z)));
+            }
+        }
+    }
+    for (size_t i = 0; i < scene->mNumMeshes; i++)
+    {
+        const auto meshPtr = scene->mMeshes[i];
+        for (size_t j = 0; j < meshPtr->mNumFaces; j++)
+        {
+            const auto& face = meshPtr->mFaces[j];
+            if (face.mNumIndices != 3) {
+                continue; // Skip non-triangle faces for now
+            }
+
+            for (size_t k = 0; k < face.mNumIndices; k++)
+            {
+                const auto& bitangent = meshPtr->HasTangentsAndBitangents() ? meshPtr->mBitangents[face.mIndices[k]] : aiVector3D(0.0f, 0.0f, 1.0f);
+                vbo.addData(glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z)));
             }
         }
     }
@@ -160,6 +198,16 @@ void ModelMesh::setVertexAttributesPointers(int numVertices)
     //normals
     glEnableVertexAttribArray(NORMAL_ATTRIBUTE_INDEX);
     glVertexAttribPointer(NORMAL_ATTRIBUTE_INDEX, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), reinterpret_cast<void*>(offset));
+
+    offset += sizeof(glm::vec3)*numVertices;
+
+    glEnableVertexAttribArray(TANGENT_ATTRIBUTE_INDEX);
+    glVertexAttribPointer(TANGENT_ATTRIBUTE_INDEX, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), reinterpret_cast<void*>(offset));
+
+    offset += sizeof(glm::vec3)*numVertices;
+
+    glEnableVertexAttribArray(BITANGENT_ATTRIBUTE_INDEX);
+    glVertexAttribPointer(BITANGENT_ATTRIBUTE_INDEX, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), reinterpret_cast<void*>(offset));
 
     offset += sizeof(glm::vec3)*numVertices;
 }

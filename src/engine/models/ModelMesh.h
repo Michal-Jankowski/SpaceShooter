@@ -22,6 +22,8 @@ public:
     static const int POSITION_ATTRIBUTE_INDEX; // Vertex attribute index of vertex position (0)
     static const int TEXTURE_COORDINATE_ATTRIBUTE_INDEX; // Vertex attribute index of texture coordinate (1)
     static const int NORMAL_ATTRIBUTE_INDEX; // Vertex attribute index of vertex normal (2)
+    static const int TANGENT_ATTRIBUTE_INDEX; // Vertex attribute index of vertex normal (2)
+    static const int BITANGENT_ATTRIBUTE_INDEX; // Vertex attribute index of vertex normal (2)
 
     bool loadModelFromFile(const std::string& path);
 

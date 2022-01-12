@@ -27,7 +27,16 @@ struct PointLight
 };
 
 struct Material {
-    bool isOn;
+    bool isOn; //specular isOn
     float specularIntensity;
     float specularStrength;
+    bool useNormalMap;
 };
+
+struct Matrices
+{
+    mat4 projectionMatrix;
+    mat4 viewMatrix;
+    mat4 modelMatrix;
+    mat3 normalMatrix;
+} ;
