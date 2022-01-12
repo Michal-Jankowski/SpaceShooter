@@ -116,7 +116,7 @@ void Material::setup(const glm::mat4 model) const{
     shader.setUniform("diffTex", 0);
     shader.setUniform("normTex", 1);
 
-    shader.setUniform("matrices.modelMatrix", model);
+    shader.SetModelAndNormalMatrix("matrices.modelMatrix","matrices.normalMatrix", model);
 
     ///specular
     shader.setUniform("material.isOn", m_isEnabled);
@@ -125,5 +125,6 @@ void Material::setup(const glm::mat4 model) const{
     }
     shader.setUniform("material.specularIntensity", m_specularIntensity);
     shader.setUniform("material.specularStrength", m_specularStrength);
+    shader.setUniform("material.useNormal", true);
 
 }

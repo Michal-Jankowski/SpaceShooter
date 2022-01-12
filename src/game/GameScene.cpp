@@ -131,14 +131,19 @@ void GameScene::updateShaderMatrices(const std::string &shaderKey){
     mainProgram.setUniform("matrices.viewMatrix", m_camera->getViewMatrix());
     mainProgram.setUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
     mainProgram.setUniform("isStencil", false);
+	mainProgram.setUniform("cameraPosition", m_camera->getEye());
+
 }
 
 void GameScene::updateLights(const std::string &shaderKey){
     auto& shaderProgramManager = ShaderProgramManager::getInstance();
     auto& mainProgram = shaderProgramManager.getShaderProgram(shaderKey);
     mainProgram.useProgram();
-    m_ambientLight->setUniform(mainProgram, "ambientLight");
-    m_diffuseLight->setUniform(mainProgram, "diffuseLight");
+
+	m_ambientLight->setUniform(mainProgram, "ambientLight");
+	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
+	m_pointLightOne->setUniform(mainProgram, "pointLightOne");
+	m_pointLightTwo->setUniform(mainProgram, "pointLightTwo");
 }
 
 void GameScene::renderScene() {

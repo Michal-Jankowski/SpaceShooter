@@ -21,6 +21,7 @@ uniform bool isStencil;
 
 uniform AmbientLight ambientLight;
 uniform DiffuseLight diffuseLight;
+uniform PointLight pointLightOne, pointLightTwo;
 uniform Material material;
 uniform Laser laser;
 
@@ -45,6 +46,10 @@ void main() {
                                                       fs_in.worldPosition.xyz,
                                                       normal,
                                                       cameraPosition);
+    vec3 pointLightColourOne = getPointLightColour(pointLightOne, fs_in.worldPosition.xyz, normal);
+    vec3 pointLightColourTwo = getPointLightColour(pointLightTwo, fs_in.worldPosition.xyz, normal);
+
+    lightColour = lightColour + pointLightColourOne + pointLightColourTwo;
 
     if(laser.isOn) {
         outputColour = laser.color;
