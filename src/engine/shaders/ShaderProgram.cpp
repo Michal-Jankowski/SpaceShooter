@@ -11,6 +11,9 @@ bool ShaderProgram::addShaderToProgram(const Shader& shShader) {
 		return false;
 	}
 	glAttachShader(m_programID, shShader.getShaderID());
+#ifdef _DEBUG
+    shaderSources.push_back(shShader.shaderSource);
+#endif
 	return true;
 }
 

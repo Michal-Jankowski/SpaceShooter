@@ -40,3 +40,9 @@ struct Matrices
     mat4 modelMatrix;
     mat3 normalMatrix;
 } ;
+
+struct TangentSpace {
+    vec3 diffusePos;
+    vec3 camPos;
+    vec3 worldPos;
+};

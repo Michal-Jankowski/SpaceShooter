@@ -114,7 +114,13 @@ void Material::setup(const glm::mat4 model) const{
     }
 
     shader.setUniform("diffTex", 0);
-    shader.setUniform("normTex", 1);
+    if(hasNormal) {
+        shader.setUniform("normTex", 1);
+        shader.setUniform("material.useNormalMap", true);
+    }
+    else{
+        shader.setUniform("material.useNormalMap", false);
+    }
 
     shader.SetModelAndNormalMatrix("matrices.modelMatrix","matrices.normalMatrix", model);
 
@@ -125,6 +131,6 @@ void Material::setup(const glm::mat4 model) const{
     }
     shader.setUniform("material.specularIntensity", m_specularIntensity);
     shader.setUniform("material.specularStrength", m_specularStrength);
-    shader.setUniform("material.useNormal", true);
+
 
 }

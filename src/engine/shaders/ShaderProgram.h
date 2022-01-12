@@ -44,7 +44,11 @@ public:
 	// Model and normal matrix setting
 	void SetModelAndNormalMatrix(const std::string& sModelMatrixName, const std::string& sNormalMatrixName, glm::mat4 mModelMatrix);
 
+
 private:
 	GLuint m_programID;
 	bool m_isLinked = false;
+#ifdef _DEBUG
+	std::vector<std::string> shaderSources;
+#endif
 };

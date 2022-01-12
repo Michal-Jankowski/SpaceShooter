@@ -12,10 +12,14 @@ public:
 	GLuint getShaderID() const;
 	GLenum getShaderType() const;
 	void deleteShader();
+#ifdef _DEBUG
+	std::string shaderSource;
+#endif
 private:
 	bool getLinesFromFile(const std::string& fileName, std::vector<std::string>& result, bool isReadingIncludedFile = false) const;
 	GLuint m_shaderID = 0;
 	GLenum m_shaderType = 0;
 	bool m_hasLoaded = false;
+
 };
 

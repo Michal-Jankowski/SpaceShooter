@@ -12,7 +12,7 @@ Shader::~Shader() {
 bool Shader::loadShaderFromFile(const std::string& file, GLenum shaderType) {
     std::vector<std::string> shaderLines;
 
-    std::string shaderSource = Shadinclude::load(file);
+    shaderSource = Shadinclude::load(file);
     if(shaderSource.empty()){
         return false;
     }
