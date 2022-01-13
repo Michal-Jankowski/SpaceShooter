@@ -26,8 +26,6 @@ uniform PointLight pointLightOne, pointLightTwo;
 uniform Material material;
 uniform Laser laser;
 
-
-
 void main() {
 
     vec4 texColor = texture(diffTex, fs_in.verTexCoord);
@@ -44,22 +42,30 @@ void main() {
     vec3 ambient = getAmbientLightColour(ambientLight);
     vec3 lightColour = ambient;
 
+    DiffuseLight usedDiffuse = diffuseLight;
+    vec3 camPos = cameraPosition;
+    vec3 worldPos = fs_in.worldPosition.xyz;
+    PointLight usedPointLightOne = pointLightOne;
+    PointLight usedPointLightTwo = pointLightTwo;
+
     if(material.useNormalMap){
         vec3 normalMap = texture(normTex, fs_in.verTexCoord).rgb;
         normalMap = normalize(normalMap * 2.0 - 1.0);
-        vec3 diff = getDiffuseLightColour(fs_in.tangentSpace.diffuseLight, normalMap);
-        lightColour = lightColour + diff ;
-    }
-    else{
-        vec3 diff = getDiffuseLightColour(diffuseLight, normal);
-        lightColour = lightColour + diff ;
+        normal = normalMap;
+
+        usedDiffuse = fs_in.tangentSpace.diffuseLight;
+        camPos = fs_in.tangentSpace.camPos;
+        worldPos = fs_in.tangentSpace.worldPos;
+        usedPointLightOne = fs_in.tangentSpace.pointLightOne;
+        usedPointLightTwo = fs_in.tangentSpace.pointLightTwo;
     }
 
-    vec3 spec = getSpecularMaterialLightColour(diffuseLight, material, fs_in.worldPosition.xyz, normal, cameraPosition);
-    lightColour = lightColour + spec;
+    vec3 diff = getDiffuseLightColour(usedDiffuse, normal);
+    vec3 spec = getSpecularMaterialLightColour(usedDiffuse, material, worldPos, normal, camPos);
+    lightColour = lightColour + diff + spec;
 
-    vec3 pointLightColourOne = getPointLightColour(pointLightOne, fs_in.worldPosition.xyz, normal);
-    vec3 pointLightColourTwo = getPointLightColour(pointLightTwo, fs_in.worldPosition.xyz, normal);
+    vec3 pointLightColourOne = getPointLightColour(usedPointLightOne, worldPos, normal);
+    vec3 pointLightColourTwo = getPointLightColour(usedPointLightTwo, worldPos, normal);
 
     lightColour = lightColour + pointLightColourOne + pointLightColourTwo;
 
@@ -67,7 +73,6 @@ void main() {
         outputColour = laser.color;
     } else {
         outputColour =  objColor * vec4(lightColour, 1.0);
-        outputColour.xyz = fs_in.tangentSpace.diffuseLight.direction;
     }
     if(isStencil) {
         outputColour = color;

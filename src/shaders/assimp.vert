@@ -21,7 +21,7 @@ uniform vec3 cameraPosition;
 uniform Matrices matrices;
 uniform Material material;
 uniform DiffuseLight diffuseLight;
-
+uniform PointLight pointLightOne, pointLightTwo;
 
 void main() 
 {
@@ -35,13 +35,17 @@ void main()
 
 	if(material.useNormalMap){
 		vs_out.tangentSpace.diffuseLight = diffuseLight;
+		vs_out.tangentSpace.pointLightOne = pointLightOne;
+		vs_out.tangentSpace.pointLightTwo = pointLightTwo;
 		vec3 T = normalize(vec3(matrices.modelMatrix * vec4(verTangent, 0.0)));
 		vec3 B = normalize(vec3(matrices.modelMatrix * vec4(verBitangent, 0.0)));
 		vec3 N = normalize(vec3(matrices.modelMatrix * vec4(verNormal, 0.0)));
 		mat3 TBN = transpose(mat3(T, B, N));
 		vs_out.tangentSpace.diffuseLight.direction = normalize(TBN * diffuseLight.direction);
-		vs_out.tangentSpace.camPos = normalize(TBN * cameraPosition);
-		vs_out.tangentSpace.worldPos = normalize(TBN * vs_out.worldPosition.xyz);
+		vs_out.tangentSpace.camPos = (TBN * cameraPosition);
+		vs_out.tangentSpace.worldPos = (TBN * vs_out.worldPosition.xyz);
+		vs_out.tangentSpace.pointLightOne.position = (TBN * pointLightOne.position);
+		vs_out.tangentSpace.pointLightTwo.position = (TBN * pointLightTwo.position);
 	}
 
 

@@ -45,4 +45,5 @@ struct TangentSpace {
     vec3 camPos;
     vec3 worldPos;
     DiffuseLight diffuseLight;
+    PointLight pointLightOne, pointLightTwo;
 };
