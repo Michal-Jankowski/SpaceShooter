@@ -68,6 +68,7 @@ file(GLOB FILES_SOURCES
 		"src/engine/utils/*.h"
 		"src/shaders/*.vert"
 		"src/shaders/*.frag"
+		"src/shaders/*.incl"
 		"${LIB_GLAD_DIR}/src/glad.c"
 		"${LIB_STB_DIR}/stb_image.h")
     
