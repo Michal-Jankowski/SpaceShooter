@@ -47,10 +47,7 @@ void main() {
     if(material.useNormalMap){
         vec3 normalMap = texture(normTex, fs_in.verTexCoord).rgb;
         normalMap = normalize(normalMap * 2.0 - 1.0);
-        //float intensity = max(0.0, dot(normalMap, -fs_in.tangentSpaceLightDir));
-        //float multiplier =
-        vec3 diff = getDiffuseLightColour(diffuseLight, normalMap);
-        //vec3 diff = vec3(10.0f,10.0f,10.0f);
+        vec3 diff = getDiffuseLightColour(fs_in.tangentSpace.diffuseLight, normalMap);
         lightColour = lightColour + diff ;
     }
     else{
@@ -70,7 +67,7 @@ void main() {
         outputColour = laser.color;
     } else {
         outputColour =  objColor * vec4(lightColour, 1.0);
-        //outputColour.xyz = fs_in.tangentSpaceLightDir;
+        outputColour.xyz = fs_in.tangentSpace.diffuseLight.direction;
     }
     if(isStencil) {
         outputColour = color;

@@ -34,17 +34,16 @@ void main()
 	vs_out.cameraSpacePosition = MV_Matrix * vec4(verPos, 1.0);
 
 	if(material.useNormalMap){
+		vs_out.tangentSpace.diffuseLight = diffuseLight;
 		vec3 T = normalize(vec3(matrices.modelMatrix * vec4(verTangent, 0.0)));
 		vec3 B = normalize(vec3(matrices.modelMatrix * vec4(verBitangent, 0.0)));
 		vec3 N = normalize(vec3(matrices.modelMatrix * vec4(verNormal, 0.0)));
 		mat3 TBN = transpose(mat3(T, B, N));
-		vs_out.tangentSpace.diffusePos = normalize(TBN * diffuseLight.direction.xyz); //sic!
+		vs_out.tangentSpace.diffuseLight.direction = normalize(TBN * diffuseLight.direction);
 		vs_out.tangentSpace.camPos = normalize(TBN * cameraPosition);
 		vs_out.tangentSpace.worldPos = normalize(TBN * vs_out.worldPosition.xyz);
 	}
-	else {
-		vs_out.tangentSpace.diffusePos = diffuseLight.direction;
-	}
+
 
 	gl_Position = MVP_matrix * vec4(verPos, 1.0);
 }

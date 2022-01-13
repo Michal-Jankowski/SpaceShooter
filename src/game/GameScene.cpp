@@ -87,8 +87,10 @@ void GameScene::initScene() {
 		gameObjects.push_back(std::make_unique<Ship>(m_camera));
         auto planet1 = std::make_unique<Planet>(30.0f, this, glm::vec3(-50.0f, 0.0f, -50.0f));
 		// Need a way to represent pointLight object, Planet is non-ideal solution
-		auto sourceLightOne = std::make_unique<Planet>(3.0f, this, glm::vec3(-60.0f, 20.0f, 0.0f));
-		auto sourceLightTwo = std::make_unique<Planet>(3.0f, this, glm::vec3(60.0f, 20.0f, 0.0f));
+		auto sourceLightOne = std::make_unique<Collectible>();
+        sourceLightOne->transform->setPosition( glm::vec3(-60.0f, 20.0f, 0.0f));
+        auto sourceLightTwo = std::make_unique<Collectible>();
+        sourceLightTwo->transform->setPosition( glm::vec3(60.0f, 20.0f, 0.0f));
 
 		gameObjects.push_back(std::move(planet1));
 		gameObjects.push_back(std::move(sourceLightOne));

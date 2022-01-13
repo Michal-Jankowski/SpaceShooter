@@ -42,7 +42,7 @@ struct Matrices
 } ;
 
 struct TangentSpace {
-    vec3 diffusePos;
     vec3 camPos;
     vec3 worldPos;
+    DiffuseLight diffuseLight;
 };
