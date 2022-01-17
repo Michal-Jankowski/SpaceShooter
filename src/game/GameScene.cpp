@@ -7,11 +7,9 @@
 #include "../engine/shaders/ShaderProgramManager.h"
 #include "../engine/textures/TextureManager.h"
 #include "../engine/textures/SamplerManager.h"
-#include "../engine/buffers/ObjPicker.h"
 #include "models/Ship.h"
 #include "models/Collectible.h"
 #include "../engine/maths/MatrixManager.h"
-#include "../engine/buffers/DefaultBuff.h"
 #include "models/Enemy.h"
 #include "models/Planet.h"
 #include "../engine/utils/ErrorCallback.h"
@@ -62,7 +60,6 @@ void GameScene::initScene() {
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
-		m_sphere = std::make_unique<Sphere>(30.0f, 15, 15, true, true, true);
 		m_HUD = std::make_unique<GameHUD>(*this);
 		m_pointLightOne = std::make_unique<PointLight>(glm::vec3(-60.0f, 20.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 0.3f, 0.3f, 0.004f, 0.0001f);
 		m_pointLightTwo = std::make_unique<PointLight>(glm::vec3(60.0f, 20.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.3f, 0.3f, 0.0005f, 0.0005f);
@@ -76,7 +73,6 @@ void GameScene::initScene() {
 		shaderProgramManager.linkAllPrograms();
 		int width, height;
 		glfwGetWindowSize(getWindow(), &width, &height);
-		ObjPicker::getInstance().initialize();
 		m_camera = std::make_shared<Camera>(
                 glm::vec3(-120.0f, 8.0f, 120.0f),
                 glm::vec3(-120.0f, 8.0f, 119.0f),
@@ -156,7 +152,6 @@ void GameScene::renderScene() {
 
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	DefaultBuff::bindAsBothReadAndDraw();
 
     updateMatrices();
     updateShaderMatrices("main");
@@ -172,22 +167,14 @@ void GameScene::renderScene() {
     mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
     mainProgram.setUniform("matrices.modelMatrix",translated);
 
-	auto& objectPicker = ObjPicker::getInstance();
-	objectPicker.renderAllPickableObjects();
 
-	if (visualizeColorFrameBuffer)
-	{
-		const auto cursorPosition = getOpenGLCursorPosition();
-		objectPicker.performObjectPicking(cursorPosition.x, cursorPosition.y);
-		objectPicker.copyColorToDefaultFrameBuffer();
-	}
 	// Set Light properties for skybox, instead we would have illuminated sky
 	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
 	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
 	ambientSkybox.setUniform(mainProgram, "ambientLight");
 	Material::none().setUniform(mainProgram, "material");
-	PointLight::none().setUniform(mainProgram, "pointLightOne");
-	PointLight::none().setUniform(mainProgram, "pointLightTwo");
+	//PointLight::none().setUniform(mainProgram, "pointLightOne");
+	//PointLight::none().setUniform(mainProgram, "pointLightTwo");
 	m_skybox->render(m_camera->getEye(), mainProgram);
 
 	SamplerManager::getInstance().getSampler("main").bind();
@@ -213,10 +200,6 @@ void GameScene::renderScene() {
 	m_cube->render();
 	
 
-	textureManager.getTexture("snow").bind(0);
-	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
-	m_sphere->render();
-
 	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 	glStencilMask(0x00);
 
@@ -238,22 +221,18 @@ void GameScene::renderScene() {
 	glStencilFunc(GL_ALWAYS, 0, 0xFF);
 	glEnable(GL_DEPTH_TEST);
 
-	DefaultBuff::bindAsBothReadAndDraw();
-	DefaultBuff::setFullViewport();
 }
 void GameScene::onWindowSizeChanged(int width, int height)
 {
 	if (width == 0 || height == 0) {
 		return;
 	}
-	ObjPicker::getInstance().resizePickingFrameBuffer(width, height);
 }
 
 void GameScene::onMouseButtonPressed(int button, int action) {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
 		const auto cursorPosition = getOpenGLCursorPosition();
-		ObjPicker::getInstance().performObjectPicking(cursorPosition.x, cursorPosition.y);
 	}
 }
 
@@ -302,13 +281,11 @@ void GameScene::updateScene() {
 
 	}
 	
-	ObjPicker::getInstance().updateAllPickableObjects(getValueByTime(1.0f));
 	m_rotationAngleRad += getValueByTime(glm::radians(5.0f));
 
 }
 
 void GameScene::releaseScene() {
-	ObjPicker::getInstance().release();
 	m_skybox.reset();
 	ShaderManager::getInstance().clearShaderCache();
 	ShaderProgramManager::getInstance().clearShaderProgramCache();
