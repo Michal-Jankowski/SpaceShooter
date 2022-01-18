@@ -11,7 +11,6 @@ void Buffer::createVBO(size_t reserveBytes) {
 
 	glGenBuffers(1, &m_bufferID);
 	m_rawData.reserve(reserveBytes > 0 ? reserveBytes : 1024);
-	std::cout << "Created buffer with ID " << m_bufferID << " and reserved size of " << m_rawData.capacity() << "bytes" << std::endl;
 	m_isBufferInitalized = true;
 }
 
@@ -62,7 +61,6 @@ void Buffer::deleteVBO() {
     if (!m_isBufferInitalized) {
         return;
     }
-    std::cout << "Delete VBO with ID" << m_bufferID << std::endl;
     glDeleteBuffers(1, &m_bufferID);
     m_isDataLoaded = false;
     m_isBufferInitalized = false;
