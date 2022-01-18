@@ -21,7 +21,7 @@ Material& Material::none() {
 }
 
 void Material::setUniform(ShaderProgram& shaderProgram, const std::string& uniformName) {
-    shaderProgram.setUniform(constructAttributeName(uniformName, "isOn"), m_isEnabled);
+    shaderProgram.setUniform(constructAttributeName(uniformName, "isMaterialOn"), m_isEnabled);
     if (!m_isEnabled) {
         return;
     }
@@ -125,7 +125,7 @@ void Material::setup(const glm::mat4 model) const{
     shader.SetModelAndNormalMatrix("matrices.modelMatrix","matrices.normalMatrix", model);
 
     ///specular
-    shader.setUniform("material.isOn", m_isEnabled);
+    shader.setUniform("material.isMaterialOn", m_isEnabled);
     if (!m_isEnabled) {
         return;
     }

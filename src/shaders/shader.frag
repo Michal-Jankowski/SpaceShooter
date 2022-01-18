@@ -31,8 +31,8 @@ void main() {
     + getSpecularMaterialLightColour(diffuseLight, material, IOWorldPosition.xyz, normal, cameraPosition);
     vec3 pointLightColourOne = getPointLightColour(pointLightOne, IOWorldPosition.xyz, normal);
     vec3 pointLightColourTwo = getPointLightColour(pointLightTwo, IOWorldPosition.xyz, normal);
-    lightColour = lightColour + pointLightColourOne + pointLightColourTwo;
-    if(laser.isOn) {
+    lightColour += pointLightColourOne + pointLightColourTwo;
+    if(laser.isLaserOn) {
         outputColour = laser.color;
     } else {
         outputColour =  objColor * vec4(lightColour, 1.0);

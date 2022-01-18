@@ -41,12 +41,12 @@ void Line::draw()
 	mainProgram.setUniform("matrices.viewMatrix", matrixManager.getViewMatrix());
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
 	mainProgram.setUniform("laser.color", m_lineColor);
-	mainProgram.setUniform("laser.isOn", true);
+	mainProgram.setUniform("laser.isLaserOn", true);
 
 	glBindVertexArray(m_VAO);
 	glDrawArrays(GL_LINES, 0, 2);
 
-	mainProgram.setUniform("laser.isOn", false);
+	mainProgram.setUniform("laser.isLaserOn", false);
 
 }
 

@@ -9,7 +9,7 @@
         , constantAttenuation(constantAttenuation)
         , linearAttenuation(linearAttenuation)
         , exponentialAttenuation(exponentialAttenuation)
-        , isOn(isOn ? 1 : 0)
+        , isOn(isOn ? true : false)
     {
     }
     
@@ -25,7 +25,7 @@
         shaderProgram.setUniform(constructAttributeName(uniformName, "constantAttenuation"), constantAttenuation);
         shaderProgram.setUniform(constructAttributeName(uniformName, "linearAttenuation"), linearAttenuation);
         shaderProgram.setUniform(constructAttributeName(uniformName, "exponentialAttenuation"), exponentialAttenuation);
-        shaderProgram.setUniform(constructAttributeName(uniformName, "isOn"), isOn);
+        shaderProgram.setUniform(constructAttributeName(uniformName, "isPointOn"), isOn);
     }
 
     GLsizeiptr PointLight::getDataSizeStd140()

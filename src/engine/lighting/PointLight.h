@@ -21,5 +21,5 @@
         float constantAttenuation; 
         float linearAttenuation; 
         float exponentialAttenuation; 
-        GLint isOn; 
+        bool isOn; 
     };

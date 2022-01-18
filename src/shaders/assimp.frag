@@ -69,7 +69,7 @@ void main() {
 
     lightColour = lightColour + pointLightColourOne + pointLightColourTwo;
 
-    if(laser.isOn) {
+    if(laser.isLaserOn) {
         outputColour = laser.color;
     } else {
         outputColour =  objColor * vec4(lightColour, 1.0);

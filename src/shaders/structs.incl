@@ -1,18 +1,18 @@
 struct Laser {
     vec4 color;
-    bool isOn;
+    bool isLaserOn;
 };
 
 struct AmbientLight {
     vec3 color;
-    bool isOn;
+    bool isAmbientOn;
 };
 
 struct DiffuseLight {
     vec3 color;
     vec3 direction;
     float factor;
-    bool isOn;
+    bool isDiffuseOn;
 };
 
 struct PointLight
@@ -23,11 +23,11 @@ struct PointLight
 	float constantAttenuation;
 	float linearAttenuation;
 	float exponentialAttenuation;
-	bool isOn;
+	bool isPointOn;
 };
 
 struct Material {
-    bool isOn; //specular isOn
+    bool isMaterialOn; //specular isMaterialOn
     float specularIntensity;
     float specularStrength;
     bool useNormalMap;

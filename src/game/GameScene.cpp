@@ -58,11 +58,11 @@ void GameScene::initScene() {
 		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
 		m_cube = std::make_unique<Cube>(true, true, true);
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
-		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
+		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f,  true);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
 		m_HUD = std::make_unique<GameHUD>(*this);
-		m_pointLightOne = std::make_unique<PointLight>(glm::vec3(-60.0f, 20.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 0.3f, 0.3f, 0.004f, 0.0001f);
-		m_pointLightTwo = std::make_unique<PointLight>(glm::vec3(60.0f, 20.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.3f, 0.3f, 0.0005f, 0.0005f);
+		m_pointLightOne = std::make_unique<PointLight>(glm::vec3(-60.0f, 20.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), 0.3f, 0.3f, 0.004f, 0.0001f, true);
+		m_pointLightTwo = std::make_unique<PointLight>(glm::vec3(60.0f, 20.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 0.3f, 0.3f, 0.0005f, 0.0005f, true);
 
 		Material shinnyMaterial = Material(1.0f, 32.0f);
 
@@ -199,12 +199,9 @@ void GameScene::renderScene() {
 	TextureManager::getInstance().getTexture("lava").bind(0);
 	m_cube->render();
 
-
     m_HUD->renderHUD(ambientSkybox);
     drawGameObjectsHUD();
-
 	glEnable(GL_DEPTH_TEST);
-
 }
 void GameScene::onWindowSizeChanged(int width, int height)
 {
@@ -262,7 +259,9 @@ void GameScene::updateScene() {
 
 	}
 	if (keyPressedOnce(GLFW_KEY_5)) {
-		visualizeColorFrameBuffer = !visualizeColorFrameBuffer;
+		auto& shaderProgramManager = ShaderProgramManager::getInstance();
+		auto& mainProgram = shaderProgramManager.getShaderProgram("main");
+		mainProgram.useProgram();
 
 	}
 	

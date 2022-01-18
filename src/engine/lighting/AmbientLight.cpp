@@ -7,7 +7,7 @@ AmbientLight::AmbientLight(const glm::vec3& color, const bool isOn)
 }
 
 void AmbientLight::switchLight(ShaderProgram& shaderProgram, const bool enable) {
-    shaderProgram.setUniform(constructAttributeName("ambientLight", "isOn"), enable);
+    shaderProgram.setUniform(constructAttributeName("ambientLight", "isAmbientOn"), enable);
     m_isOn = enable;
 }
 
@@ -21,7 +21,7 @@ std::string AmbientLight::constructAttributeName(const std::string& uniformName,
 
 void AmbientLight::setUniform(ShaderProgram& shaderProgram, const std::string& uniformName) {
     shaderProgram.setUniform(constructAttributeName(uniformName, "color"), m_color);
-    shaderProgram.setUniform(constructAttributeName(uniformName, "isOn"), m_isOn);
+    shaderProgram.setUniform(constructAttributeName(uniformName, "isAmbientOn"), m_isOn);
 }
 
 glm::vec3 AmbientLight::getColorContribution() const {
