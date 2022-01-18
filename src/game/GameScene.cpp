@@ -144,14 +144,17 @@ void GameScene::updateLights(const std::string &shaderKey){
 	m_pointLightTwo->setUniform(mainProgram, "pointLightTwo");
 }
 
+void GameScene::clearBuffers() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+}
+
 void GameScene::renderScene() {
 
 
 	auto& shaderProgramManager = ShaderProgramManager::getInstance();
 	auto& textureManager = TextureManager::getInstance();
-
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	clearBuffers();
 
     updateMatrices();
     updateShaderMatrices("main");
@@ -186,9 +189,6 @@ void GameScene::renderScene() {
 	mainProgram.setUniform("cameraPosition", m_camera->getEye());
 	m_material->setUniform(mainProgram, "material");
 
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	glStencilMask(0xFF);
-
 	Cube cub1 = Cube();
 	auto crateSize = 8.0f;
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 0.0f, -80.0f));
@@ -198,27 +198,11 @@ void GameScene::renderScene() {
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
 	TextureManager::getInstance().getTexture("lava").bind(0);
 	m_cube->render();
-	
 
-	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-	glStencilMask(0x00);
-
-	mainProgram.setUniform("isStencil", true);
-	crateSize = 10.0f;
-	model = glm::translate(glm::mat4(1.0f), glm::vec3(-30.0f, 0.0f, -80.0f));
-	renderedHeight = 5.0f;
-	model = glm::translate(model, glm::vec3(0.0f, 1.5f + crateSize / 2.0f + renderedHeight, 0.0f));
-	model = glm::scale(model, glm::vec3(crateSize, crateSize + 5.0f, crateSize ));
-	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
-	TextureManager::getInstance().getTexture("lava").bind(0);
-	m_cube->render();
-	mainProgram.setUniform("isStencil", false);
 
     m_HUD->renderHUD(ambientSkybox);
     drawGameObjectsHUD();
 
-	glStencilMask(0xFF);
-	glStencilFunc(GL_ALWAYS, 0, 0xFF);
 	glEnable(GL_DEPTH_TEST);
 
 }
@@ -254,6 +238,7 @@ void GameScene::updateScene() {
 	}
 	/* Free floating camera or static camera*/
 	if (keyPressedOnce(GLFW_KEY_2)) {
+		glfwSetInputMode(this->getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		setCameraUpdateEnabled(!isCameraUpdateEnabled());
 	}
 	/* Update camera state*/

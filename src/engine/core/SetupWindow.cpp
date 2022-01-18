@@ -19,28 +19,21 @@ bool SetupWindow::createWindow(const std::string& title, int majorVersion, int m
 
 	const auto primaryWindow = glfwGetPrimaryMonitor();
 	const auto videoMode = glfwGetVideoMode(primaryWindow);
-	m_showFullScreen = showFullscreen;
 	auto monitor = m_showFullScreen ? primaryWindow : nullptr;
-
-	m_window = glfwCreateWindow(videoMode->width, videoMode->height, title.c_str(), monitor, nullptr);
+	auto width = 840;
+	auto height = 640;
+	m_window = glfwCreateWindow(width, height, title.c_str(), monitor, nullptr);
 	if (m_window == nullptr) {
 		return false;
 	}
 	glfwMakeContextCurrent(m_window);
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 	glfwSetWindowSizeCallback(m_window, onWindowSizeChangedStatic);
-	
-	if (!showFullscreen){
-		glfwMaximizeWindow(m_window);
-		// After calling glfwMaximizeWindow, the onWindowSizeChanged somehow does not get called. Therefore I call it manually.
-		int width, height;
-		glfwGetWindowSize(m_window, &width, &height);
-		onWindowSizeChangedInternal(width, height);
-	}
+	onWindowSizeChangedInternal(width, height);
 	glfwSetMouseButtonCallback(m_window, onMouseButtonPressedStatic);
 	glfwSetScrollCallback(m_window, onMouseWheelScrollStatic);
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	m_windows[m_window] = this;
-
     return true;
 
 }
@@ -164,7 +157,7 @@ glm::ivec2 SetupWindow::getOpenGLCursorPosition() const
 {
 	double posX, posY;
 	glfwGetCursorPos(m_window, &posX, &posY);
-	return glm::ivec2(static_cast<int>(posX), m_screenHeight - static_cast<int>(posY));
+	return glm::ivec2(static_cast<int>(posX), 640 - static_cast<int>(posY));
 }
 
 bool SetupWindow::keyPressed(int keyCode) const {
@@ -200,17 +193,15 @@ bool SetupWindow::errorHasOccured() const {
 }
 
 void SetupWindow::recalculateProjectionMatrix() {
-	int width, height;
-	glfwGetWindowSize(getWindow(), &width, &height);
-	m_projectionMatrix = glm::perspective(45.0f, static_cast<float>(width) / static_cast<float>(height), 0.5f, 1500.0f);
-	m_orthoMatrix = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
+	m_projectionMatrix = glm::perspective(45.0f, static_cast<float>(m_screenWidth) / static_cast<float>(m_screenHeight), 0.5f, 1500.0f);
+	m_orthoMatrix = glm::ortho(0.0f, static_cast<float>(m_screenWidth), 0.0f, static_cast<float>(m_screenHeight));
 }
 
 void SetupWindow::onWindowSizeChangedInternal(int width, int height) {
-	recalculateProjectionMatrix();
-	glViewport(0, 0, width, height);
 	m_screenWidth = width;
 	m_screenHeight = height;
+	recalculateProjectionMatrix();
+	glViewport(0, 0, width, height);
 	onWindowSizeChanged(width, height);
 }
 

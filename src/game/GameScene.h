@@ -25,6 +25,7 @@ public:
     void onMouseButtonPressed(int button, int action) override;
     void addObject(std::unique_ptr<GameObject> gameObjet);
 private:
+    void clearBuffers();
     void gameObjectsLoop();
     void drawGameObjectsHUD();
     void updateMatrices();
