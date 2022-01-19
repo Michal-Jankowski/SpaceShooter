@@ -4,12 +4,21 @@
 
 Camera::Camera(const glm::vec3& pos, const glm::vec3& viewPoint, const glm::vec3& up, glm::i32vec2 windowPosition, float moveSpeed, float mouseSensitivity)
   :  m_position(pos)
+  ,  init_pos(pos)
   ,  m_viewPoint(viewPoint)
+  ,  init_viewPoint(viewPoint)
   ,  m_upVector(up)
+  ,  init_upVector(up)
   ,  m_moveSpeed(moveSpeed)
   ,  m_mouseSensitivity(mouseSensitivity)
   ,  m_windowCenterPosition(windowPosition)
 {
+}
+
+void Camera::returnToInitPosition() {
+    m_position = init_pos;
+    m_viewPoint = init_viewPoint;
+    m_upVector = init_upVector;
 }
 
 void Camera::setKeyboardControls(int forwardKeyCode, int backwardKeyCode, int strafeLeftKeyCode, int strafeRightKeyCode) {
@@ -114,3 +123,5 @@ void Camera::rotateUpDown(float angleInDegrees) {
 		m_viewPoint = m_position + glm::vec3(rotatedViewVector);
 	}
 }
+
+

@@ -37,9 +37,8 @@ private:
     glm::vec3 heightCamOffset = glm::vec3(0.0f, -2.0f, 0.0f);
     int m_shootMouseKeyCode = GLFW_MOUSE_BUTTON_LEFT;
 
-    int life = 0;
-    int initLife = 3;
-    glm::vec3 initPos = glm::vec3(0.0f,0.0f,0.0f);
+    int lives = 0;
+    int initLives = 3;
     int enemiesShot = 0;
     int collectiblesFound = 0;
 };

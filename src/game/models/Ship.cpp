@@ -14,11 +14,11 @@ Ship::Ship(std::shared_ptr<Camera> cameraRef) : GameModel(MODEL_PATH), m_camera(
 }
 
 void Ship::init() {
+    m_camera->returnToInitPosition();
+    lives = initLives;
     enemiesShot = 0;
     collectiblesFound = 0;
-    transform->setPosition(initPos);
 }
-
 
 void Ship::update(SetupWindow* scene) {
     GameModel::update(scene);
@@ -50,6 +50,7 @@ void Ship::shootCheck(SetupWindow* scene) {
 }
 
 void Ship::drawHud(GameHUD *hud) {
+    hud->addLines(string_utils::formatString("Lives: {}", lives), 1);
     hud->addLines(string_utils::formatString("Enemies shot: {}", enemiesShot), 1);
     hud->addLines(string_utils::formatString("Collectibles found: {}", collectiblesFound), 1);
 }
@@ -70,7 +71,10 @@ bool Ship::isValidCollisionTarget(GameObject *other) const {
 }
 
 void Ship::damage(bool autoKill) {
-
+    lives -= 1;
+    if(autoKill || lives <= 0){
+        init();
+    }
 }
 
 

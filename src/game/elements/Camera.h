@@ -15,6 +15,7 @@ public:
 	glm::mat4 getViewMatrix() const;
 	glm::vec3 getEye() const;
 	glm::vec3  getViewPoint() const;
+    void returnToInitPosition();
 private:
 	void moveBy(float distance);
 	void strafeBy(float distance);
@@ -24,6 +25,10 @@ private:
 	glm::vec3 m_position;
 	glm::vec3 m_viewPoint;
 	glm::vec3 m_upVector;
+
+    glm::vec3 init_pos;
+    glm::vec3 init_viewPoint;
+    glm::vec3 init_upVector;
 
 	float m_mouseSensitivity;
 	float m_moveSpeed;
