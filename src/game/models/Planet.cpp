@@ -53,5 +53,5 @@ void Planet::onCollision(GameObject *other) {
 }
 
 bool Planet::isValidCollisionTarget(GameObject *other) const {
-    return false;
+    return dynamic_cast<Ship*>(other) != nullptr;
 }
