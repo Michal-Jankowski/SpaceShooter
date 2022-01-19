@@ -6,8 +6,7 @@
     {
     public:
         PointLight(const glm::vec3& position, const glm::vec3& color, const float ambientFactor,
-            const float constantAttenuation, const float linearAttenuation, const float exponentialAttenuation,
-            const bool isOn = true);
+            const float constantAttenuation, const float linearAttenuation, const float exponentialAttenuation);
         void setUniform(ShaderProgram& shaderProgram, const std::string& uniformName);
         static GLsizeiptr getDataSizeStd140();
         void* getDataPointer() const;
@@ -21,5 +20,4 @@
         float constantAttenuation; 
         float linearAttenuation; 
         float exponentialAttenuation; 
-        bool isOn; 
     };

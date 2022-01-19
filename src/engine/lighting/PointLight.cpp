@@ -1,15 +1,13 @@
 #include "PointLight.h"
 
     PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, const float ambientFactor,
-        const float constantAttenuation, const float linearAttenuation, const float exponentialAttenuation,
-        const bool isOn)
+        const float constantAttenuation, const float linearAttenuation, const float exponentialAttenuation)
         : position(position)
         , color(color)
         , ambientFactor(ambientFactor)
         , constantAttenuation(constantAttenuation)
         , linearAttenuation(linearAttenuation)
         , exponentialAttenuation(exponentialAttenuation)
-        , isOn(isOn ? true : false)
     {
     }
     
@@ -25,7 +23,6 @@
         shaderProgram.setUniform(constructAttributeName(uniformName, "constantAttenuation"), constantAttenuation);
         shaderProgram.setUniform(constructAttributeName(uniformName, "linearAttenuation"), linearAttenuation);
         shaderProgram.setUniform(constructAttributeName(uniformName, "exponentialAttenuation"), exponentialAttenuation);
-        shaderProgram.setUniform(constructAttributeName(uniformName, "isPointOn"), isOn);
     }
 
     GLsizeiptr PointLight::getDataSizeStd140()
@@ -40,6 +37,6 @@
 
     PointLight& PointLight::none()
     {
-        static PointLight nonePointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, 0.0f, 0.0f, false);
+        static PointLight nonePointLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, 0.0f, 0.0f);
         return nonePointLight;
     }
