@@ -54,6 +54,7 @@ void GameScene::initScene() {
 		laserShaderProgram.addShaderToProgram(shaderManager.getVertexShader("laser_part"));
 		laserShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("laser_part"));
 
+        collisionHandler = std::make_unique<CollisionHandler>();
 		// init objs
 		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
 		m_cube = std::make_unique<Cube>(true, true, true);
@@ -79,8 +80,8 @@ void GameScene::initScene() {
                 glm::vec3(0.0f, 1.0f, 0.f),
                 glm::i32vec2(width / 2, height / 2),
                 15.0f);
-
-		gameObjects.push_back(std::make_unique<Ship>(m_camera));
+        auto ship = std::make_unique<Ship>(m_camera);
+        addObject(std::move(ship));
         auto planet1 = std::make_unique<Planet>(30.0f, this, glm::vec3(-50.0f, 0.0f, -50.0f));
 		// Need a way to represent pointLight object, Planet is non-ideal solution
 		auto sourceLightOne = std::make_unique<Collectible>();
@@ -88,12 +89,14 @@ void GameScene::initScene() {
         auto sourceLightTwo = std::make_unique<Collectible>();
         sourceLightTwo->transform->setPosition( glm::vec3(60.0f, 20.0f, 0.0f));
 
-		gameObjects.push_back(std::move(planet1));
-		gameObjects.push_back(std::move(sourceLightOne));
-		gameObjects.push_back(std::move(sourceLightTwo));
+        addObject(std::move(planet1));
+        addObject(std::move(sourceLightOne));
+        addObject(std::move(sourceLightTwo));
 
 
 		//gameObjects.push_back(std::make_unique<Planet>(1.0f, this));
+
+
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -286,25 +289,11 @@ void GameScene::gameObjectsLoop() {
         gameObject->update(this);
     }
     ///COLLISIONS
-    for (int i = 0; i < gameObjects.size(); ++i) {
-        for (int j = i+1; j < gameObjects.size(); ++j) {
-            if (gameObjects[i]->useCollision(gameObjects[j].get())
-             || gameObjects[j]->useCollision(gameObjects[i].get())) {
-                bool col = gameObjects[i]->col->isColliding(gameObjects[j]->col.get());
-                if(col){
-                    gameObjects[i]->onCollision(gameObjects[j].get());
-                    gameObjects[j]->onCollision(gameObjects[i].get());
-                }
-            }
-        }
-
-    }
+    collisionHandler->runCollisionChecks();
     ///REMOVE
     for (int i = 0; i < gameObjects.size(); ++i) {
         if(gameObjects[i]->awaitingDestroy){
-            gameObjects[i].reset();
-            gameObjects.erase(gameObjects.begin()+i);
-            i--;
+            removeGameObjectAt(i);
         }
     }
     ///RENDER
@@ -315,8 +304,22 @@ void GameScene::gameObjectsLoop() {
 }
 
 void GameScene::addObject(std::unique_ptr<GameObject> go) {
+    if(go->useCollision(nullptr)) {
+        collisionHandler->registerCollider(go.get());
+    }
     creatingGameObjects.push(std::move(go));
+
 }
+
+void GameScene::removeGameObjectAt(int i) {
+    if(gameObjects[i]->useCollision(nullptr)) {
+        collisionHandler->deregisterCollider(gameObjects[i].get());
+    }
+    gameObjects[i].reset();
+    gameObjects.erase(gameObjects.begin()+i);
+    i--;
+}
+
 
 void GameScene::drawGameObjectsHUD() {
     for (auto & gameObject : gameObjects) {
@@ -324,3 +327,8 @@ void GameScene::drawGameObjectsHUD() {
     }
     m_HUD->clearLines();
 }
+
+const CollisionHandler &GameScene::getCollisionHandler() {
+    return *collisionHandler;
+}
+

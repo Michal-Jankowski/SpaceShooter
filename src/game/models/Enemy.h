@@ -3,6 +3,7 @@
 
 
 #include "../../engine/models/GameModel.h"
+#include "../elements/Laser.h"
 
 class Enemy : public GameModel {
 public:
