@@ -1,6 +1,7 @@
 
 
 #include "CollisionHandler.h"
+#include "LineCollider.h"
 
 void CollisionHandler::registerCollider(GameObject *go) {
     colliders.push_back(go);
@@ -28,4 +29,17 @@ void CollisionHandler::runCollisionChecks() {
         }
 
     }
+}
+
+bool CollisionHandler::inLineOfSight(const GameModel &go1, const GameModel &go2) {
+    LineCollider lCollider = LineCollider(nullptr, go1.transform->getPosition(), go2.transform->getPosition());
+    for (auto & collider : colliders) {
+       if(collider == &go1 || collider == &go2){
+           continue;
+       }
+       if(lCollider.isColliding(collider->col.get())){
+           return false;
+       }
+    }
+    return true;
 }

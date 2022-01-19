@@ -10,7 +10,15 @@
 
 Ship::Ship(std::shared_ptr<Camera> cameraRef) : GameModel(MODEL_PATH), m_camera(std::move(cameraRef)) {
     col = std::make_unique<SphereCollider>(transform.get(), 2.0f, true);
+    init();
 }
+
+void Ship::init() {
+    enemiesShot = 0;
+    collectiblesFound = 0;
+    transform->setPosition(initPos);
+}
+
 
 void Ship::update(SetupWindow* scene) {
     GameModel::update(scene);
@@ -60,4 +68,9 @@ void Ship::addPoint(Ship::PointType type) {
 bool Ship::isValidCollisionTarget(GameObject *other) const {
      return false;
 }
+
+void Ship::damage(bool autoKill) {
+
+}
+
 

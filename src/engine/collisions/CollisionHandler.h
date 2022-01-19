@@ -5,12 +5,14 @@
 
 
 #include "../models/GameObject.h"
+#include "../models/GameModel.h"
 
 class CollisionHandler {
 public:
     void registerCollider(GameObject* go);
     void deregisterCollider(GameObject* go);
     void runCollisionChecks();
+    bool inLineOfSight(const GameModel &go1, const GameModel & go2);
 private:
     std::vector<GameObject*> colliders;
 

@@ -14,8 +14,9 @@ void Enemy::update(SetupWindow* gScene) {
 
 void Enemy::onCollision(GameObject *other) {
     GameModel::onCollision(other);
-    if(dynamic_cast<Ship*>(other) != nullptr){
-        other->awaitingDestroy = true;
+    auto ship = dynamic_cast<Ship*>(other);
+    if(ship != nullptr){
+        ship->damage(true);
     }
     else if(auto* laser = dynamic_cast<Laser*>(other)){
         if(auto* ship = dynamic_cast<Ship*>(laser->getShooter())){

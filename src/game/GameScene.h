@@ -13,6 +13,7 @@
 #include "../engine/lighting/PointLight.h"
 #include "../engine/buffers/Line.h"
 #include "../engine/collisions/CollisionHandler.h"
+#include "models/Ship.h"
 #include <queue>
 
 class GameScene : public SetupWindow
@@ -26,6 +27,7 @@ public:
     void onMouseButtonPressed(int button, int action) override;
     void addObject(std::unique_ptr<GameObject> gameObjet);
     const CollisionHandler& getCollisionHandler();
+    const Ship& getPlayer();
 private:
     void clearBuffers();
     void gameObjectsLoop();
@@ -45,6 +47,7 @@ private:
     std::unique_ptr<Material> m_material;
     std::unique_ptr<GameHUD> m_HUD;
     std::unique_ptr<CollisionHandler> collisionHandler;
+    Ship* shipRef;
     float m_rotationAngleRad = 0.0f;
 };
 

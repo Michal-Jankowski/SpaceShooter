@@ -81,6 +81,7 @@ void GameScene::initScene() {
                 glm::i32vec2(width / 2, height / 2),
                 15.0f);
         auto ship = std::make_unique<Ship>(m_camera);
+        shipRef = ship.get();
         addObject(std::move(ship));
         auto planet1 = std::make_unique<Planet>(30.0f, this, glm::vec3(-50.0f, 0.0f, -50.0f));
 		// Need a way to represent pointLight object, Planet is non-ideal solution
@@ -330,5 +331,9 @@ void GameScene::drawGameObjectsHUD() {
 
 const CollisionHandler &GameScene::getCollisionHandler() {
     return *collisionHandler;
+}
+
+const Ship &GameScene::getPlayer() {
+    return *shipRef;
 }
 

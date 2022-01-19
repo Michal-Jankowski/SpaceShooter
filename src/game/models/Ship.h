@@ -21,9 +21,11 @@ public:
 
     enum PointType { enemyPoint, collectiblePoint };
     void addPoint(PointType type);
+    void damage(bool autoKill = false);
 private:
     inline static const std::string MODEL_PATH = "../res/models/ship.obj";
 
+    void init();
     void shootCheck(SetupWindow* scene);
     std::shared_ptr<Camera> m_camera;
     float distCamOffset = 5.0f;
@@ -35,6 +37,9 @@ private:
     glm::vec3 heightCamOffset = glm::vec3(0.0f, -2.0f, 0.0f);
     int m_shootMouseKeyCode = GLFW_MOUSE_BUTTON_LEFT;
 
+    int life = 0;
+    int initLife = 3;
+    glm::vec3 initPos = glm::vec3(0.0f,0.0f,0.0f);
     int enemiesShot = 0;
     int collectiblesFound = 0;
 };
