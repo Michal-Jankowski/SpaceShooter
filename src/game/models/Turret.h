@@ -5,11 +5,17 @@
 
 
 #include "Enemy.h"
+#include "../GameScene.h"
 
 class Turret : public Enemy {
 
     void update(SetupWindow *gScene) override;
+    void drawHud(GameHUD *hud) override;
 private:
+    const float shootAttemptInterval = 3.0f;
+    float shootAttemptTimer = 0.0f;
+    void tryShoot(GameScene *gScene);
+    static bool isSightInterruptor(GameObject* go);
     inline static const std::string MODEL_PATH = "../res/models/enemy.obj";
 };
 

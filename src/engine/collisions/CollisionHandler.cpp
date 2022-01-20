@@ -31,15 +31,24 @@ void CollisionHandler::runCollisionChecks() {
     }
 }
 
-bool CollisionHandler::inLineOfSight(const GameModel &go1, const GameModel &go2) {
+bool CollisionHandler::inLineOfSight(const GameModel &go1, const GameModel &go2, bool (*obstacle)(GameObject*)) {
     LineCollider lCollider = LineCollider(nullptr, go1.transform->getPosition(), go2.transform->getPosition());
+    Line l  = Line(lCollider.getStart(), lCollider.getEnd());
+
     for (auto & collider : colliders) {
        if(collider == &go1 || collider == &go2){
            continue;
        }
+       if(!obstacle(collider)){
+           continue;
+       }
        if(lCollider.isColliding(collider->col.get())){
+           l.setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+           l.draw();
            return false;
        }
     }
+    l.setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    l.draw();
     return true;
 }

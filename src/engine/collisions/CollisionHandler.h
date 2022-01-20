@@ -12,7 +12,7 @@ public:
     void registerCollider(GameObject* go);
     void deregisterCollider(GameObject* go);
     void runCollisionChecks();
-    bool inLineOfSight(const GameModel &go1, const GameModel & go2);
+    bool inLineOfSight(const GameModel &go1, const GameModel & go2, bool (*obstacle)(GameObject*));
 private:
     std::vector<GameObject*> colliders;
 

@@ -14,7 +14,8 @@ public:
     bool isValidCollisionTarget(GameObject* other) const override;
 private:
     inline static const std::string MODEL_PATH = "../res/models/planet.obj";
-    int enemies = 10;
+
+    int enemies = 3;
     int collectibles = 10;
     float collectiblesOffset = 1.1f;
 };
