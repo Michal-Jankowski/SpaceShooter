@@ -17,8 +17,10 @@ void CollisionHandler::deregisterCollider(GameObject *go) {
 
 void CollisionHandler::runCollisionChecks() {
     for (int i = 0; i < colliders.size(); ++i) {
-        if(colliders[i]->useCollision(nullptr)){
-            colliders[i]->col->drawDebug();
+        if(drawDebug) {
+            if (colliders[i]->useCollision(nullptr)) {
+                colliders[i]->col->drawDebug();
+            }
         }
 
         for (int j = i+1; j < colliders.size(); ++j) {
@@ -37,7 +39,7 @@ void CollisionHandler::runCollisionChecks() {
 
 bool CollisionHandler::inLineOfSight(const GameModel &go1, const GameModel &go2, bool (*obstacle)(GameObject*)) {
     LineCollider lCollider = LineCollider(nullptr, go1.transform->getPosition(), go2.transform->getPosition());
-    Line l  = Line(lCollider.getStart(), lCollider.getEnd());
+    Line l = Line(lCollider.getStart(), lCollider.getEnd());
 
     for (auto & collider : colliders) {
        if(collider == &go1 || collider == &go2){
@@ -46,13 +48,17 @@ bool CollisionHandler::inLineOfSight(const GameModel &go1, const GameModel &go2,
        if(!obstacle(collider)){
            continue;
        }
-       if(lCollider.isColliding(collider->col.get())){
-           l.setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-           l.draw();
-           return false;
+       if(drawDebug) {
+           if (lCollider.isColliding(collider->col.get())) {
+               l.setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+               l.draw();
+               return false;
+           }
        }
     }
-    l.setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-    l.draw();
+    if(drawDebug) {
+        l.setColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+        l.draw();
+    }
     return true;
 }

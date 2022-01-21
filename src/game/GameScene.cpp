@@ -261,7 +261,9 @@ void GameScene::updateScene() {
 		mainProgram.useProgram();
 
 	}
-	
+    if (keyPressedOnce(GLFW_KEY_6)) {
+        collisionHandler->drawDebug = !collisionHandler->drawDebug;
+    }
 	m_rotationAngleRad += getValueByTime(glm::radians(5.0f));
 
 }
