@@ -15,7 +15,7 @@ public:
 
     float radius;
 private:
-    static const int debugResolution = 20;
+    static const int debugResolution = 25;
     void drawDebugImpl() override;
 };
 

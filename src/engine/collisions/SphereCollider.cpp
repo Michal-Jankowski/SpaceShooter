@@ -23,22 +23,31 @@ SphereCollider::SphereCollider(Transform* transformRef, float radius, bool drawD
 
 void SphereCollider::drawDebugImpl() {
     Line laser = Line(glm::vec3(0), glm::vec3(0));
+    laser.setColor(glm::vec4(0.2f, 0.85f, 0.1f, 0.0f));
     for (int i = 0; i < debugResolution; ++i) {
-        glm::vec3 start = MathUtils::sphericalToCartesianAngles(radius, (float)i * (360.0f / debugResolution), 0);
-        glm::vec3 end = MathUtils::sphericalToCartesianAngles(radius, ((float)i+1.0f) * (360.0f/debugResolution), 0);
-        laser.setPosition(start,end);
+        glm::vec3 start = MathUtils::sphericalToCartesianAngles(radius, (float)i * (360.0f / debugResolution), 90);
+        glm::vec3 end = MathUtils::sphericalToCartesianAngles(radius, ((float)i + 1.0f) * (360.0f/debugResolution), 90);
+        laser.setPosition(start + transformRef->getPosition(),end + transformRef->getPosition());
         laser.draw();
     }
     for (int i = 0; i < debugResolution; ++i) {
-        glm::vec3 start = MathUtils::sphericalToCartesianAngles(radius, 0, (float)i * (360.0f / debugResolution));
-        glm::vec3 end = MathUtils::sphericalToCartesianAngles(radius, 0,((float)i+1.0f) * (360.0f/debugResolution));
-        laser.setPosition(start,end);
+        glm::vec3 start = MathUtils::sphericalToCartesianAngles(radius, 0, (float)i * (180.0f / debugResolution));
+        glm::vec3 end = MathUtils::sphericalToCartesianAngles(radius, 0,((float)i+1.0f) * (180.0f/debugResolution));
+        laser.setPosition(start + transformRef->getPosition(),end + transformRef->getPosition());
+        laser.draw();
+        start = MathUtils::sphericalToCartesianAngles(radius, 180, (float)i * (180.0f / debugResolution));
+        end = MathUtils::sphericalToCartesianAngles(radius, 180,((float)i+1.0f) * (180.0f/debugResolution));
+        laser.setPosition(start + transformRef->getPosition(),end + transformRef->getPosition());
         laser.draw();
     }
     for (int i = 0; i < debugResolution; ++i) {
-        glm::vec3 start = MathUtils::sphericalToCartesianAngles(radius, 90, (float)i * (360.0f / debugResolution));
-        glm::vec3 end = MathUtils::sphericalToCartesianAngles(radius, 90,((float)i+1.0f) * (360.0f/debugResolution));
-        laser.setPosition(start,end);
+        glm::vec3 start = MathUtils::sphericalToCartesianAngles(radius, 90, (float)i * (180.0f / debugResolution));
+        glm::vec3 end = MathUtils::sphericalToCartesianAngles(radius, 90,((float)i+1.0f) * (180.0f/debugResolution));
+        laser.setPosition(start + transformRef->getPosition(),end + transformRef->getPosition());
+        laser.draw();
+        start = MathUtils::sphericalToCartesianAngles(radius, 270, (float)i * (180.0f / debugResolution));
+        end = MathUtils::sphericalToCartesianAngles(radius, 270,((float)i+1.0f) * (180.0f/debugResolution));
+        laser.setPosition(start + transformRef->getPosition(),end + transformRef->getPosition());
         laser.draw();
     }
 }

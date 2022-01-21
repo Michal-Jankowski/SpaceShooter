@@ -2,9 +2,7 @@
 
 
 void GameObject::render() {
-    if(useCollision(nullptr)){
-        col->drawDebug();
-    }
+
 }
 
 void GameObject::onCollision(GameObject *other) {

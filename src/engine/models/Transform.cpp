@@ -1,6 +1,6 @@
-
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "Transform.h"
-#include <glm/ext/matrix_transform.hpp>
 
 Transform::Transform() {
     pos = glm::vec3(0.0f,0.0f,0.0f);
@@ -38,9 +38,10 @@ void Transform::scaleTimes(glm::vec3 diff) {
 }
 
 glm::mat4 Transform::getMatrix() {
-    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), pos);
-    modelMatrix = glm::rotate(modelMatrix, angle(rotation), axis(rotation));
-    modelMatrix = glm::scale(modelMatrix, scale);
+    glm::mat4 translationMat = glm::translate(glm::mat4(1.0f), pos);
+    glm::mat4 rotationMat = glm::rotate(glm::mat4(1.0f), angle(rotation), axis(rotation));
+    glm::mat4 scaleMat = glm::scale(glm::mat4(1.0f), scale);
+    glm::mat4 modelMatrix = translationMat * rotationMat * scaleMat;
     return modelMatrix;
 }
 

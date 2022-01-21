@@ -17,6 +17,10 @@ void CollisionHandler::deregisterCollider(GameObject *go) {
 
 void CollisionHandler::runCollisionChecks() {
     for (int i = 0; i < colliders.size(); ++i) {
+        if(colliders[i]->useCollision(nullptr)){
+            colliders[i]->col->drawDebug();
+        }
+
         for (int j = i+1; j < colliders.size(); ++j) {
             if (colliders[i]->useCollision(colliders[j])
                 || colliders[j]->useCollision(colliders[i])) {
