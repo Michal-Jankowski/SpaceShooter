@@ -14,6 +14,11 @@ public:
     void render() override;
     bool isValidCollisionTarget(GameObject *other) const override;
     GameObject* getShooter();
+
+    constexpr static const float laserLength = 10.0f;
+    constexpr static float laserLifetime = 0.5f;
+    constexpr static float laserSpeedStartCompensation = 6.0f;
+
 private:
     GameObject* shotFrom;
     Line line;

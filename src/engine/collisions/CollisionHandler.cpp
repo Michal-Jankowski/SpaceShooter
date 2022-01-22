@@ -2,6 +2,7 @@
 
 #include "CollisionHandler.h"
 #include "LineCollider.h"
+#include "../../game/models/Planet.h"
 
 void CollisionHandler::registerCollider(GameObject *go) {
     colliders.push_back(go);
@@ -48,12 +49,12 @@ bool CollisionHandler::inLineOfSight(const GameModel &go1, const GameModel &go2,
        if(!obstacle(collider)){
            continue;
        }
-       if(drawDebug) {
-           if (lCollider.isColliding(collider->col.get())) {
+       if (lCollider.isColliding(collider->col.get())) {
+           if(drawDebug) {
                l.setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
                l.draw();
-               return false;
            }
+           return false;
        }
     }
     if(drawDebug) {

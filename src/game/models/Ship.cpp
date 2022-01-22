@@ -42,9 +42,9 @@ void Ship::shootCheck(SetupWindow* scene) {
 
     if(scene->mouseButtonPressed(m_shootMouseKeyCode)){
         auto* gScene = dynamic_cast<GameScene*>(scene);
-        glm::vec3 startPos = transform->getPosition() - (m_camera->getNormalizedViewVector() * laserSpeedStartCompensation);
-        glm::vec3 endPos = startPos +(m_camera->getNormalizedViewVector() * laserLength);
-        gScene->addObject(std::make_unique<Laser>(startPos, endPos, laserLifetime, this));
+        glm::vec3 startPos = transform->getPosition() - (m_camera->getNormalizedViewVector() * Laser::laserSpeedStartCompensation);
+        glm::vec3 endPos = startPos +(m_camera->getNormalizedViewVector() * Laser::laserLength);
+        gScene->addObject(std::make_unique<Laser>(startPos, endPos, Laser::laserLifetime, this));
         shootTimer = shootTimeout;
     }
 }

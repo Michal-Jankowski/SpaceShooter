@@ -14,15 +14,15 @@ void Enemy::update(SetupWindow* gScene) {
 
 void Enemy::onCollision(GameObject *other) {
     GameModel::onCollision(other);
-    auto ship = dynamic_cast<Ship*>(other);
-    if(ship != nullptr){
+    if(auto ship = dynamic_cast<Ship*>(other)){
         ship->damage(true);
     }
-    else if(auto* laser = dynamic_cast<Laser*>(other)){
-        if(auto* ship = dynamic_cast<Ship*>(laser->getShooter())){
-            ship->addPoint(Ship::enemyPoint);
+    else if(auto laser = dynamic_cast<Laser*>(other)){
+        if(auto pShip = dynamic_cast<Ship*>(laser->getShooter())){
+            pShip->addPoint(Ship::enemyPoint);
+            awaitingDestroy = true;
         }
-        awaitingDestroy = true;
+
     }
 }
 

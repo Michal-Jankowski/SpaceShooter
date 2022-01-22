@@ -94,11 +94,6 @@ void GameScene::initScene() {
         addObject(std::move(sourceLightOne));
         addObject(std::move(sourceLightTwo));
 
-
-		//gameObjects.push_back(std::make_unique<Planet>(1.0f, this));
-
-
-
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}

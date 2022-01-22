@@ -15,8 +15,8 @@ public:
 private:
     inline static const std::string MODEL_PATH = "../res/models/planet.obj";
 
-    int enemies = 3;
-    int collectibles = 10;
+    int enemies = 10;
+    int collectibles = 5;
     float collectiblesOffset = 1.1f;
 };
 

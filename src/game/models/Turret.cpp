@@ -3,6 +3,7 @@
 #include "Turret.h"
 #include "../GameScene.h"
 #include "Planet.h"
+#include "../../engine/utils/RandomGenerator.h"
 
 void Turret::update(SetupWindow *scene) {
     Enemy::update(scene);
@@ -16,17 +17,27 @@ void Turret::update(SetupWindow *scene) {
     if(lineOfSight){
         shootAttemptTimer += (float)scene->getDeltaTime();
         if(shootAttemptTimer >= shootAttemptInterval){
-            shootAttemptTimer = -0.01f;
+            shootAttemptTimer = 0.0f;
             tryShoot(gScene);
         }
     }
     else {
-        //shootAttemptTimer = 0.0f;
+        shootAttemptTimer = 0.0f;
     }
 }
 
 void Turret::tryShoot(GameScene *gScene) {
-    std::cout << "SHOOTING" << std::endl;
+    //std::cout << "SHOOTING" << std::endl;
+    auto shipPos = gScene->getPlayer().transform->getPosition();
+    glm::vec3 pos = RandomGenerator::getInstance().onSurfaceOfUnitSphere();
+    pos *= shootRandomSize;
+    pos += shipPos;
+
+    glm::vec3 dir = glm::normalize(shipPos - transform->getPosition());
+
+    glm::vec3 startPos = transform->getPosition() - (dir * Laser::laserSpeedStartCompensation);
+    glm::vec3 endPos = startPos +(dir * Laser::laserLength);
+    gScene->addObject(std::make_unique<Laser>(startPos, endPos, Laser::laserLifetime, this));
 }
 
 void Turret::drawHud(GameHUD *hud) {
