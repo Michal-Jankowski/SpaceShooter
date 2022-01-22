@@ -162,7 +162,11 @@ void GameScene::renderScene() {
     updateShaderMatrices("main");
     updateShaderMatrices("assimp");
     updateLights("assimp");
-	gameObjectsLoop();
+
+	drawGameObjects();
+    if(drawDebugCollisions) {
+        collisionHandler->drawDebug();
+    }
     auto& mainProgram = shaderProgramManager.getShaderProgram("main");
   	auto& outlineProgram = shaderProgramManager.getShaderProgram("outline");
 
@@ -260,10 +264,10 @@ void GameScene::updateScene() {
 
 	}
     if (keyPressedOnce(GLFW_KEY_6)) {
-        collisionHandler->drawDebug = !collisionHandler->drawDebug;
+        drawDebugCollisions = !drawDebugCollisions;
     }
 	m_rotationAngleRad += getValueByTime(glm::radians(5.0f));
-
+    gameObjectsLogicLoop();
 }
 
 void GameScene::releaseScene() {
@@ -279,7 +283,7 @@ void GameScene::releaseScene() {
     }
 }
 
-void GameScene::gameObjectsLoop() {
+void GameScene::gameObjectsLogicLoop() {
     ///SPAWN
     while(!creatingGameObjects.empty()){
         gameObjects.push_back(std::move(creatingGameObjects.front()));
@@ -297,12 +301,14 @@ void GameScene::gameObjectsLoop() {
             removeGameObjectAt(i);
         }
     }
-    ///RENDER
+}
+
+void GameScene::drawGameObjects() {
     for (auto & gameObject : gameObjects) {
         gameObject->render();
-
     }
 }
+
 
 void GameScene::addObject(std::unique_ptr<GameObject> go) {
     if(go->useCollision(nullptr)) {
@@ -342,4 +348,5 @@ void GameScene::reinitObjects() {
         gameObject->reinit();
     }
 }
+
 

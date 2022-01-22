@@ -3,6 +3,10 @@
 #include "../maths/MatrixManager.h"
 #include "../shaders/ShaderProgramManager.h"
 
+Line::Line() : Line(glm::vec3(0.0f), glm::vec3(1.0f)) {
+
+}
+
 Line::Line(glm::vec3 start, glm::vec3 end)
 	: m_startPoint(start)
 	, m_endPoint(end)
@@ -54,6 +58,10 @@ void Line::setColor(const glm::vec4& color) {
 	m_lineColor = color;
 }
 
+void Line::setColor(const glm::vec3& color) {
+    m_lineColor = glm::vec4(color, 1.0f);
+}
+
 void Line::setPosition(const glm::vec3& start, const glm::vec3& end){
     m_startPoint = start;
     m_endPoint = end;
@@ -74,3 +82,5 @@ glm::vec3 Line::getEndPosition() const {
 glm::vec3 Line::getNormalisedDir() const {
     return glm::normalize(m_endPoint-m_startPoint);
 }
+
+

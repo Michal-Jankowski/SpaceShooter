@@ -22,7 +22,7 @@ Planet::Planet(SetupWindow *scene, float size, bool generateSurroundings, const 
             glm::vec3 pos = r.onSurfaceOfUnitSphere() * size;
 
             std::unique_ptr<GameModel> enemy;
-            if(r.fromZeroToOne() > 0.5f) {
+            if(r.fromZeroToOne() > 0.9f) {
                 enemy = std::make_unique<Turret>(scene);
                 pos *= turretsOffset;
             }

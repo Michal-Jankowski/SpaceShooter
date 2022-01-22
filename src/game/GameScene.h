@@ -31,7 +31,8 @@ public:
     void reinitObjects();
 private:
     void clearBuffers();
-    void gameObjectsLoop();
+    void gameObjectsLogicLoop();
+    void drawGameObjects();
     void removeGameObjectAt(int i);
     void drawGameObjectsHUD();
     void updateMatrices();
@@ -50,5 +51,6 @@ private:
     std::unique_ptr<CollisionHandler> collisionHandler;
     Ship* shipRef;
     float m_rotationAngleRad = 0.0f;
+    bool drawDebugCollisions = false;
 };
 

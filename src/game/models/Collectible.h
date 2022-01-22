@@ -13,6 +13,7 @@ class Collectible : public GameModel {
 public:
     explicit Collectible(SetupWindow* scene);
     void update() override;
+    void render() override;
     void onCollision(GameObject *other) override;
     void drawHud(GameHUD *hud) override;
     bool isValidCollisionTarget(GameObject *other) const override;

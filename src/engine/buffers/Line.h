@@ -4,10 +4,12 @@
 class Line
 {
 public:
+	Line();
 	Line(glm::vec3 start, glm::vec3 end);
 	~Line();
 	void draw();
 	void setColor(const glm::vec4& color);
+    void setColor(const glm::vec3 &color);
 	void setPosition(const glm::vec3& start, const glm::vec3& end);
     [[nodiscard]] glm::vec3 getStartPosition() const;
     [[nodiscard]] glm::vec3 getEndPosition() const;
@@ -21,5 +23,7 @@ private:
 	glm::vec4 m_lineColor;
 
 	bool needInitialising = false;
+
+
 };
 

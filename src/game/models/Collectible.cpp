@@ -14,6 +14,10 @@ Collectible::Collectible(SetupWindow* scene)
 
 void Collectible::update() {
     GameModel::update();
+}
+
+void Collectible::render() {
+    GameModel::render();
     m_outline.render();
 }
 
@@ -36,3 +40,5 @@ void Collectible::drawHud(GameHUD *hud) {
 bool Collectible::isValidCollisionTarget(GameObject *other) const {
     return dynamic_cast<Ship*>(other) != nullptr;
 }
+
+
