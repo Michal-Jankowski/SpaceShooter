@@ -16,8 +16,9 @@ void Turret::update() {
 
     if(lineOfSight){
         shootAttemptTimer += (float)scene->getDeltaTime();
-        if(shootAttemptTimer >= shootAttemptInterval){
+        if(shootAttemptTimer >= randomShootInterval){
             shootAttemptTimer = 0.0f;
+            randomShootInterval = 2.0f * RandomGenerator::getInstance().fromZeroToOne() * shootAttemptInterval;
             tryShoot(gScene);
         }
     }
@@ -42,7 +43,7 @@ void Turret::tryShoot(GameScene *gScene) {
 
 void Turret::drawHud(GameHUD *hud) {
     Enemy::drawHud(hud);
-    hud->addLines(string_utils::formatString("Shoot timer: {}", shootAttemptTimer), 1);
+    //hud->addLines(string_utils::formatString("Shoot timer: {}", shootAttemptTimer), 1);
 }
 
 bool Turret::isSightInterruptor(GameObject* go) {
@@ -50,5 +51,5 @@ bool Turret::isSightInterruptor(GameObject* go) {
 }
 
 Turret::Turret(SetupWindow *scene) : Enemy(scene) {
-
+    randomShootInterval = shootAttemptInterval;
 }

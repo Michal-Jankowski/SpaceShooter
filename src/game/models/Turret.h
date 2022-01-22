@@ -13,7 +13,8 @@ public:
     void update() override;
     void drawHud(GameHUD *hud) override;
 private:
-    const float shootAttemptInterval = 1.0f;
+    const float shootAttemptInterval = 4.0f;
+    float randomShootInterval;
     float shootAttemptTimer = 0.0f;
     float shootRandomSize = 10.0f;
     void tryShoot(GameScene *gScene);

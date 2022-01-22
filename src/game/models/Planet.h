@@ -8,7 +8,15 @@
 class Planet : public GameModel 
 {
 public:
-    explicit Planet(SetupWindow* scene, float size, const glm::vec3& position = glm::vec3(0));
+    Planet(SetupWindow* scene,
+            float size,
+            bool generateSurroundings,
+            const glm::vec3& position = glm::vec3(0));
+    Planet(SetupWindow* scene,
+            float size,
+            bool generateSurroundings,
+            const std::string &modelPath,
+            const glm::vec3& position = glm::vec3(0));
     void update() override;
     void onCollision(GameObject* other) override;
     bool isValidCollisionTarget(GameObject* other) const override;

@@ -1,7 +1,3 @@
-//
-// Created by aklin on 15.11.2021.
-//
-
 #ifndef SPACESHOOTER_SHIP_H
 #define SPACESHOOTER_SHIP_H
 

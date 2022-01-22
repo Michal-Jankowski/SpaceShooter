@@ -83,13 +83,14 @@ void GameScene::initScene() {
         auto ship = std::make_unique<Ship>(this, m_camera);
         shipRef = ship.get();
         addObject(std::move(ship));
-        auto planet1 = std::make_unique<Planet>(this, 30.0f, glm::vec3(-50.0f, 0.0f, -50.0f));
-		// Need a way to represent pointLight object, Planet is non-ideal solution
-		auto sourceLightOne = std::make_unique<Collectible>(this);
-        sourceLightOne->transform->setPosition( glm::vec3(-60.0f, 20.0f, 0.0f));
-        auto sourceLightTwo = std::make_unique<Collectible>(this);
-        sourceLightTwo->transform->setPosition( glm::vec3(60.0f, 20.0f, 0.0f));
+        auto planet1 = std::make_unique<Planet>(this, 30.0f, true, glm::vec3(-50.0f, 0.0f, -50.0f));
 
+		auto sourceLightOne = std::make_unique<Planet>(this, 10, false,
+                                                          "../res/models/sun.obj",
+                                                          glm::vec3(-60.0f, 20.0f, 0.0f));
+        auto sourceLightTwo = std::make_unique<Planet>(this, 10, false,
+                                                          "../res/models/sun.obj",
+                                                          glm::vec3(60.0f, 20.0f, 0.0f));
         addObject(std::move(planet1));
         addObject(std::move(sourceLightOne));
         addObject(std::move(sourceLightTwo));

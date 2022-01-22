@@ -16,16 +16,15 @@
 
 class GameModel : public GameObject {
 public:
-
     explicit GameModel(SetupWindow* scene, const std::string& path, glm::vec3 position = glm::vec3(0));
     void render() override;
     void drawHud(GameHUD *hud) override {}
     void reinit() override;
+    bool isValidCollisionTarget(GameObject *other) const override {return false;}
 
     ShaderProgram shader;
     ModelMesh mesh = ModelMesh();
     std::unique_ptr<Transform> transform;
-
 };
 
 
