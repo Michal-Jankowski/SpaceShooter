@@ -30,10 +30,10 @@ void Turret::tryShoot(GameScene *gScene) {
     //std::cout << "SHOOTING" << std::endl;
     auto shipPos = gScene->getPlayer().transform->getPosition();
     glm::vec3 pos = RandomGenerator::getInstance().onSurfaceOfUnitSphere();
-    pos *= shootRandomSize;
+    pos = pos * shootRandomSize;
     pos += shipPos;
 
-    glm::vec3 dir = glm::normalize(shipPos - transform->getPosition());
+    glm::vec3 dir = glm::normalize(pos - transform->getPosition());
 
     glm::vec3 startPos = transform->getPosition() - (dir * Laser::laserSpeedStartCompensation);
     glm::vec3 endPos = startPos +(dir * Laser::laserLength);
