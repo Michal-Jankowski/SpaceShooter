@@ -22,7 +22,7 @@ Planet::Planet(SetupWindow *scene, float size, bool generateSurroundings, const 
             glm::vec3 pos = r.onSurfaceOfUnitSphere() * size;
 
             std::unique_ptr<GameModel> enemy;
-            if(r.fromZeroToOne() > 0.5f) {
+            if(r.fromZeroToOne() > mineToTurretRatio) {
                 enemy = std::make_unique<Turret>(scene);
                 pos *= turretsOffset;
             }
@@ -65,6 +65,10 @@ void Planet::onCollision(GameObject *other) {
 
 bool Planet::isValidCollisionTarget(GameObject *other) const {
     return dynamic_cast<Ship*>(other) != nullptr;
+}
+
+void Planet::render() {
+    GameModel::render();
 }
 
 
