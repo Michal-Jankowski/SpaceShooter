@@ -20,6 +20,7 @@ public:
     enum PointType { enemyPoint, collectiblePoint };
     void addPoint(PointType type);
     void damage(bool autoKill = false);
+    void addTotalTarget(int enemies, int collectibles);
 private:
     inline static const std::string MODEL_PATH = "../res/models/ship.obj";
 
@@ -35,9 +36,11 @@ private:
     int m_shootMouseKeyCode = GLFW_MOUSE_BUTTON_LEFT;
 
     int lives = 0;
-    int initLives = 15;
+    const int initLives = 15;
     int enemiesShot = 0;
+    int totalEnemies = 0;
     int collectiblesFound = 0;
+    int totalCollectibles = 0;
 
 };
 

@@ -7,13 +7,14 @@
 
 class Enemy : public GameModel {
 public:
-    explicit Enemy(SetupWindow* scene);
+    Enemy(SetupWindow* scene);
+    Enemy(SetupWindow* scene, const std::string &model_path);
     void update() override;
     void onCollision(GameObject *other) override;
     void drawHud(GameHUD *hud) override;
     bool isValidCollisionTarget(GameObject *other) const override;
 private:
-    inline static const std::string MODEL_PATH = "../res/models/enemy.obj";
+    inline static const std::string MODEL_PATH = "../res/models/mine.obj";
 };
 
 

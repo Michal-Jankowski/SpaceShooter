@@ -1,11 +1,14 @@
 #include "Enemy.h"
 #include "../../engine/collisions/SphereCollider.h"
 #include "Ship.h"
-#include "../elements/Laser.h"
 
 
-Enemy::Enemy(SetupWindow* scene) : GameModel(scene, MODEL_PATH) {
+Enemy::Enemy(SetupWindow *scene, const std::string &model_path) : GameModel(scene, model_path) {
     col = std::make_unique<SphereCollider>(transform.get(),2.0f, true);
+}
+
+Enemy::Enemy(SetupWindow* scene) : Enemy(scene, MODEL_PATH) {
+
 }
 
 void Enemy::update() {
@@ -34,3 +37,4 @@ bool Enemy::isValidCollisionTarget(GameObject *other) const {
     return dynamic_cast<Ship*>(other) != nullptr
         || dynamic_cast<Laser*>(other) != nullptr;
 }
+

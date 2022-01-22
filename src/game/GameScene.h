@@ -27,7 +27,7 @@ public:
     void onMouseButtonPressed(int button, int action) override;
     void addObject(std::unique_ptr<GameObject> gameObjet);
     const CollisionHandler& getCollisionHandler();
-    const Ship& getPlayer();
+    Ship* getPlayer();
     void reinitObjects();
 private:
     void clearBuffers();

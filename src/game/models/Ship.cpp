@@ -48,8 +48,8 @@ void Ship::shootCheck() {
 
 void Ship::drawHud(GameHUD *hud) {
     hud->addLines(string_utils::formatString("Lives: {}", lives), 1);
-    hud->addLines(string_utils::formatString("Enemies shot: {}", enemiesShot), 1);
-    hud->addLines(string_utils::formatString("Collectibles found: {}", collectiblesFound), 1);
+    hud->addLines(string_utils::formatString("Enemies shot: {}/{}", enemiesShot, totalEnemies), 1);
+    hud->addLines(string_utils::formatString("Collectibles found: {}/{}", collectiblesFound, totalCollectibles), 1);
 }
 
 void Ship::addPoint(Ship::PointType type) {
@@ -89,6 +89,11 @@ void Ship::onCollision(GameObject *other) {
 void Ship::reinit() {
     GameModel::reinit();
     init();
+}
+
+void Ship::addTotalTarget(int enemies, int collectibles) {
+    totalEnemies += enemies;
+    totalCollectibles += collectibles;
 }
 
 

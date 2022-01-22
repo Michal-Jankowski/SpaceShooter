@@ -84,6 +84,8 @@ void GameScene::initScene() {
         shipRef = ship.get();
         addObject(std::move(ship));
         auto planet1 = std::make_unique<Planet>(this, 30.0f, true, glm::vec3(-50.0f, 0.0f, -50.0f));
+        auto planet2 = std::make_unique<Planet>(this, 30.0f, true, glm::vec3(50.0f, 50.0f, -50.0f));
+        addObject(std::move(planet2));
 
 		auto sourceLightOne = std::make_unique<Planet>(this, 10, false,
                                                           "../res/models/sun.obj",
@@ -331,8 +333,8 @@ const CollisionHandler &GameScene::getCollisionHandler() {
     return *collisionHandler;
 }
 
-const Ship &GameScene::getPlayer() {
-    return *shipRef;
+Ship* GameScene::getPlayer() {
+    return shipRef;
 }
 
 void GameScene::reinitObjects() {

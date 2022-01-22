@@ -12,7 +12,7 @@ void Turret::update() {
     auto* gScene = dynamic_cast<GameScene*>(scene);
 
     auto collisionHandler = gScene->getCollisionHandler();
-    bool lineOfSight = collisionHandler.inLineOfSight(*this, gScene->getPlayer(), &isSightInterruptor);
+    bool lineOfSight = collisionHandler.inLineOfSight(*this, *gScene->getPlayer(), &isSightInterruptor);
 
     if(lineOfSight){
         shootAttemptTimer += (float)scene->getDeltaTime();
@@ -29,7 +29,7 @@ void Turret::update() {
 
 void Turret::tryShoot(GameScene *gScene) {
     //std::cout << "SHOOTING" << std::endl;
-    auto shipPos = gScene->getPlayer().transform->getPosition();
+    auto shipPos = gScene->getPlayer()->transform->getPosition();
     glm::vec3 pos = RandomGenerator::getInstance().onSurfaceOfUnitSphere();
     pos = pos * shootRandomSize;
     pos += shipPos;
@@ -50,6 +50,6 @@ bool Turret::isSightInterruptor(GameObject* go) {
     return dynamic_cast<Planet*>(go) != nullptr;
 }
 
-Turret::Turret(SetupWindow *scene) : Enemy(scene) {
+Turret::Turret(SetupWindow *scene) : Enemy(scene, MODEL_PATH) {
     randomShootInterval = shootAttemptInterval;
 }

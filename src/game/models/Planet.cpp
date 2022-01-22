@@ -14,14 +14,23 @@ Planet::Planet(SetupWindow *scene, float size, bool generateSurroundings, const 
 
     if(generateSurroundings) {
         auto gScene = dynamic_cast<GameScene *>(scene);
-        //Ship player = gScene->getPlayer();
+        gScene->getPlayer()->addTotalTarget(enemies,collectibles);
 
         auto r = RandomGenerator::getInstance();
 
         for (int i = 0; i < enemies; ++i) {
-            glm::vec3 pos = r.onSurfaceOfUnitSphere() * size * collectiblesOffset;
+            glm::vec3 pos = r.onSurfaceOfUnitSphere() * size;
 
-            auto enemy = std::make_unique<Turret>(scene);
+            std::unique_ptr<GameModel> enemy;
+            if(r.fromZeroToOne() > 0.5f) {
+                enemy = std::make_unique<Turret>(scene);
+                pos *= turretsOffset;
+            }
+            else{
+                enemy = std::make_unique<Enemy>(scene);
+                enemy->transform->setScale(glm::vec3(2.0f));
+                pos *= minesOffset;
+            }
             enemy->transform->setPosition(pos + transform->getPosition());
             enemy->transform->setLookAt(pos);
             gScene->addObject(std::move(enemy));
