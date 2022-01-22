@@ -15,6 +15,7 @@ public:
     virtual void update() {};
     virtual void drawHud(GameHUD* hud) {};
     virtual void render();
+    virtual void renderDebug() {};
     virtual void reinit() {};
 
     [[nodiscard]] bool useCollision(GameObject* other) const;

@@ -164,7 +164,7 @@ void GameScene::renderScene() {
     updateLights("assimp");
 
 	drawGameObjects();
-    if(drawDebugCollisions) {
+    if(drawDebug) {
         collisionHandler->drawDebug();
     }
     auto& mainProgram = shaderProgramManager.getShaderProgram("main");
@@ -264,7 +264,7 @@ void GameScene::updateScene() {
 
 	}
     if (keyPressedOnce(GLFW_KEY_6)) {
-        drawDebugCollisions = !drawDebugCollisions;
+        drawDebug = !drawDebug;
     }
 	m_rotationAngleRad += getValueByTime(glm::radians(5.0f));
     gameObjectsLogicLoop();
@@ -306,6 +306,9 @@ void GameScene::gameObjectsLogicLoop() {
 void GameScene::drawGameObjects() {
     for (auto & gameObject : gameObjects) {
         gameObject->render();
+        if(drawDebug){
+            gameObject->renderDebug();
+        }
     }
 }
 

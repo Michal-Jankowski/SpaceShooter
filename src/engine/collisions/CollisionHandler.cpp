@@ -44,11 +44,9 @@ bool CollisionHandler::inLineOfSight(const GameModel &go1, const GameModel &go2,
            continue;
        }
        if (lCollider.isColliding(collider->col.get())) {
-           setBufferLineParams(lCollider.getStart(), lCollider.getEnd(),redColor);
            return false;
        }
     }
-    setBufferLineParams(lCollider.getStart(), lCollider.getEnd(),greenColor);
     return true;
 }
 
@@ -58,18 +56,7 @@ void CollisionHandler::drawDebug() {
             collider->col->drawDebug();
         }
     }
-    for (int i = 0; i < debugLineBufferSize; ++i) {
-        Line l = Line(lineBuffer[i][0], lineBuffer[i][1]);
-        l.setColor(lineBuffer[i][2]);
-        l.draw();
-    }
 }
 
-void CollisionHandler::setBufferLineParams(glm::vec3 start, glm::vec3 end, glm::vec3 col) {
-    lineBuffer[debugLineCounter][0] = start;
-    lineBuffer[debugLineCounter][1] = end;
-    lineBuffer[debugLineCounter][2] = col;
-    debugLineCounter = (debugLineCounter + 1) % debugLineBufferSize;
-}
 
 CollisionHandler::CollisionHandler() = default;

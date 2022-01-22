@@ -51,6 +51,6 @@ private:
     std::unique_ptr<CollisionHandler> collisionHandler;
     Ship* shipRef;
     float m_rotationAngleRad = 0.0f;
-    bool drawDebugCollisions = false;
+    bool drawDebug = false;
 };
 

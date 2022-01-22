@@ -53,3 +53,14 @@ bool Turret::isSightInterruptor(GameObject* go) {
 Turret::Turret(SetupWindow *scene) : Enemy(scene, MODEL_PATH) {
     randomShootInterval = shootAttemptInterval;
 }
+
+void Turret::renderDebug() {
+    GameObject::renderDebug();
+    auto* gScene = dynamic_cast<GameScene*>(scene);
+    auto collisionHandler = gScene->getCollisionHandler();
+    bool lineOfSight = collisionHandler.inLineOfSight(*this, *gScene->getPlayer(), &isSightInterruptor);
+
+    Line l = Line(transform->getPosition(), gScene->getPlayer()->transform->getPosition());
+    l.setColor(lineOfSight ? greenColor : redColor);
+    l.draw();
+}
