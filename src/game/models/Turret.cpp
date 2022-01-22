@@ -5,8 +5,8 @@
 #include "Planet.h"
 #include "../../engine/utils/RandomGenerator.h"
 
-void Turret::update(SetupWindow *scene) {
-    Enemy::update(scene);
+void Turret::update() {
+    Enemy::update();
     transform->setScale(glm::vec3(2.0f));
 
     auto* gScene = dynamic_cast<GameScene*>(scene);
@@ -37,7 +37,7 @@ void Turret::tryShoot(GameScene *gScene) {
 
     glm::vec3 startPos = transform->getPosition() - (dir * Laser::laserSpeedStartCompensation);
     glm::vec3 endPos = startPos +(dir * Laser::laserLength);
-    gScene->addObject(std::make_unique<Laser>(startPos, endPos, Laser::laserLifetime, this));
+    gScene->addObject(std::make_unique<Laser>(scene, startPos, endPos, Laser::laserLifetime, this));
 }
 
 void Turret::drawHud(GameHUD *hud) {
@@ -47,4 +47,8 @@ void Turret::drawHud(GameHUD *hud) {
 
 bool Turret::isSightInterruptor(GameObject* go) {
     return dynamic_cast<Planet*>(go) != nullptr;
+}
+
+Turret::Turret(SetupWindow *scene) : Enemy(scene) {
+
 }

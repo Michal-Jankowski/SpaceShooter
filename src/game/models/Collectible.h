@@ -11,8 +11,8 @@
 
 class Collectible : public GameModel {
 public:
-    explicit Collectible();
-    void update(SetupWindow* gScene) override;
+    explicit Collectible(SetupWindow* scene);
+    void update() override;
     void onCollision(GameObject *other) override;
     void drawHud(GameHUD *hud) override;
     bool isValidCollisionTarget(GameObject *other) const override;

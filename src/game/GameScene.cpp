@@ -80,14 +80,14 @@ void GameScene::initScene() {
                 glm::vec3(0.0f, 1.0f, 0.f),
                 glm::i32vec2(width / 2, height / 2),
                 15.0f);
-        auto ship = std::make_unique<Ship>(m_camera);
+        auto ship = std::make_unique<Ship>(this, m_camera);
         shipRef = ship.get();
         addObject(std::move(ship));
-        auto planet1 = std::make_unique<Planet>(30.0f, this, glm::vec3(-50.0f, 0.0f, -50.0f));
+        auto planet1 = std::make_unique<Planet>(this, 30.0f, glm::vec3(-50.0f, 0.0f, -50.0f));
 		// Need a way to represent pointLight object, Planet is non-ideal solution
-		auto sourceLightOne = std::make_unique<Collectible>();
+		auto sourceLightOne = std::make_unique<Collectible>(this);
         sourceLightOne->transform->setPosition( glm::vec3(-60.0f, 20.0f, 0.0f));
-        auto sourceLightTwo = std::make_unique<Collectible>();
+        auto sourceLightTwo = std::make_unique<Collectible>(this);
         sourceLightTwo->transform->setPosition( glm::vec3(60.0f, 20.0f, 0.0f));
 
         addObject(std::move(planet1));
@@ -284,7 +284,7 @@ void GameScene::gameObjectsLoop() {
     }
     ///UPDATE
     for (auto & gameObject : gameObjects) {
-        gameObject->update(this);
+        gameObject->update();
     }
     ///COLLISIONS
     collisionHandler->runCollisionChecks();
@@ -332,5 +332,11 @@ const CollisionHandler &GameScene::getCollisionHandler() {
 
 const Ship &GameScene::getPlayer() {
     return *shipRef;
+}
+
+void GameScene::reinitObjects() {
+    for (auto & gameObject : gameObjects) {
+        gameObject->reinit();
+    }
 }
 

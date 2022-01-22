@@ -4,9 +4,8 @@
 #include <memory>
 class StencilOutline: public GameObject {
 public:
-	StencilOutline() {}
-	StencilOutline(GameObject* entity1, GameObject* entity2, glm::mat4 model, glm::vec4 color, glm::vec3 scale);
-	void update(SetupWindow* gScene) override;
+	StencilOutline(SetupWindow* scene, GameObject* entity1, GameObject* entity2, glm::mat4 model, glm::vec4 color, glm::vec3 scale);
+	void update() override;
 	void render() override;
 	bool isValidCollisionTarget(GameObject* other) const override;
 	void skip() const;

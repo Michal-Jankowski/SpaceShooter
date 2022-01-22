@@ -5,17 +5,17 @@
 #include <glm/ext.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-Laser::Laser(glm::vec3 from, glm::vec3 to, float lifetime,GameObject* shotFrom) : line(from,to) {
+Laser::Laser(SetupWindow *scene, glm::vec3 from, glm::vec3 to, float lifetime,GameObject* shotFrom) : GameObject(scene), line(from,to) {
     timer = lifetime;
     this->shotFrom = shotFrom;
     glm::vec3 dir = line.getNormalisedDir();
     col = std::make_unique<LineCollider>(nullptr, line.getStartPosition(), line.getStartPosition() + (dir * lineCollisionCheckLength));
 }
 
-void Laser::update(SetupWindow *gScene) {
-    GameObject::update(gScene);
+void Laser::update() {
+    GameObject::update();
     //std::cout << "updating laser"  << std::endl;
-    auto deltaTime = (float)gScene->getDeltaTime();
+    auto deltaTime = (float)scene->getDeltaTime();
     glm::vec3 dir = line.getNormalisedDir();
     glm::vec3 offset = dir * speed * deltaTime;
     line.setPosition(line.getStartPosition() + offset,

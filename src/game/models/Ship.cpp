@@ -1,14 +1,11 @@
-//
-// Created by aklin on 15.11.2021.
-//
-
 #include <string>
 #include "Ship.h"
 #include "../../engine/collisions/SphereCollider.h"
 #include "../GameScene.h"
 #include "../elements/Laser.h"
+#include "../../engine/utils/RandomGenerator.h"
 
-Ship::Ship(std::shared_ptr<Camera> cameraRef) : GameModel(MODEL_PATH), m_camera(std::move(cameraRef)) {
+Ship::Ship(SetupWindow* scene, std::shared_ptr<Camera> cameraRef) : GameModel(scene, MODEL_PATH), m_camera(std::move(cameraRef)) {
     col = std::make_unique<SphereCollider>(transform.get(), 2.0f, true);
     init();
 }
@@ -20,8 +17,8 @@ void Ship::init() {
     collectiblesFound = 0;
 }
 
-void Ship::update(SetupWindow* scene) {
-    GameModel::update(scene);
+void Ship::update() {
+    GameModel::update();
 
     ///ATTACH TO CAM
     transform->setPosition(
@@ -30,10 +27,10 @@ void Ship::update(SetupWindow* scene) {
             heightCamOffset);
     transform->setLookAt(m_camera->getNormalizedViewVector());
 
-    shootCheck(scene);
+    shootCheck();
 }
 
-void Ship::shootCheck(SetupWindow* scene) {
+void Ship::shootCheck() {
 
     if(shootTimer > 0.0f){
         shootTimer -= (float)scene->getDeltaTime();
@@ -44,7 +41,7 @@ void Ship::shootCheck(SetupWindow* scene) {
         auto* gScene = dynamic_cast<GameScene*>(scene);
         glm::vec3 startPos = transform->getPosition() - (m_camera->getNormalizedViewVector() * Laser::laserSpeedStartCompensation);
         glm::vec3 endPos = startPos +(m_camera->getNormalizedViewVector() * Laser::laserLength);
-        gScene->addObject(std::make_unique<Laser>(startPos, endPos, Laser::laserLifetime, this));
+        gScene->addObject(std::make_unique<Laser>(scene, startPos, endPos, Laser::laserLifetime, this));
         shootTimer = shootTimeout;
     }
 }
@@ -67,14 +64,31 @@ void Ship::addPoint(Ship::PointType type) {
 }
 
 bool Ship::isValidCollisionTarget(GameObject *other) const {
-     return false;
+    return dynamic_cast<Laser*>(other) != nullptr;
 }
 
 void Ship::damage(bool autoKill) {
     lives -= 1;
     if(autoKill || lives <= 0){
-        init();
+        auto gScene = dynamic_cast<GameScene*>(scene);
+        gScene->reinitObjects();
     }
+}
+
+void Ship::onCollision(GameObject *other) {
+    GameModel::onCollision(other);
+    if(auto laser = dynamic_cast<Laser*>(other)){
+        if(dynamic_cast<Ship*>(laser->getShooter()) == nullptr){
+            if(RandomGenerator::getInstance().fromZeroToOne() < laserDmgChance) {
+                damage();
+            }
+        }
+    }
+}
+
+void Ship::reinit() {
+    GameModel::reinit();
+    init();
 }
 
 

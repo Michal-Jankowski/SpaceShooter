@@ -11,10 +11,10 @@ public:
 	void update(const std::function<bool(int)>& keyInputFunc, const std::function<glm::i32vec2()>& getCursorPosFunc, const std::function<void(const glm::i32vec2&)>& setCursorPosFunc,
 		const std::function<float(float)>& speedCorrectionFunc);
 	void setWindowCenterPosition(const glm::i32vec2& windowCenterPosition);
-	glm::vec3 getNormalizedViewVector() const;
-	glm::mat4 getViewMatrix() const;
-	glm::vec3 getEye() const;
-	glm::vec3  getViewPoint() const;
+	[[nodiscard]] glm::vec3 getNormalizedViewVector() const;
+	[[nodiscard]] glm::mat4 getViewMatrix() const;
+	[[nodiscard]] glm::vec3 getEye() const;
+	[[nodiscard]] glm::vec3  getViewPoint() const;
     void returnToInitPosition();
 private:
 	void moveBy(float distance);

@@ -2,7 +2,7 @@
 #include "GameModel.h"
 #include "../../game\models\Collectible.h"
 
-GameModel::GameModel(const std::string& path, glm::vec3 position) {
+GameModel::GameModel(SetupWindow* scene, const std::string& path, glm::vec3 position) : GameObject(scene) {
 
     mesh.loadModelFromFile(path);
     transform = std::make_unique<Transform>();
@@ -14,6 +14,10 @@ void GameModel::render() {
         return;
     }
     mesh.render(transform->getMatrix());
+}
+
+void GameModel::reinit() {
+    GameObject::reinit();
 }
 
 

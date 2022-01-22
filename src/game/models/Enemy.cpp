@@ -4,12 +4,12 @@
 #include "../elements/Laser.h"
 
 
-Enemy::Enemy() : GameModel(MODEL_PATH) {
+Enemy::Enemy(SetupWindow* scene) : GameModel(scene, MODEL_PATH) {
     col = std::make_unique<SphereCollider>(transform.get(),2.0f, true);
 }
 
-void Enemy::update(SetupWindow* gScene) {
-    GameModel::update(gScene);
+void Enemy::update() {
+    GameModel::update();
 }
 
 void Enemy::onCollision(GameObject *other) {
@@ -22,7 +22,6 @@ void Enemy::onCollision(GameObject *other) {
             pShip->addPoint(Ship::enemyPoint);
             awaitingDestroy = true;
         }
-
     }
 }
 

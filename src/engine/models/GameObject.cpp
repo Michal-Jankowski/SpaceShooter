@@ -1,6 +1,9 @@
 #include "GameObject.h"
 
 
+GameObject::GameObject(SetupWindow *scene) : scene(scene) {}
+
+
 void GameObject::render() {
 
 }
@@ -21,5 +24,6 @@ bool GameObject::useCollision(GameObject* other) const {
         return isValidCollisionTarget(other);
     }
 }
+
 
 

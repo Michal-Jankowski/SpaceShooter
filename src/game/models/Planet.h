@@ -8,8 +8,8 @@
 class Planet : public GameModel 
 {
 public:
-    explicit Planet(float size, SetupWindow* scene, const glm::vec3& position = glm::vec3(0));
-    void update(SetupWindow* scene) override;
+    explicit Planet(SetupWindow* scene, float size, const glm::vec3& position = glm::vec3(0));
+    void update() override;
     void onCollision(GameObject* other) override;
     bool isValidCollisionTarget(GameObject* other) const override;
 private:

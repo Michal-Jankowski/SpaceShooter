@@ -28,6 +28,7 @@ public:
     void addObject(std::unique_ptr<GameObject> gameObjet);
     const CollisionHandler& getCollisionHandler();
     const Ship& getPlayer();
+    void reinitObjects();
 private:
     void clearBuffers();
     void gameObjectsLoop();

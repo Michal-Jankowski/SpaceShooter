@@ -7,8 +7,8 @@
 
 class Enemy : public GameModel {
 public:
-    explicit Enemy();
-    void update(SetupWindow *gScene) override;
+    explicit Enemy(SetupWindow* scene);
+    void update() override;
     void onCollision(GameObject *other) override;
     void drawHud(GameHUD *hud) override;
     bool isValidCollisionTarget(GameObject *other) const override;

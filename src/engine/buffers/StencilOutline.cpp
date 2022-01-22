@@ -4,8 +4,9 @@
 #include "../../game\models\Collectible.h"
 
 constexpr glm::vec3 scaledEntities = { 1.5, 1.5, 1.5 };
-StencilOutline::StencilOutline(GameObject* entity1, GameObject* entity2, glm::mat4 model, glm::vec4 color, glm::vec3 scale)
-	: m_entity1(entity1)
+StencilOutline::StencilOutline(SetupWindow* scene, GameObject* entity1, GameObject* entity2, glm::mat4 model, glm::vec4 color, glm::vec3 scale)
+    : GameObject(scene)
+    , m_entity1(entity1)
 	, m_entity2(entity2)
 	, m_color(color)
 	, m_model(model)
@@ -14,9 +15,8 @@ StencilOutline::StencilOutline(GameObject* entity1, GameObject* entity2, glm::ma
 
 }
 
-void StencilOutline::update(SetupWindow* gScene) {
-
-	GameObject::update(gScene);
+void StencilOutline::update() {
+	GameObject::update();
 }
 
 void StencilOutline::render()

@@ -17,9 +17,10 @@
 class GameModel : public GameObject {
 public:
 
-    explicit GameModel(const std::string& path, glm::vec3 position = glm::vec3(0));
+    explicit GameModel(SetupWindow* scene, const std::string& path, glm::vec3 position = glm::vec3(0));
     void render() override;
     void drawHud(GameHUD *hud) override {}
+    void reinit() override;
 
     ShaderProgram shader;
     ModelMesh mesh = ModelMesh();

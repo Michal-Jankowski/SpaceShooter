@@ -10,17 +10,20 @@
 
 class GameObject {
 public:
-    virtual void update(SetupWindow* scene) {};
+    explicit GameObject(SetupWindow* scene);
+
+    virtual void update() {};
     virtual void drawHud(GameHUD* hud) {};
     virtual void render();
+    virtual void reinit() {};
 
     [[nodiscard]] bool useCollision(GameObject* other) const;
     virtual bool isValidCollisionTarget(GameObject* other) const = 0;
     virtual void onCollision(GameObject* other);
     std::unique_ptr<Collider> col;
     bool awaitingDestroy = false;
-
-
+protected:
+    SetupWindow* scene;
 };
 
 

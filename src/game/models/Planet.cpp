@@ -7,7 +7,7 @@
 #include "../../engine/collisions/SphereCollider.h"
 #include "../../engine/utils/RandomGenerator.h"
 
-Planet::Planet(float size, SetupWindow* scene, const glm::vec3 &position) : GameModel(MODEL_PATH, position) {
+Planet::Planet(SetupWindow* scene, float size, const glm::vec3 &position) : GameModel(scene, MODEL_PATH, position) {
 
     col = std::make_unique<SphereCollider>(transform.get(),size * 0.5f, true);
 
@@ -18,7 +18,7 @@ Planet::Planet(float size, SetupWindow* scene, const glm::vec3 &position) : Game
     for (int i = 0; i < enemies; ++i) {
         glm::vec3 pos = r.onSurfaceOfUnitSphere() * size * collectiblesOffset;
 
-        auto enemy = std::make_unique<Turret>();
+        auto enemy = std::make_unique<Turret>(scene);
         enemy->transform->setPosition(pos + transform->getPosition());
         enemy->transform->setLookAt(pos);
         gScene->addObject(std::move(enemy));
@@ -27,7 +27,7 @@ Planet::Planet(float size, SetupWindow* scene, const glm::vec3 &position) : Game
     for (int i = 0; i < collectibles; ++i) {
         glm::vec3 pos = r.onSurfaceOfUnitSphere() * size * collectiblesOffset;
 
-        auto collectible = std::make_unique<Collectible>();
+        auto collectible = std::make_unique<Collectible>(scene);
         collectible->transform->setPosition(pos + transform->getPosition());
         gScene->addObject(std::move(collectible));
     }
@@ -35,8 +35,8 @@ Planet::Planet(float size, SetupWindow* scene, const glm::vec3 &position) : Game
     transform->setScale(glm::vec3(size));
 }
 
-void Planet::update(SetupWindow *gScene) {
-    GameObject::update(gScene);
+void Planet::update() {
+    GameObject::update();
 }
 
 void Planet::onCollision(GameObject *other) {
