@@ -33,9 +33,9 @@ void Camera::update(const std::function<bool(int)>& keyInputFunc,
 	const std::function<void(const glm::i32vec2&)>& setCursorPosFunc,
 	const std::function<float(float)>& speedCorrectionFunc)
 {
-	if (keyInputFunc(m_forwardKeyCode)) {
+	//if (keyInputFunc(m_forwardKeyCode)) {
 		moveBy(speedCorrectionFunc(m_moveSpeed));
-	}
+	//}
 	if (keyInputFunc(m_accelerateKeyCode)) {
 		moveBy(speedCorrectionFunc(5.0f * m_moveSpeed));
 	}

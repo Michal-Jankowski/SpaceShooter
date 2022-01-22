@@ -43,7 +43,7 @@ void Planet::onCollision(GameObject *other) {
     GameObject::onCollision(other);
     auto ship = dynamic_cast<Ship*>(other);
     if(ship != nullptr){
-        //ship->damage(true);
+        ship->damage(true);
     }
 }
 

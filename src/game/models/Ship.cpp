@@ -6,7 +6,7 @@
 #include "../../engine/utils/RandomGenerator.h"
 
 Ship::Ship(SetupWindow* scene, std::shared_ptr<Camera> cameraRef) : GameModel(scene, MODEL_PATH), m_camera(std::move(cameraRef)) {
-    col = std::make_unique<SphereCollider>(transform.get(), 2.0f, true);
+    col = std::make_unique<SphereCollider>(transform.get(), 1.0f, true);
     init();
 }
 
