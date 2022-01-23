@@ -14,7 +14,6 @@ Laser::Laser(SetupWindow *scene, glm::vec3 from, glm::vec3 to, float lifetime,Ga
 
 void Laser::update() {
     GameObject::update();
-    //std::cout << "updating laser"  << std::endl;
     auto deltaTime = (float)scene->getDeltaTime();
     glm::vec3 dir = line.getNormalisedDir();
     glm::vec3 offset = dir * speed * deltaTime;
