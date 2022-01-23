@@ -3,36 +3,42 @@
 #include "../maths/MatrixManager.h"
 #include "../shaders/ShaderProgramManager.h"
 
-constexpr GLushort verticesIndices[]{
-	0,
-	1,
-};
-
-Line::Line(glm::vec3 start, glm::vec3 end)
-	: m_startPoint(start)
-	, m_endPoint(end)
-	, m_lineColor(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f))
-	, m_vertices({ start.x, start.y, start.z, end.x, end.y, end.z })
+Line::Line(const std::vector<glm::vec3>& points)
+	: m_vertices(points)
 {
 	setupBuffers();
 }
 
+Line::Line(const glm::vec3& start, const glm::vec3& end)
+	: m_startPoint(start)
+	, m_endPoint(end)
+	, m_vertices({start, end})
+{
+	setupBuffers();
+}
+
+void Line::clearBuffer() {
+	glDeleteVertexArrays(1, &m_VAO);
+	glDeleteBuffers(1, &m_VBO);
+	glDeleteBuffers(1, &m_IBO);
+}
 Line::~Line()
 {
-	glDeleteBuffers(1, &m_IBO);
-	glDeleteBuffers(1, &m_VBO);
-	glDeleteVertexArrays(1, &m_VAO);
+	clearBuffer();
 }
 
 void Line::setupBuffers()
 {
+	auto strideIdx = 0;
+	for (const auto& point : m_vertices) {
+		m_verticesIndicies.emplace_back(strideIdx);
+		strideIdx += 1;
+	}
 	glCreateVertexArrays(1, &m_VAO);
-
 	glCreateBuffers(1, &m_VBO);
 	glNamedBufferStorage(m_VBO, sizeof(m_vertices) * m_vertices.size(), m_vertices.data(), GL_DYNAMIC_STORAGE_BIT);
-
 	glCreateBuffers(1, &m_IBO);
-	glNamedBufferStorage(m_IBO, sizeof(uint32_t) * 2, verticesIndices, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(m_IBO, sizeof(GLushort) * m_verticesIndicies.size(), m_verticesIndicies.data(), GL_DYNAMIC_STORAGE_BIT);
 
 	glVertexArrayVertexBuffer(m_VAO, 0, m_VBO, 0, 3 * sizeof(float));
 	glVertexArrayElementBuffer(m_VAO, m_IBO);
@@ -61,9 +67,9 @@ void Line::draw()
 	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
 	const auto drawSize = bufferSize / sizeof(GLushort);
 	glDrawElements(GL_LINES, drawSize, GL_UNSIGNED_SHORT, 0);
-
 	mainProgram.setUniform("laser.isLaserOn", false);
-	glUseProgram(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 }
 
@@ -75,12 +81,21 @@ void Line::setColor(const glm::vec3& color) {
     m_lineColor = glm::vec4(color, 1.0f);
 }
 
-void Line::setPosition(const glm::vec3& start, const glm::vec3& end){
-    m_startPoint = start;
-    m_endPoint = end;
+void Line::setMultiplePositions(const std::vector<glm::vec3>& start) {
 
 	m_vertices.clear();
-	m_vertices.insert(m_vertices.end(), { start.x, start.y, start.z, end.x, end.y, end.z });
+	m_vertices = start;
+	clearBuffer();
+	setupBuffers();
+}
+
+void Line::setPosition(const std::vector<glm::vec3>& points){
+    m_startPoint = points[0];
+    m_endPoint = points[1];
+
+	m_vertices.clear();
+	m_vertices = points;
+	clearBuffer();
 	setupBuffers();
 }
 
