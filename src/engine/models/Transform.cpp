@@ -1,5 +1,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include "Transform.h"
 
 Transform::Transform() {
@@ -46,7 +47,13 @@ glm::mat4 Transform::getMatrix() {
 }
 
 void Transform::setLookAt(glm::vec3 direction, glm::vec3 up){
-    rotation = glm::quatLookAt(direction, up);
+    rotation = glm::quatLookAt(glm::normalize(direction), up);
+}
+
+void Transform::rotateEuler(float x, float y, float z) {
+    glm::mat4 rotationMatrix = glm::eulerAngleXYZ(x,y,z);
+    glm::quat rotateQuat = glm::quat_cast(rotationMatrix);
+    rotation = rotation * rotateQuat;
 }
 
 

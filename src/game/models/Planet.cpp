@@ -31,6 +31,7 @@ Planet::Planet(SetupWindow *scene, float size, bool generateSurroundings, const 
                 enemy->transform->setScale(glm::vec3(2.0f));
                 pos *= minesOffset;
             }
+
             enemy->transform->setPosition(pos + transform->getPosition());
             enemy->transform->setLookAt(pos);
             gScene->addObject(std::move(enemy));

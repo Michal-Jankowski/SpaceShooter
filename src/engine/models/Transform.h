@@ -17,6 +17,7 @@ public:
     void moveBy(glm::vec3 distance);
 
     void setLookAt(glm::vec3 direction, glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f));
+    void rotateEuler(float x, float y, float z);
 
     void setScale(glm::vec3 newScale);
     [[nodiscard]]  glm::vec3 getScale();
