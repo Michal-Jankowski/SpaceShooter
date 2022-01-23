@@ -11,12 +11,10 @@
 
 class Collider {
 public:
-    explicit Collider(Transform* transformRef, bool drawDebug);
+    explicit Collider(Transform* transformRef);
 
     virtual bool isColliding(Collider* other) =0;
-    //TODO: BB fast check
     void drawDebug();
-    bool debugEnable;
     Transform* transformRef;
 protected:
     virtual void drawDebugImpl() = 0;

@@ -6,19 +6,21 @@
 #include "../utils/MathUtils.h"
 
 bool SphereCollider::isColliding(Collider* other) {
+    float radius = getScaledRadius();
     if(auto* sCol = dynamic_cast<SphereCollider*>(other)){
         glm::vec3 diff = transformRef->getPosition() - sCol->transformRef->getPosition();
         glm::vec3 sq = glm::vec3(diff.x*diff.x, diff.y*diff.y, diff.z*diff.z);
         float dist = glm::sqrt(sq.x+sq.y+sq.z);
-        return dist < sCol->radius + radius;
+        return dist < sCol->getScaledRadius() + radius;
     } else if(auto* lCol = dynamic_cast<LineCollider*>(other)){
         return CollisionMath::lineSphereCollision(lCol->getStart(), lCol->getEnd(), transformRef->getPosition(), radius);
     }
     return false;
 }
 
-SphereCollider::SphereCollider(Transform* transformRef, float radius, bool drawDebug) : Collider(transformRef, drawDebug) {
-    this->radius = radius;
+SphereCollider::SphereCollider(Transform* transformRef, float radius)
+    : Collider(transformRef),
+    rawRadius(radius) {
 }
 
 void SphereCollider::drawDebugInternal(Line& laser, float radius,  float phi1, float phi2, float theta1, float theta2) {
@@ -32,6 +34,7 @@ void SphereCollider::drawDebugInternal(Line& laser, float radius,  float phi1, f
 void SphereCollider::drawDebugImpl() {
     Line laser = Line(glm::vec3(0), glm::vec3(0));
     laser.setColor(glm::vec4(0.2f, 0.85f, 0.1f, 0.0f));
+    float radius = getScaledRadius();
     for (auto i = 0; i < debugResolution; ++i) {
         auto phi1 = (float)i * (360.0f / debugResolution), phi2 = ((float)i + 1.0f) * (360.0f / debugResolution);
         auto theta1 = 90, theta2 = 90;
@@ -57,6 +60,12 @@ void SphereCollider::drawDebugImpl() {
         drawDebugInternal(laser, radius, phi1, phi2, theta1, theta2);
     }
 }
+
+const float SphereCollider::getScaledRadius() {
+    return rawRadius * transformRef->getScale().x;
+}
+
+
 
 
 

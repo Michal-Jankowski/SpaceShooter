@@ -9,7 +9,7 @@ Collectible::Collectible(SetupWindow* scene)
                 glm::mat4(1.0f),
                 glm::vec4(1.0f, 0.0f, 1.0f, 0.0f),
                 glm::vec3(9.0f, 9.0f, 9.0f)) {
-    col = std::make_unique<SphereCollider>(transform.get(),2.0f, true);
+    col = std::make_unique<SphereCollider>(transform.get(), 2.0f);
 }
 
 void Collectible::update() {

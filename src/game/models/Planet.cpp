@@ -10,7 +10,7 @@
 Planet::Planet(SetupWindow *scene, float size, bool generateSurroundings, const std::string &modelPath,
                const glm::vec3 &position) : GameModel(scene, modelPath, position)  {
 
-    col = std::make_unique<SphereCollider>(transform.get(),size * 0.9f, true);
+    col = std::make_unique<SphereCollider>(transform.get(),0.9f);
 
     if(generateSurroundings) {
         auto gScene = dynamic_cast<GameScene *>(scene);

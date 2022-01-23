@@ -28,7 +28,7 @@ private:
     int collectibles = 1;
     float collectiblesOffset = 1.1f;
     float turretsOffset = 1.04f;
-    float minesOffset = 1.0f;
+    float minesOffset = 0.98f;
     float mineToTurretRatio = 0.5f;
 };
 

@@ -4,7 +4,7 @@
 
 
 Enemy::Enemy(SetupWindow *scene, const std::string &model_path) : GameModel(scene, model_path) {
-    col = std::make_unique<SphereCollider>(transform.get(),2.0f, true);
+    col = std::make_unique<SphereCollider>(transform.get(),1.8f);
 }
 
 Enemy::Enemy(SetupWindow* scene) : Enemy(scene, MODEL_PATH) {

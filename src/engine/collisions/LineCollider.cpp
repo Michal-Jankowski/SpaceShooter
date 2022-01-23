@@ -5,14 +5,15 @@
 #include "SphereCollider.h"
 
 LineCollider::LineCollider(Transform* transformRef, const glm::vec3 &lineStart, const glm::vec3 &lineEnd)
-                           : Collider(transformRef, false),
+                           : Collider(transformRef),
                            lineStart(lineStart), lineEnd(lineEnd){
 
 }
 
 bool LineCollider::isColliding(Collider *other) {
     if(auto* sCol = dynamic_cast<SphereCollider*>(other)){
-        return CollisionMath::lineSphereCollision(getStart(), getEnd(), sCol->transformRef->getPosition(), sCol->radius);
+        return CollisionMath::lineSphereCollision(getStart(), getEnd(),
+                                                  sCol->transformRef->getPosition(), sCol->getScaledRadius());
     }
     return false;
 }

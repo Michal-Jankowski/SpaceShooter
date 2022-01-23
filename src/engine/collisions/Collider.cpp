@@ -4,13 +4,10 @@
 
 #include "Collider.h"
 
-Collider::Collider(Transform *transformRef,bool drawDebug) {
-    this->debugEnable = drawDebug;
+Collider::Collider(Transform *transformRef) {
     this->transformRef = transformRef;
 }
 
 void Collider::drawDebug() {
-    if(debugEnable){
-        drawDebugImpl();
-    }
+    drawDebugImpl();
 }

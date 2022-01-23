@@ -10,14 +10,15 @@
 class SphereCollider : public Collider {
 
 public:
-    SphereCollider(Transform* transformRef, float radius, bool drawDebug);
+    explicit SphereCollider(Transform* transformRef, float radius = 1.0f);
     bool isColliding(Collider* other) override;
 
-    float radius;
+    [[nodiscard]] const float getScaledRadius();
 private:
     static const int debugResolution = 25;
     void drawDebugImpl() override;
     void drawDebugInternal(Line& laser, float radius, float phi1, float phi2, float theta1, float theta2);
+    float rawRadius;
 };
 
 
