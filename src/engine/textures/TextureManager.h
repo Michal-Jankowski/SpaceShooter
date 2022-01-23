@@ -7,6 +7,7 @@ class TextureManager
 public:
 	static TextureManager& getInstance();
 	void loadTexture2D(const std::string& name, const std::string& fileName, bool generateMipmaps = true);
+	void loadCubemap(const std::string& keyName, const std::string& path);
 	bool deleteTexture(const std::string& name);
 	const TextureLoader& getTexture(const std::string& key) const;
 	bool containsTexture(const std::string& key) const;

@@ -11,17 +11,17 @@ public:
 	void setColor(const glm::vec4& color);
     void setColor(const glm::vec3 &color);
 	void setPosition(const glm::vec3& start, const glm::vec3& end);
-    [[nodiscard]] glm::vec3 getStartPosition() const;
-    [[nodiscard]] glm::vec3 getEndPosition() const;
-    [[nodiscard]] glm::vec3 getNormalisedDir() const;
+    glm::vec3 getStartPosition() const;
+    glm::vec3 getEndPosition() const;
+    glm::vec3 getNormalisedDir() const;
 private:
 	void setupBuffers();
-	unsigned int m_VBO{ 0 }, m_VAO{ 0 };
+	unsigned int m_VBO{ 0 }, m_VAO{ 0 }, m_IBO{ 0 };
 	std::vector<float> m_vertices;
+	std::vector<GLushort> m_verticesIndicies{ 0, 1 };
     glm::vec3 m_startPoint;
     glm::vec3 m_endPoint;
 	glm::vec4 m_lineColor;
-
 	bool needInitialising = false;
 
 

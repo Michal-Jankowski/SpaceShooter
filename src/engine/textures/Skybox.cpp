@@ -4,132 +4,103 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <mutex>
+#include "../shaders/ShaderProgramManager.h"
+#include "../maths/MatrixManager.h"
+constexpr auto skyboxKey = "skybox";
+constexpr auto skyboxBlueNight = "./res/skybox/blue/";
 
-const std::string Skybox::SAMPLER_KEY = "skybox";
 
-Skybox::Skybox(const std::string& path, bool withPositions, bool withTextureCoordinates, bool withNormals)
-    : Cube(withPositions, withTextureCoordinates, withNormals)
-    , m_SkyboxDirectory(path) {
+constexpr GLfloat skyboxVertices[] = {
+    // positions          
+    -1.0f,  1.0f, -1.0f, // 0
+    -1.0f, -1.0f, -1.0f, // 1
+     1.0f, -1.0f, -1.0f, // 2
+     1.0f,  1.0f, -1.0f, // 3
+    -1.0f, -1.0f,  1.0f, // 4
+    -1.0f,  1.0f,  1.0f, // 5
+     1.0f, -1.0f,  1.0f, // 6
+     1.0f,  1.0f,  1.0f, // 7 
+};
 
-    tryLoadTexture(CUBE_FRONT_FACE);
-    tryLoadTexture(CUBE_BACK_FACE);
-    tryLoadTexture(CUBE_LEFT_FACE);
-    tryLoadTexture(CUBE_RIGHT_FACE);
-    tryLoadTexture(CUBE_TOP_FACE);
-    tryLoadTexture(CUBE_BOTTOM_FACE);
+constexpr GLushort skyboxIndices[] = {
+    0, 1, 2,
+    2, 3, 0,
+    4, 1, 0,
+    0, 5, 4,
+    2, 6, 7,
+    7, 3, 2,
+    4, 5, 7,
+    7, 6, 4,
+    0, 3, 7,
+    7, 5, 0,
+    1, 4, 2,
+    2, 4, 6,
+};
 
-    static std::once_flag prepareOnceFlag;
+Skybox::Skybox(const std::string& path)
+    : m_SkyboxDirectory(path) {
 
-    std::call_once(prepareOnceFlag, []() {
-        auto& sm = SamplerManager::getInstance();
-        auto& sampler = sm.createSampler(SAMPLER_KEY, FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_TRILINEAR);
-        sampler.setRepeat(false);
-    });
+    start();
+   
 }
+
+void Skybox::start() {
+
+  glGenVertexArrays(1, &skyboxVAO);
+  glBindVertexArray(skyboxVAO);
+  glGenBuffers(1, &skyboxVBO);
+  glGenBuffers(1, &skyboxEBO);
+  glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skyboxEBO);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), skyboxIndices, GL_STATIC_DRAW);
+
+  glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), reinterpret_cast<void*>(0));
+
+
+  auto& tm = TextureManager::getInstance();
+  tm.loadCubemap(skyboxKey, skyboxBlueNight);
+  auto& smm = SamplerManager::getInstance();
+  auto& sampler = smm.createSampler(skyboxKey, FilterOptions::MAG_FILTER_NEAREST, FilterOptions::MIN_FILTER_NEAREST);
+  sampler.setRepeat(false);
+  auto& shaderProgramManager = ShaderProgramManager::getInstance();
+  auto& skyboxProgram = shaderProgramManager.getShaderProgram("skybox");
+  skyboxProgram.useProgram();
+  skyboxProgram.setUniform("skybox", 0);
+
+}
+
 
 Skybox::~Skybox() {
     auto& tm = TextureManager::getInstance();
-    tm.deleteTexture(getTextureKey(CUBE_FRONT_FACE));
-    tm.deleteTexture(getTextureKey(CUBE_BACK_FACE));
-    tm.deleteTexture(getTextureKey(CUBE_LEFT_FACE));
-    tm.deleteTexture(getTextureKey(CUBE_RIGHT_FACE));
-    tm.deleteTexture(getTextureKey(CUBE_TOP_FACE));
-    tm.deleteTexture(getTextureKey(CUBE_BOTTOM_FACE));
+    tm.deleteTexture(skyboxKey);  
 }
+
 
 void Skybox::render(const glm::vec3& position, ShaderProgram& shader) const  {
 
-    const auto frontKey = getTextureKey(CUBE_FRONT_FACE);
-    const auto backKey = getTextureKey(CUBE_BACK_FACE);
-    const auto leftKey = getTextureKey(CUBE_LEFT_FACE);
-    const auto rightKey = getTextureKey(CUBE_RIGHT_FACE);
-    const auto topKey = getTextureKey(CUBE_TOP_FACE);
-    const auto bottomKey = getTextureKey(CUBE_BOTTOM_FACE);
-    auto& tm = TextureManager::getInstance();
-    const auto& sampler = SamplerManager::getInstance().getSampler(SAMPLER_KEY);
+    auto& shaderProgramManager = ShaderProgramManager::getInstance();
+    auto& skyboxProgram = shaderProgramManager.getShaderProgram("skybox");
+    auto& matrixManager = MatrixManager::getInstance();
+    const auto& sampler = SamplerManager::getInstance().getSampler(skyboxKey);
     sampler.bind();
+    auto& tm = TextureManager::getInstance();
+    glDepthFunc(GL_LEQUAL);
+    skyboxProgram.useProgram();
+    auto viewMatrix = glm::mat4(glm::mat3(matrixManager.getViewMatrix()));
+    skyboxProgram.setUniform("matrices.modelMatrix", glm::mat4(1.0f));
+    skyboxProgram.setUniform("matrices.viewMatrix", viewMatrix);
+    skyboxProgram.setUniform("matrices.projectionMatrix", matrixManager.getProjectionMatrix());
 
-    // Turn off depth mask (don't write to depth buffer)
-    glDepthMask(GL_FALSE);
+    glBindVertexArray(skyboxVAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, tm.getTexture("skybox").getID());
+    int bufferSize;
+    glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
+    const auto drawSize = bufferSize / sizeof(GLushort);
+    glDrawElements(GL_TRIANGLES, drawSize, GL_UNSIGNED_SHORT, 0);
+    glBindVertexArray(0);
 
-    // Enlarge default cube by some factor, that's not further then far clipping plane (100 is fine)
-    auto skyboxModelMatrix = glm::translate(glm::mat4(1.0f), position);
-    skyboxModelMatrix = glm::scale(skyboxModelMatrix, glm::vec3(900.0f, 900.0f, 900.0f));
-    shader.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", skyboxModelMatrix);
-
-    // Render front side if texture has been loaded
-    if (tm.containsTexture(frontKey)) {
-        tm.getTexture(frontKey).bind();
-        renderFaces(CUBE_FRONT_FACE);
-    }
-
-    // Render back side if texture has been loaded
-    if (tm.containsTexture(backKey)) {
-        tm.getTexture(backKey).bind();
-        renderFaces(CUBE_BACK_FACE);
-    }
-
-    // Render left side if texture has been loaded
-    if (tm.containsTexture(leftKey)) {
-        tm.getTexture(leftKey).bind();
-        renderFaces(CUBE_LEFT_FACE);
-    }
-
-    // Render right side if texture has been loaded
-    if (tm.containsTexture(rightKey)) {
-        tm.getTexture(rightKey).bind();
-        renderFaces(CUBE_RIGHT_FACE);
-    }
-
-    // Render top side if texture has been loaded
-    if (tm.containsTexture(topKey)) {
-        tm.getTexture(topKey).bind();
-        renderFaces(CUBE_TOP_FACE);
-    }
-
-    // Render bottom side if texture has been loaded
-    if (tm.containsTexture(bottomKey)) {
-        tm.getTexture(bottomKey).bind();
-        renderFaces(CUBE_BOTTOM_FACE);
-    }
-    // Turn the depth mask back on
-    glDepthMask(GL_TRUE);
-}
-
-void Skybox::loadTexture(const int sideBit) const {
-}
-
-std::string Skybox::getSideFileName(const int sideBit) {
-    if (sideBit & CUBE_FRONT_FACE) {
-        return "front";
-    }
-    else if (sideBit & CUBE_BACK_FACE) {
-        return "back";
-    }
-    else if (sideBit & CUBE_LEFT_FACE) {
-        return "left";
-    }
-    else if (sideBit & CUBE_RIGHT_FACE) {
-        return "right";
-    }
-    else if (sideBit & CUBE_TOP_FACE) {
-        return "top";
-    }
-
-    return "bottom";
-}
-
-std::string Skybox::getTextureKey(const int sideBit) const {
-    return m_SkyboxDirectory + "/" + getSideFileName(sideBit);
-}
-
-void Skybox::tryLoadTexture(const int sideBit) const {
-    const auto key = getTextureKey(sideBit);
-    const auto fileName = key + ".png";
-    try
-    {
-        auto& tm = TextureManager::getInstance();
-        tm.loadTexture2D(key, fileName);
-    }
-    catch (const std::runtime_error&) {}
+    glDepthFunc(GL_LESS);
 }

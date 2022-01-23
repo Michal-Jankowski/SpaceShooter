@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 #include <stdexcept>
+#include <vector>
 
 TextureManager& TextureManager::getInstance() {
 	static TextureManager textureManager;
@@ -17,6 +18,15 @@ void TextureManager::loadTexture2D(const std::string& name, const std::string& f
 		throw std::runtime_error(msg.c_str());
 	}
 	m_textureKeys[name] = std::move(texturePtr);
+}
+
+void TextureManager::loadCubemap(const std::string& keyName, const std::string& path) {
+	auto texturePtr = std::make_unique<TextureLoader>();
+	if (!texturePtr->loadCubemap(path)) {
+		auto msg = "Could not load cubemap within path '" + path;
+		throw std::runtime_error(msg.c_str());
+	}
+	m_textureKeys[keyName] = std::move(texturePtr);
 }
 
 bool TextureManager::deleteTexture(const std::string& name) {

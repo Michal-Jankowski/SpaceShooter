@@ -3,9 +3,10 @@
 #include "../maths/MatrixManager.h"
 #include "../shaders/ShaderProgramManager.h"
 
-Line::Line() : Line(glm::vec3(0.0f), glm::vec3(1.0f)) {
-
-}
+constexpr GLushort verticesIndices[]{
+	0,
+	1,
+};
 
 Line::Line(glm::vec3 start, glm::vec3 end)
 	: m_startPoint(start)
@@ -25,12 +26,19 @@ Line::~Line()
 void Line::setupBuffers()
 {
 	glCreateVertexArrays(1, &m_VAO);
+
 	glCreateBuffers(1, &m_VBO);
-	glNamedBufferData(m_VBO, sizeof(m_vertices) * m_vertices.size(), m_vertices.data(), GL_STATIC_DRAW);
+	glNamedBufferStorage(m_VBO, sizeof(m_vertices) * m_vertices.size(), m_vertices.data(), GL_DYNAMIC_STORAGE_BIT);
+
+	glCreateBuffers(1, &m_IBO);
+	glNamedBufferStorage(m_IBO, sizeof(uint32_t) * 2, verticesIndices, GL_DYNAMIC_STORAGE_BIT);
+
+	glVertexArrayVertexBuffer(m_VAO, 0, m_VBO, 0, 3 * sizeof(float));
+	glVertexArrayElementBuffer(m_VAO, m_IBO);
+
 	glEnableVertexArrayAttrib(m_VAO, 0);
-	glVertexArrayAttribBinding(m_VAO, 0, 0);
 	glVertexArrayAttribFormat(m_VAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayVertexBuffer(m_VAO, 0, m_VBO, 0, 3 * sizeof(GLfloat));
+	glVertexArrayAttribBinding(m_VAO, 0, 0);
 
 }
 
@@ -48,9 +56,13 @@ void Line::draw()
 	mainProgram.setUniform("laser.isLaserOn", true);
 
 	glBindVertexArray(m_VAO);
-	glDrawArrays(GL_LINES, 0, 2);
+	int bufferSize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
+	const auto drawSize = bufferSize / sizeof(GLushort);
+	glDrawElements(GL_LINES, drawSize, GL_UNSIGNED_SHORT, 0);
 
 	mainProgram.setUniform("laser.isLaserOn", false);
+	glUseProgram(0);
 
 }
 

@@ -19,7 +19,6 @@ uniform DiffuseLight diffuseLight;
 uniform PointLight pointLightOne, pointLightTwo;
 uniform Material material;
 uniform Laser laser;
-
 void main() {
     vec3 normal = normalize(IOVerNormal);
     vec4 texColor = texture(diffTex, IOVerTexCoord);

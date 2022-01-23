@@ -37,6 +37,8 @@ void GameScene::initScene() {
 		shaderManager.loadVertexShader("outline_part", "../src/shaders/shaderOutline.vert");
 		shaderManager.loadFragmentShader("laser_part", "../src/shaders/line.frag");
 		shaderManager.loadVertexShader("laser_part", "../src/shaders/line.vert");
+		shaderManager.loadFragmentShader("skybox_part", "../src/shaders/skybox.frag");
+		shaderManager.loadVertexShader("skybox_part", "../src/shaders/skybox.vert");
 
 		auto& mainShaderProgram = shaderProgramManager.createShaderProgram("main");
 		mainShaderProgram.addShaderToProgram(shaderManager.getVertexShader("main_part"));
@@ -54,10 +56,15 @@ void GameScene::initScene() {
 		laserShaderProgram.addShaderToProgram(shaderManager.getVertexShader("laser_part"));
 		laserShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("laser_part"));
 
-        collisionHandler = std::make_unique<CollisionHandler>();
+		auto& skyboxShaderProgram = shaderProgramManager.createShaderProgram("skybox");
+		skyboxShaderProgram.addShaderToProgram(shaderManager.getVertexShader("skybox_part"));
+		skyboxShaderProgram.addShaderToProgram(shaderManager.getFragmentShader("skybox_part"));
+		shaderProgramManager.linkAllPrograms();
+
 		// init objs
-		m_skybox = std::make_unique<Skybox>("res/skybox/blue", true, true, true);
-		m_cube = std::make_unique<Cube>(true, true, true);
+		collisionHandler = std::make_unique<CollisionHandler>();
+		m_skybox = std::make_unique<Skybox>("res/skybox/blue");
+		m_cube = std::make_unique<Cube>();
 		m_ambientLight = std::make_unique<AmbientLight>(glm::vec3(0.6f, 0.6f, 0.6f));
 		m_diffuseLight = std::make_unique<DiffuseLight>(glm::vec3(1.0f, 1.0f, 1.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), 15.0f);
 		m_material = std::make_unique<Material>(12.0f, 20.0f);
@@ -71,7 +78,6 @@ void GameScene::initScene() {
 		TextureManager::getInstance().loadTexture2D("snow", "res/img/snow.png");
 		TextureManager::getInstance().loadTexture2D("lava", "res/img/lava.png");
 
-		shaderProgramManager.linkAllPrograms();
 		int width, height;
 		glfwGetWindowSize(getWindow(), &width, &height);
 		m_camera = std::make_shared<Camera>(
@@ -184,7 +190,7 @@ void GameScene::renderScene() {
 	Material::none().setUniform(mainProgram, "material");
 	//PointLight::none().setUniform(mainProgram, "pointLightOne");
 	//PointLight::none().setUniform(mainProgram, "pointLightTwo");
-	m_skybox->render(m_camera->getEye(), mainProgram);
+
 
 	SamplerManager::getInstance().getSampler("main").bind();
 	m_ambientLight->setUniform(mainProgram, "ambientLight");
@@ -204,7 +210,8 @@ void GameScene::renderScene() {
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
 	TextureManager::getInstance().getTexture("lava").bind(0);
 	m_cube->render();
-
+	// Order of drawing skybox, text does matters, due to the depth buffer manipulation
+	m_skybox->render(m_camera->getEye(), mainProgram);
     m_HUD->renderHUD(ambientSkybox);
     drawGameObjectsHUD();
 	glEnable(GL_DEPTH_TEST);
