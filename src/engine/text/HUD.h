@@ -132,15 +132,8 @@ protected:
         return PrintBuilder(*this);
     }
 
-    /**
-     * Gets shader program for 2D rendering.
-     */
     ShaderProgram& getOrtho2DShaderProgram() const;
 
-    /**
-     * Gets HUD sampler.
-     */
     const Sampler& getHUDSampler() const;
 
-    Static_meshes_2D::Quad _texturedQuad; // Static mesh for rendering 2D quad
 };

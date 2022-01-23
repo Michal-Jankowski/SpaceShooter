@@ -16,7 +16,6 @@ const std::string HUD::HUD_SAMPLER_KEY = "HUD";
 
 HUD::HUD(const SetupWindow& window)
     : _window(window)
-    , _texturedQuad(true, true)
 {
     static std::once_flag prepareOnceFlag;
     std::call_once(prepareOnceFlag, []()
@@ -47,24 +46,6 @@ int HUD::getHeight() const
     int width, height;
     glfwGetFramebufferSize(_window.getWindow(), &width, &height);
     return height;
-}
-
-void HUD::renderTexturedQuad2D(int x, int y, int renderedWidth, int renderedHeight, bool fromRight, bool fromTop) const
-{
-    if (fromRight) {
-        x = getWidth() - x - renderedWidth;
-    }
-    if (fromTop) {
-        y = getHeight() - y - renderedHeight;
-    }
-
-    auto& shaderProgram = getOrtho2DShaderProgram();
-    glm::mat4 model = glm::translate(glm::mat4(1.0), glm::vec3(static_cast<float>(x), static_cast<float>(y), 0.0f));
-    model = glm::scale(model, glm::vec3(static_cast<float>(renderedWidth), static_cast<float>(renderedHeight), 1.0f));
-    shaderProgram.setUniform("matrices.modelMatrix", model);
-    //[ShaderConstants::modelMatrix()] = model;
-
-    _texturedQuad.render();
 }
 
 ShaderProgram& HUD::getOrtho2DShaderProgram() const
