@@ -4,7 +4,6 @@
 class Line
 {
 public:
-	Line();
 	Line(glm::vec3 start, glm::vec3 end);
 	~Line();
 	void draw();

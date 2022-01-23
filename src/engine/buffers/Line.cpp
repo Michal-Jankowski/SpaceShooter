@@ -19,6 +19,7 @@ Line::Line(glm::vec3 start, glm::vec3 end)
 
 Line::~Line()
 {
+	glDeleteBuffers(1, &m_IBO);
 	glDeleteBuffers(1, &m_VBO);
 	glDeleteVertexArrays(1, &m_VAO);
 }
