@@ -18,11 +18,13 @@ void Laser::update() {
     auto deltaTime = (float)scene->getDeltaTime();
     glm::vec3 dir = line.getNormalisedDir();
     glm::vec3 offset = dir * speed * deltaTime;
-    line.setPosition(line.getStartPosition() + offset,
-                     line.getEndPosition() + offset);
+    std::vector<glm::vec3> linePoints{ line.getStartPosition() + offset, line.getEndPosition() + offset };
+    line.setPosition(linePoints);
     timer -= deltaTime;
     if(timer < 0){
         awaitingDestroy = true;
+        line.~Line();
+        shotFrom = nullptr;
     }
 }
 
