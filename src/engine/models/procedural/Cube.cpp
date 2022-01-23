@@ -99,7 +99,8 @@ void Cube::deleteMesh() {
         return;
     }
     glDeleteVertexArrays(1, &VAO);
-    m_vbo.deleteVBO();
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
     m_isInitialized = false;
 }
 

@@ -73,6 +73,9 @@ void Skybox::start() {
 
 
 Skybox::~Skybox() {
+    glDeleteVertexArrays(1, &skyboxVAO);
+    glDeleteBuffers(1, &skyboxVBO);
+    glDeleteBuffers(1, &skyboxEBO);
     auto& tm = TextureManager::getInstance();
     tm.deleteTexture(skyboxKey);  
 }
