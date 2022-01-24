@@ -299,15 +299,14 @@ void GameScene::gameObjectsLogicLoop() {
         auto inserting = creatingGameObjects.front().get();
         if(const auto model = dynamic_cast<GameModel*>(inserting)){
             if(model->mesh.hasTransparentMaterials()){
-                gameObjects.insert(gameObjects.begin(), std::move(creatingGameObjects.front()));
+                gameObjects.push_back(std::move(creatingGameObjects.front()));
             }
             else{
-                gameObjects.push_back(std::move(creatingGameObjects.front()));
-
+                gameObjects.insert(gameObjects.begin(), std::move(creatingGameObjects.front()));
             }
         }
         else{
-            gameObjects.push_back(std::move(creatingGameObjects.front()));
+            gameObjects.insert(gameObjects.begin(), std::move(creatingGameObjects.front()));
         }
         creatingGameObjects.pop();
     }

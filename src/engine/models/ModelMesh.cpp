@@ -244,7 +244,7 @@ ModelMesh::~ModelMesh() {
 
 bool ModelMesh::hasTransparentMaterials() {
     for (auto & material : materials){
-        if(material.second->isTransparent()){
+        if(material.first != NULL && material.second->isTransparent()){
             return true;
         }
     }
