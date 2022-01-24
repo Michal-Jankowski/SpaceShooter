@@ -168,10 +168,7 @@ void GameScene::renderScene() {
     updateShaderMatrices("assimp");
     updateLights("assimp");
 
-	drawGameObjects();
-    if(drawDebug) {
-        collisionHandler->drawDebug();
-    }
+
     auto& mainProgram = shaderProgramManager.getShaderProgram("main");
   	auto& outlineProgram = shaderProgramManager.getShaderProgram("outline");
 
@@ -209,8 +206,15 @@ void GameScene::renderScene() {
 	mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", model);
 	TextureManager::getInstance().getTexture("lava").bind(0);
 	m_cube->render();
+
 	// Order of drawing skybox, text does matters, due to the depth buffer manipulation
 	m_skybox->render(m_camera->getEye(), mainProgram);
+
+    drawGameObjects();
+    if(drawDebug) {
+        collisionHandler->drawDebug();
+    }
+
     m_HUD->renderHUD(ambientSkybox);
     drawGameObjectsHUD();
 	glEnable(GL_DEPTH_TEST);
@@ -292,7 +296,19 @@ void GameScene::releaseScene() {
 void GameScene::gameObjectsLogicLoop() {
     ///SPAWN
     while(!creatingGameObjects.empty()){
-        gameObjects.push_back(std::move(creatingGameObjects.front()));
+        auto inserting = creatingGameObjects.front().get();
+        if(const auto model = dynamic_cast<GameModel*>(inserting)){
+            if(model->mesh.hasTransparentMaterials()){
+                gameObjects.insert(gameObjects.begin(), std::move(creatingGameObjects.front()));
+            }
+            else{
+                gameObjects.push_back(std::move(creatingGameObjects.front()));
+
+            }
+        }
+        else{
+            gameObjects.push_back(std::move(creatingGameObjects.front()));
+        }
         creatingGameObjects.pop();
     }
     ///UPDATE

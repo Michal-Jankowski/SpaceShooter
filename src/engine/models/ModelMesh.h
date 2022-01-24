@@ -30,7 +30,7 @@ public:
     void render(const glm::mat4 model) const;
 
     void clearData();
-
+    [[nodiscard]] bool hasTransparentMaterials();
 private:
     std::vector<int> _meshStartIndices; // Indices of where the meshes start in the VBO
     std::vector<int> _meshVerticesCount; // How many vertices are there for every mesh

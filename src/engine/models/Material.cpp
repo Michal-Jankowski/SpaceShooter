@@ -58,18 +58,15 @@ Material::Material(const aiMaterial *assimpMat) {
     {
         if (assimpMat->GetTexture(aiTextureType_DIFFUSE, 0, &aiTexturePath) == AI_SUCCESS)
         {
-            aiBlendMode blendMode;
-            //TODO blendmode to assimp
-            assimpMat->Get(AI_MATKEY_BLEND_FUNC, blendMode);
             const std::string textureFileName = aiStringToStdString(aiTexturePath);
             mainTextureKey = loadMaterialTexture(textureFileName);
+            auto format = TextureManager::getInstance().getTexture(mainTextureKey).getFormat();
+            m_isTransparent = format == GL_RGBA;
         }
 
     }
     if (assimpMat->GetTextureCount(aiTextureType_HEIGHT ) > 0) {
         if (assimpMat->GetTexture(aiTextureType_HEIGHT, 0, &aiTexturePath) == AI_SUCCESS) {
-            aiBlendMode blendMode;
-            assimpMat->Get(AI_MATKEY_BLEND_FUNC, blendMode);
             const std::string textureFileName = aiStringToStdString(aiTexturePath);
             normalTextureKey = loadMaterialTexture(textureFileName);
             if(!normalTextureKey.empty()) {
@@ -103,8 +100,10 @@ std::string Material::aiStringToStdString(const aiString& aiStringStruct)
 
 void Material::setup(const glm::mat4 model) const{
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    if(m_isTransparent) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
 
     auto shader = ShaderProgramManager::getInstance().getShaderProgram(assimpModelsShaderKey);
     shader.useProgram();
@@ -136,4 +135,8 @@ void Material::setup(const glm::mat4 model) const{
     shader.setUniform("material.specularStrength", m_specularStrength);
 
 
+}
+
+const bool Material::isTransparent() {
+    return m_isTransparent;
 }

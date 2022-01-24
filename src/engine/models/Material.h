@@ -11,11 +11,13 @@ public:
 	static Material& none();
 	void setUniform(ShaderProgram& shaderProgram, const std::string& uniformName);
     void setup(const glm::mat4 model) const;
+    [[nodiscard]] const bool isTransparent();
 private:
 	std::string constructAttributeName(const std::string& uniformName, const std::string& attributeName);
 	bool m_isEnabled;
 	float m_specularIntensity;
 	float m_specularStrength;
+	bool m_isTransparent;
 
     std::string mainTextureKey;
     bool hasNormal = false;

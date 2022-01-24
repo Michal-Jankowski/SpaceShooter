@@ -225,17 +225,29 @@ void ModelMesh::render(const glm::mat4 model) const
         const auto usedMaterialIndex = _meshMaterialIndices[i];
         if (materials.count(usedMaterialIndex) > 0)
         {
-            const auto mat = *materials.at(usedMaterialIndex);
+            auto mat = *materials.at(usedMaterialIndex);
             mat.setup(model);
+            glDrawArrays(GL_TRIANGLES, _meshStartIndices[i], _meshVerticesCount[i]);
+            if(mat.isTransparent()) {
+                glDisable(GL_BLEND);
+            }
         }
-        glDrawArrays(GL_TRIANGLES, _meshStartIndices[i], _meshVerticesCount[i]);
-        glDisable(GL_BLEND);
+
     }
 }
 
 ModelMesh::~ModelMesh() {
     materials.clear();
     clearData();
+}
+
+bool ModelMesh::hasTransparentMaterials() {
+    for (auto & material : materials){
+        if(material.second->isTransparent()){
+            return true;
+        }
+    }
+    return false;
 }
 
 

@@ -21,10 +21,10 @@ public:
     void drawHud(GameHUD *hud) override {}
     void reinit() override;
     bool isValidCollisionTarget(GameObject *other) const override {return false;}
-
-    ShaderProgram shader;
-    ModelMesh mesh = ModelMesh();
     std::unique_ptr<Transform> transform;
+
+    ModelMesh mesh = ModelMesh();
+    ShaderProgram shader;
 };
 
 
