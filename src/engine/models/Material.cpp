@@ -103,6 +103,9 @@ std::string Material::aiStringToStdString(const aiString& aiStringStruct)
 
 void Material::setup(const glm::mat4 model) const{
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     auto shader = ShaderProgramManager::getInstance().getShaderProgram(assimpModelsShaderKey);
     shader.useProgram();
 

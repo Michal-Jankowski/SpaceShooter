@@ -33,7 +33,7 @@ private:
     void clearBuffers();
     void gameObjectsLogicLoop();
     void drawGameObjects();
-    void removeGameObjectAt(int i);
+    void removeGameObjectAt(int &i);
     void drawGameObjectsHUD();
     void updateMatrices();
     void updateShaderMatrices(const std::string& shaderKey);

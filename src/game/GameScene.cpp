@@ -103,8 +103,7 @@ void GameScene::initScene() {
         addObject(std::move(sourceLightOne));
         addObject(std::move(sourceLightTwo));
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	}
 	catch (const std::runtime_error& error) {
 		std::cout << "Error occured during initialization: " << error.what() << std::endl;
@@ -328,7 +327,7 @@ void GameScene::addObject(std::unique_ptr<GameObject> go) {
 
 }
 
-void GameScene::removeGameObjectAt(int i) {
+void GameScene::removeGameObjectAt(int &i) {
     if(gameObjects[i]->useCollision(nullptr)) {
         collisionHandler->deregisterCollider(gameObjects[i].get());
     }

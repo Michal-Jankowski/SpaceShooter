@@ -229,7 +229,7 @@ void ModelMesh::render(const glm::mat4 model) const
             mat.setup(model);
         }
         glDrawArrays(GL_TRIANGLES, _meshStartIndices[i], _meshVerticesCount[i]);
-
+        glDisable(GL_BLEND);
     }
 }
 
