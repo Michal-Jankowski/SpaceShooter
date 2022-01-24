@@ -231,6 +231,7 @@ void ModelMesh::render(const glm::mat4 model) const
             if(mat.isTransparent()) {
                 glDisable(GL_BLEND);
             }
+            glDisable(GL_CULL_FACE);
         }
 
     }
