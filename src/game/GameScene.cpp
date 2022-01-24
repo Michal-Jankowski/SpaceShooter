@@ -90,6 +90,7 @@ void GameScene::initScene() {
         shipRef = ship.get();
         addObject(std::move(ship));
         auto planet1 = std::make_unique<Planet>(this, 30.0f, true, glm::vec3(-50.0f, 0.0f, -50.0f));
+        addObject(std::move(planet1));
         auto planet2 = std::make_unique<Planet>(this, 30.0f, true, glm::vec3(50.0f, 50.0f, -50.0f));
         addObject(std::move(planet2));
 
@@ -99,7 +100,7 @@ void GameScene::initScene() {
         auto sourceLightTwo = std::make_unique<Planet>(this, 10, false,
                                                           "../res/models/sun.obj",
                                                           glm::vec3(60.0f, 20.0f, 0.0f));
-        addObject(std::move(planet1));
+
         addObject(std::move(sourceLightOne));
         addObject(std::move(sourceLightTwo));
 
