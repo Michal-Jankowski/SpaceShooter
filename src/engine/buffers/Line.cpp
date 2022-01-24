@@ -90,9 +90,6 @@ void Line::setMultiplePositions(const std::vector<glm::vec3>& start) {
 }
 
 void Line::setPosition(const std::vector<glm::vec3>& points){
-	if (points.empty()) {
-		return;
-	}
     m_startPoint = points[0];
     m_endPoint = points[1];
 
