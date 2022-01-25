@@ -7,14 +7,14 @@
 
 Ship::Ship(SetupWindow* scene, std::shared_ptr<Camera> cameraRef) : GameModel(scene, MODEL_PATH), m_camera(std::move(cameraRef)) {
     col = std::make_unique<SphereCollider>(transform.get(), 1.5f);
+    enemiesShot = 0;
+    collectiblesFound = 0;
     init();
 }
 
 void Ship::init() {
     m_camera->returnToInitPosition();
     lives = initLives;
-    enemiesShot = 0;
-    collectiblesFound = 0;
 }
 
 void Ship::update() {

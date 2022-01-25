@@ -8,6 +8,7 @@
 
 namespace string_utils
 {
+
     inline std::string formatStringImpl(const char* s, std::stringstream& ss)
     {
         ss << s;

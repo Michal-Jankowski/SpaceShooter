@@ -17,6 +17,9 @@ void Enemy::update() {
 
 void Enemy::onCollision(GameObject *other) {
     GameModel::onCollision(other);
+    if(awaitingDestroy){
+        return;
+    }
     if(auto ship = dynamic_cast<Ship*>(other)){
         ship->damage(true);
     }

@@ -60,3 +60,14 @@ void HUD::printInternal(int x, int y, const std::string &text) const {
 
 }
 
+
+void HUD::addLines(const std::string &text, int lineCount, int lineOffsetX, int lineOffsetY, int lineHeight) {
+    m_fromRight = false;
+    m_fromTop = true;
+    print(lineOffsetX, lineOffsetY + lineHeight * m_currentLines, text);
+    m_currentLines += lineCount;
+}
+
+void HUD::clearLines() {
+    m_currentLines = 0;
+}
