@@ -5,19 +5,10 @@ DiffuseLight::DiffuseLight(const glm::vec3& color, const glm::vec3& direction, c
     , m_factor(factor)
 {
 }
-std::string DiffuseLight::constructAttributeName(const std::string& uniformName, const std::string& attributeName) {
-    return uniformName + "." + attributeName;
-}
 
+void DiffuseLight::setUniform(ShaderProgram& shaderProgram) {
 
-void DiffuseLight::setUniform(ShaderProgram& shaderProgram, const std::string& uniformName) {
-    shaderProgram.setUniform(constructAttributeName(uniformName, "color"), m_color);
-    shaderProgram.setUniform(constructAttributeName(uniformName, "direction"), m_direction);
-    shaderProgram.setUniform(constructAttributeName(uniformName, "factor"), m_factor);
-}
-
- DiffuseLight& DiffuseLight::none()
-{
-    static DiffuseLight noneDiffuseLight(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 0.0f);
-    return noneDiffuseLight;
+    shaderProgram.setUniform("diffuseLight.color", m_color);
+    shaderProgram.setUniform("diffuseLight.direction", m_direction);
+    shaderProgram.setUniform("diffuseLight.factor", m_factor);
 }
