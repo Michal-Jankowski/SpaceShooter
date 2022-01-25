@@ -19,10 +19,9 @@ bool visualizeColorFrameBuffer = false;
 void GameScene::initScene() {
 
 	try {
-		// Related info: https://github.com/fendevel/Guide-to-Modern-OpenGL-Functions#glbuffer
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-		glDebugMessageCallback(err_callback::message_callback, nullptr);
+		glDebugMessageCallback(err_callback::callback, nullptr);
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 
 		auto& shaderManager = ShaderManager::getInstance();
@@ -246,6 +245,10 @@ void GameScene::updateScene() {
 	if (keyPressedOnce(GLFW_KEY_2)) {
 		glfwSetInputMode(this->getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		setCameraUpdateEnabled(!isCameraUpdateEnabled());
+	}
+	/* Free floating camera or static camera*/
+	if (keyPressedOnce(GLFW_KEY_3)) {
+		glfwSetInputMode(this->getWindow(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	}
 	/* Update camera state*/
 	if (isCameraUpdateEnabled()) {

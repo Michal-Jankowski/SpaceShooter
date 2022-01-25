@@ -42,7 +42,6 @@ public:
 	int getFPS() const;
 	double getDeltaTime() const;
 	double getValueByTime(double value) const;
-	static SetupWindow* getDefaultWindow();
 	int getScreenWidth() const;
 	int getScreenHeight() const;
 	glm::ivec2 getOpenGLCursorPosition() const;

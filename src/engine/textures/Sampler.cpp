@@ -13,7 +13,7 @@ void Sampler::create(bool repeat) {
 
 void Sampler::bind(int textureUnit) const {
     if (!m_isCreated) {
-        std::cerr << "Sampler was not yet created!" << std::endl;
+        std::cerr << "ERROR: Create sampler first!" << std::endl;
         return;
     }
 	glBindSampler(textureUnit, m_samplerID);
@@ -31,7 +31,7 @@ void Sampler::deleteSampler() {
 void Sampler::setFilterOptions(FilterOptions filterOption, GLenum pname) const {
 
     if (!m_isCreated) {
-        std::cerr << "Sampler was not yet created!" << std::endl;
+        std::cerr << "ERROR: Create sampler first!" << std::endl;
         return;
     }
     GLint param = GL_NEAREST;
@@ -67,7 +67,7 @@ void Sampler::setFilterOptions(FilterOptions filterOption, GLenum pname) const {
 void Sampler::setRepeat(bool repeat) {
 
     if (!m_isCreated) {
-        std::cerr << "Sampler was not yet created!" << std::endl;
+        std::cerr << "ERROR: Create sampler first!" << std::endl;
         return;
     }
     m_repeat = repeat;

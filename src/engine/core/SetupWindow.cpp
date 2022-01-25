@@ -2,6 +2,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 std::map<GLFWwindow*, SetupWindow*> SetupWindow::m_windows;
+constexpr int WINDOW_WIDTH = 840;
+constexpr int WINDOW_HEIGHT = 640;
 
 SetupWindow::SetupWindow() {
 	for (auto& keyPressElem : m_keyWasPressed) {
@@ -20,16 +22,14 @@ bool SetupWindow::createWindow(const std::string& title, int majorVersion, int m
 	const auto primaryWindow = glfwGetPrimaryMonitor();
 	const auto videoMode = glfwGetVideoMode(primaryWindow);
 	auto monitor = m_showFullScreen ? primaryWindow : nullptr;
-	auto width = 840;
-	auto height = 640;
-	m_window = glfwCreateWindow(width, height, title.c_str(), monitor, nullptr);
+	m_window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, title.c_str(), monitor, nullptr);
 	if (m_window == nullptr) {
 		return false;
 	}
 	glfwMakeContextCurrent(m_window);
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 	glfwSetWindowSizeCallback(m_window, onWindowSizeChangedStatic);
-	onWindowSizeChangedInternal(width, height);
+	onWindowSizeChangedInternal(WINDOW_WIDTH, WINDOW_HEIGHT);
 	glfwSetMouseButtonCallback(m_window, onMouseButtonPressedStatic);
 	glfwSetScrollCallback(m_window, onMouseWheelScrollStatic);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -50,8 +50,7 @@ void SetupWindow::runApp() {
 
 	m_lastFrameTime = m_lastFrameTimeFPS = glfwGetTime();
 
-	while (glfwWindowShouldClose(m_window) == 0)
-	{
+	while (glfwWindowShouldClose(m_window) == 0) {
 		updateDeltaTimeAndFPS();
 		renderScene();
 
@@ -65,8 +64,7 @@ void SetupWindow::runApp() {
 	glfwDestroyWindow(m_window);
 	m_windows.erase(m_windows.find(m_window));
 
-	if (m_windows.empty())
-	{
+	if (m_windows.empty()) {
 		glfwTerminate();
 	}
 }
@@ -139,10 +137,6 @@ double SetupWindow::getValueByTime(double value) const {
 	return getDeltaTime() * value;
 }
 
-SetupWindow* SetupWindow::getDefaultWindow() {
-	return m_windows.size() == 0 ? nullptr : (*m_windows.begin()).second;
-
-}
 
 int SetupWindow::getScreenWidth() const
 {
