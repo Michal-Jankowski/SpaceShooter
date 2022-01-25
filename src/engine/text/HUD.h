@@ -1,95 +1,63 @@
 #pragma once
 
-// STL
 #include <string>
-
-// GLM
 #include <glm/glm.hpp>
 #include "../core/SetupWindow.h"
 #include "FontManager.h"
-#include "../models/procedural/Quad.h"
 
-// Project
-
-/**
- * Base class for rendering HUD (head-up display) over scene.
- */
 class HUD
 {
 public:
-    static const std::string DEFAULT_FONT_KEY;
-    static const std::string ORTHO_2D_PROGRAM_KEY; // Key for shader program for rendering in 2D
-    static const std::string HUD_SAMPLER_KEY; // Key for sampler used for HUD models
-
     HUD(const SetupWindow& window);
-
-    /**
-     * Renders HUD.
-     */
     virtual void renderHUD() const = 0;
 
 protected:
-    const SetupWindow& _window; // OpenGL Window class instance, for which HUD is rendered
-
-    /**
-     * Gets HUD width.
-     */
+    const SetupWindow& m_window;
+    static const std::string DEFAULT_FONT_KEY;
+    const std::string ORTHO_2D_PROGRAM_KEY = "ortho_2D";
+    const std::string HUD_SAMPLER_KEY = "HUD";
+   
     int getWidth() const;
-
-    /**
-     * Gets HUD height.
-     */
     int getHeight() const;
 
-    /**
-     * Renders 2D textured quad at specified position with specified size. Possibility to render from right or top as well.
-     *
-     * @param x               Rendering position from left or from right edge (depending on fromRight flag)
-     * @param y               Rendering position from top or bottom edge (depending on fromTop flag)
-     * @param renderedWidth   Width of rendered quad (in pixels)
-     * @param renderedHeight  Height of rendered quad (in pixels)
-     * @param fromRight       Flag telling, if you want to render from right side instead of from left side
-     * @param fromTop         Flag telling, if you want to render from top side instead of from bottom side
-     */
-    void renderTexturedQuad2D(int x, int y, int renderedWidth, int renderedHeight, bool fromRight = false, bool fromTop = false) const;
 
     class PrintBuilder
     {
     public:
-        PrintBuilder(const HUD& hud) : _hud(hud) {};
+        PrintBuilder(const HUD& hud) : m_hud(hud) {};
 
         PrintBuilder& withFont(const std::string& fontKey) {
-            _fontKey = fontKey;
+            m_fontKey = fontKey;
             return *this;
         }
 
         PrintBuilder& fromLeft() {
-            _fromRight = false;
+            m_fromRight = false;
             return *this;
         }
 
         PrintBuilder& fromRight() {
-            _fromRight = true;
+            m_fromRight = true;
             return *this;
         }
 
         PrintBuilder& fromTop() {
-            _fromTop = true;
+            m_fromTop = true;
             return *this;
         }
 
         PrintBuilder& fromBottom() {
-            _fromTop = false;
+            m_fromTop = false;
             return *this;
         }
 
         PrintBuilder& withPixelSize(int pixelSize) {
-            _pixelSize = pixelSize;
+            m_pixelSize = pixelSize;
             return *this;
         }
 
         PrintBuilder& withColor(const glm::vec4& color) {
-            _color = color;
+            m_color = color;
             return *this;
         }
 
@@ -105,35 +73,29 @@ protected:
     private:
         void printInternal(int x, int y, const std::string& text) const
         {
-            auto& font = FreeTypeFontManager::getInstance().getFreeTypeFont(_fontKey);
-            const auto textWidth = font.getTextWidth(text, _pixelSize);
-            const auto textHeight = font.getTextHeight(_pixelSize);
-            if (_fromRight) {
-                x = _hud.getWidth() - x - textWidth;
+            auto& font = FreeTypeFontManager::getInstance().getFreeTypeFont(m_fontKey);
+            const auto textWidth = font.getTextWidth(text, m_pixelSize);
+            const auto textHeight = font.getTextHeight(m_pixelSize);
+            if (m_fromRight) {
+                x = m_hud.getWidth() - x - textWidth;
             }
-            if (_fromTop) {
-                y = _hud.getHeight() - y - textHeight;
+            if (m_fromTop) {
+                y = m_hud.getHeight() - y - textHeight;
             }
 
-            font.setTextColor(_color);
+            font.setTextColor(m_color);
             font.print(x, y, text);
         }
 
-        const HUD& _hud;
-        bool _fromRight = false;
-        bool _fromTop = true;
-        int _pixelSize = -1;
-        glm::vec4 _color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-        std::string _fontKey = HUD::DEFAULT_FONT_KEY;
+        const HUD& m_hud;
+        bool m_fromRight = false;
+        bool m_fromTop = true;
+        int m_pixelSize = -1;
+        glm::vec4 m_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+        std::string m_fontKey = DEFAULT_FONT_KEY;
     };
 
-    PrintBuilder printBuilder() const
-    {
+    PrintBuilder printBuilder() const {
         return PrintBuilder(*this);
     }
-
-    ShaderProgram& getOrtho2DShaderProgram() const;
-
-    const Sampler& getHUDSampler() const;
-
 };

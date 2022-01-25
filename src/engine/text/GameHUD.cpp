@@ -1,8 +1,8 @@
-// STL
-#include <mutex>
-
-// Project
 #include "GameHUD.h"
+
+constexpr auto lineHeight = 30;
+constexpr auto lineOffsetX = 10;
+constexpr auto lineOffsetY = 140;
 
 std::ostream& operator<<(std::ostream& o, const glm::vec3& vec3)
 {
@@ -13,17 +13,13 @@ std::ostream& operator<<(std::ostream& o, const glm::vec3& vec3)
 GameHUD::GameHUD(const SetupWindow& window)
     : HUD(window)
 {
-    static std::once_flag prepareOnceFlag;
-    std::call_once(prepareOnceFlag, []()
-        {
-            FreeTypeFontManager::getInstance().loadSystemFreeTypeFont(DEFAULT_FONT_KEY, "arial.ttf", 24);
-        });
+    FreeTypeFontManager::getInstance().loadSystemFreeTypeFont(DEFAULT_FONT_KEY, "arial.ttf", 24);
 }
 
 void GameHUD::renderHUD(const AmbientLight& ambientLight) const
 {
-    printBuilder().print(10, 10, "FPS: {}", _window.getFPS());
-    printBuilder().print(10, 40, "VSync: {} (Press 0 to toggle)", _window.isVerticalSynchronizationEnabled() ? "On" : "Off");
+    printBuilder().print(10, 10, "FPS: {}", m_window.getFPS());
+    printBuilder().print(10, 40, "VSync: {} (Press 0 to toggle)", m_window.isVerticalSynchronizationEnabled() ? "On" : "Off");
 
     printBuilder()
         .fromRight()
@@ -32,12 +28,12 @@ void GameHUD::renderHUD(const AmbientLight& ambientLight) const
 }
 
 void GameHUD::addLines(const std::string &text, int lineCount) {
-    printBuilder().print(lineOffsetX, lineOffsetY + lineHeight * currentLines, text);
-    currentLines += lineCount;
+    printBuilder().print(lineOffsetX, lineOffsetY + lineHeight * m_currentLines, text);
+    m_currentLines += lineCount;
 }
 
 void GameHUD::clearLines() {
-    currentLines = 0;
+    m_currentLines = 0;
 }
 
 
