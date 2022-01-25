@@ -18,7 +18,7 @@ void GameHUD::renderHUD(const AmbientLight& ambientLight)
 }
 
 void GameHUD::addLines(const std::string &text, int lineCount) {
-    HUD::addLines(text, lineCount,lineCount,lineOffsetY, lineHeight);
+    HUD::addLines(text, lineCount,lineOffsetX,lineOffsetY, lineHeight);
 }
 
 

@@ -12,7 +12,7 @@ class Ship : public GameModel {
 public:
     Ship(SetupWindow* scene, std::shared_ptr<Camera> cameraRef);
     void update() override;
-    void drawHud(GameHUD *hud) override;
+    void drawHud(HUD *hud) override;
     bool isValidCollisionTarget(GameObject *other) const override;
     void onCollision(GameObject* other) override;
     void reinit() override;

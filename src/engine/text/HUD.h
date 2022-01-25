@@ -36,4 +36,8 @@ private:
     glm::vec4 m_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     int m_currentLines = 0;
 
+    static constexpr int lineHeight = 30;
+    static constexpr int lineOffsetX = 10;
+    static constexpr int lineOffsetY = 140;
+
 };

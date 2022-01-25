@@ -41,11 +41,6 @@ void Turret::tryShoot(GameScene *gScene) {
     gScene->addObject(std::make_unique<Laser>(scene, startPos, endPos, Laser::laserLifetime, this));
 }
 
-void Turret::drawHud(GameHUD *hud) {
-    Enemy::drawHud(hud);
-    //hud->addLines(string_utils::formatString("Shoot timer: {}", shootAttemptTimer), 1);
-}
-
 bool Turret::isSightInterruptor(GameObject* go) {
     return dynamic_cast<Planet*>(go) != nullptr;
 }

@@ -6,14 +6,14 @@
 #include "Transform.h"
 #include "../collisions/Collider.h"
 #include "../core/SetupWindow.h"
-#include "../text/GameHUD.h"
+#include "../text/HUD.h"
 
 class GameObject {
 public:
     explicit GameObject(SetupWindow* scene);
 
     virtual void update() {};
-    virtual void drawHud(GameHUD* hud) {};
+    virtual void drawHud(HUD* hud) {};
     virtual void render();
     virtual void renderDebug() {};
     virtual void reinit() {};

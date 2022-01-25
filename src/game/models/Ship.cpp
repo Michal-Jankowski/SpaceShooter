@@ -4,6 +4,7 @@
 #include "../GameScene.h"
 #include "../elements/Laser.h"
 #include "../../engine/utils/RandomGenerator.h"
+#include "../GameHUD.h"
 
 Ship::Ship(SetupWindow* scene, std::shared_ptr<Camera> cameraRef) : GameModel(scene, MODEL_PATH), m_camera(std::move(cameraRef)) {
     col = std::make_unique<SphereCollider>(transform.get(), 1.5f);
@@ -46,10 +47,11 @@ void Ship::shootCheck() {
     }
 }
 
-void Ship::drawHud(GameHUD *hud) {
-    hud->addLines(string_utils::formatString("Lives: {}", lives), 1);
-    hud->addLines(string_utils::formatString("Enemies shot: {}/{}", enemiesShot, totalEnemies), 1);
-    hud->addLines(string_utils::formatString("Collectibles found: {}/{}", collectiblesFound, totalCollectibles), 1);
+void Ship::drawHud(HUD *hud) {
+    auto gameHud = dynamic_cast<GameHUD*>(hud);
+    gameHud->addLines(string_utils::formatString("Lives: {}", lives), 1);
+    gameHud->addLines(string_utils::formatString("Enemies shot: {}/{}", enemiesShot, totalEnemies), 1);
+    gameHud->addLines(string_utils::formatString("Collectibles found: {}/{}", collectiblesFound, totalCollectibles), 1);
 }
 
 void Ship::addPoint(Ship::PointType type) {

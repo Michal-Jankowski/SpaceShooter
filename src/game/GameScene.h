@@ -14,6 +14,7 @@
 #include "../engine/buffers/Line.h"
 #include "../engine/collisions/CollisionHandler.h"
 #include "models/Ship.h"
+#include "GameHUD.h"
 #include <queue>
 #include <atomic>
 

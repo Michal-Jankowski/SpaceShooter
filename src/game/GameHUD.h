@@ -1,7 +1,7 @@
 #pragma once
 
-#include "HUD.h"
-#include "../lighting/AmbientLight.h"
+#include "../engine/text/HUD.h"
+#include "../engine/lighting/AmbientLight.h"
 
 class GameHUD : public HUD
 {

@@ -15,7 +15,6 @@ public:
     void update() override;
     void render() override;
     void onCollision(GameObject *other) override;
-    void drawHud(GameHUD *hud) override;
     bool isValidCollisionTarget(GameObject *other) const override;
 private:
     inline static const std::string MODEL_PATH = "../res/models/collectible.obj";

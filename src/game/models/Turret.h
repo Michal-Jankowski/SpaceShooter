@@ -11,7 +11,6 @@ class Turret : public Enemy {
 public:
     Turret(SetupWindow* scene);
     void update() override;
-    void drawHud(GameHUD *hud) override;
     void renderDebug() override;
 private:
     const float shootAttemptInterval = 4.0f;
