@@ -21,6 +21,7 @@ public:
 	virtual void onWindowSizeChanged(int width, int height) {}
 	virtual void onMouseWheelScroll(double scrollOffsetX, double scrollOffsetY) {}
 	virtual void onMouseButtonPressed(int button, int action) {}
+	virtual void onKeyboardButtonPressed(int button, int action) {}
 
 	bool keyPressed(int keyCode) const;
     bool mouseButtonPressed(int keyCode) const;
@@ -69,6 +70,7 @@ private:
 	static void onMouseButtonPressedStatic(GLFWwindow* window, int button, int action, int mods);
 	static void onMouseWheelScrollStatic(GLFWwindow* window, double offsetX, double offsetY);
 	static void onWindowSizeChangedStatic(GLFWwindow* window, int width, int height);
+	static void onKeyboardButtonPressedStatic(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void updateDeltaTimeAndFPS();
 	static std::map<GLFWwindow*, SetupWindow*> m_windows;
 

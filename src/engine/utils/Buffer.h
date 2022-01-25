@@ -2,14 +2,18 @@
 
 #include <vector>
 #include <GLAD/glad.h>
+
+#ifndef SPACESHOOTER_BUFFER_H
+#define SPACESHOOTER_BUFFER_H
+
 class Buffer
 {
 public:
-	void createVBO(size_t reserveBytes = 0);
-	void deleteVBO();
-	void bindVBO(GLenum bufferType = GL_ARRAY_BUFFER);
+	void create(size_t reserveBytes = 0);
+	void deleteBuffer();
+	void bind(GLenum bufferType = GL_ARRAY_BUFFER);
 	void addRawData(const void* data, size_t dataSizeinBytes, int repeat = 1);
-	void uploadDataToGPU(GLenum usageHint);
+	void upload(GLenum usageHint);
 	GLuint m_bufferID{ 0 };
 
 	template<typename T>
@@ -22,7 +26,8 @@ private:
 	size_t m_bytesAdded{ 0 };
 	size_t m_uploadedDataSize;
 	int m_bufferType{ 0 };
-	bool m_isBufferInitalized = false;
-	bool m_isDataLoaded = false;
+	bool m_isReady = false;
+	bool m_isLoaded = false;
 };
 
+#endif //SPACESHOOTER_BUFFER_H

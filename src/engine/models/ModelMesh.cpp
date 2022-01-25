@@ -39,8 +39,8 @@ bool ModelMesh::loadModelFromFile(const std::string &path) {
     glGenVertexArrays(1, &vao_ind);
     glBindVertexArray(vao_ind);
 
-    vbo.createVBO();
-    vbo.bindVBO(GL_ARRAY_BUFFER);
+    vbo.create();
+    vbo.bind(GL_ARRAY_BUFFER);
 
     //vert pos, vert normal, uv coord
     const int vertSize = sizeof(aiVector3D) * 2 + sizeof(aiVector2D);
@@ -50,7 +50,7 @@ bool ModelMesh::loadModelFromFile(const std::string &path) {
     ReadMeshNormals(scene);
     ReadMeshMaterials(scene);
 
-    vbo.uploadDataToGPU(GL_STATIC_DRAW);
+    vbo.upload(GL_STATIC_DRAW);
     setVertexAttributesPointers(vertexCount);
     isInitialized = true;
 
@@ -174,7 +174,7 @@ void ModelMesh::ReadMeshNormals(const aiScene *scene) {
 }
 
 void ModelMesh::clearData() {
-    vbo.deleteVBO();
+    vbo.deleteBuffer();
 }
 
 

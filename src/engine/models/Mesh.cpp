@@ -22,7 +22,7 @@ void Mesh::deleteMesh()
     }
 
     glDeleteVertexArrays(1, &_vao);
-    _vbo.deleteVBO();
+    _vbo.deleteBuffer();
 
     _isInitialized = false;
 }

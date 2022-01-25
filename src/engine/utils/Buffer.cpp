@@ -2,21 +2,21 @@
 #include <iostream>
 #include <cstring>
 
-void Buffer::createVBO(size_t reserveBytes) {
+void Buffer::create(size_t reserveBytes) {
 
-	if (m_isBufferInitalized) {
-		std::cerr << "Buffer already initialized! You need to delete it before re-initailizing it!" << std::endl;
+	if (m_isReady) {
+		std::cerr << "ERROR: Buffer already initialized!" << std::endl;
 		return;
 	}
 
 	glGenBuffers(1, &m_bufferID);
 	m_rawData.reserve(reserveBytes > 0 ? reserveBytes : 1024);
-	m_isBufferInitalized = true;
+	m_isReady = true;
 }
 
-void Buffer::bindVBO(GLenum bufferType) {
-	if (!m_isBufferInitalized) {
-		std::cerr << "This buffer is not initialized yet! You need to create it first!" << std::endl;
+void Buffer::bind(GLenum bufferType) {
+	if (!m_isReady) {
+		std::cerr << "ERROR: This buffer is not initialized yet!" << std::endl;
 		return;
 	}
 	m_bufferType = bufferType;
@@ -45,24 +45,24 @@ void Buffer::addRawData(const void* data, size_t dataSize, int repeat) {
     }
 }
 
-void Buffer::uploadDataToGPU(GLenum usageHint) {
-    if (!m_isBufferInitalized)
+void Buffer::upload(GLenum usageHint) {
+    if (!m_isReady)
     {
         std::cerr << "This buffer is not initialized yet! You shall call createVBO before sending to GPU!" << std::endl;
         return;
     }
     glBufferData(m_bufferType, m_bytesAdded, m_rawData.data(), usageHint);
-    m_isDataLoaded = true;
+    m_isLoaded = true;
     m_uploadedDataSize = m_bytesAdded;
     m_bytesAdded = 0;
 }
 
-void Buffer::deleteVBO() {
-    if (!m_isBufferInitalized) {
+void Buffer::deleteBuffer() {
+    if (!m_isReady) {
         return;
     }
     glDeleteBuffers(1, &m_bufferID);
-    m_isDataLoaded = false;
-    m_isBufferInitalized = false;
+    m_isLoaded = false;
+    m_isReady = false;
 }
 

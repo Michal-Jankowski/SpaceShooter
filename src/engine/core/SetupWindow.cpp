@@ -33,6 +33,7 @@ bool SetupWindow::createWindow(const std::string& title, int majorVersion, int m
 	glfwSetMouseButtonCallback(m_window, onMouseButtonPressedStatic);
 	glfwSetScrollCallback(m_window, onMouseWheelScrollStatic);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	glfwSetKeyCallback(m_window, onKeyboardButtonPressedStatic);
 	m_windows[m_window] = this;
     return true;
 
@@ -220,5 +221,11 @@ void SetupWindow::onMouseWheelScrollStatic(GLFWwindow* window, double offsetX, d
 void SetupWindow::onWindowSizeChangedStatic(GLFWwindow* window, int width, int height) {
 	if (m_windows.count(window) != 0) {
 		m_windows[window]->onWindowSizeChangedInternal(width, height);
+	}
+}
+
+void SetupWindow::onKeyboardButtonPressedStatic(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (m_windows.count(window) != 0) {
+		m_windows[window]->onKeyboardButtonPressed(key, action);
 	}
 }
