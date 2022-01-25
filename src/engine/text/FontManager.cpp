@@ -1,9 +1,6 @@
-// STL
 #include <mutex>
 #include <windows.h>
 #include "sysinfoapi.h"
-
-// Project
 #include "FontManager.h"
 
 FreeTypeFontManager& FreeTypeFontManager::getInstance()
@@ -12,9 +9,21 @@ FreeTypeFontManager& FreeTypeFontManager::getInstance()
 	return fm;
 }
 
-void FreeTypeFontManager::loadFreeTypeFontFromFile(const std::string& key, const std::string& filePath, const int pixelSize)
+
+FreeTypeFont& FreeTypeFontManager::getFreeTypeFont(const std::string& key) const
 {
-	if (containsFreeTypeFont(key))
+	if (!hasLoadedFont(key))
+	{
+		const auto msg = "Attempting to get non-existing FreeType font with key '" + key + "'!";
+		throw std::runtime_error(msg.c_str());
+	}
+
+	return *m_fontHolder.at(key);
+}
+
+void FreeTypeFontManager::loadFreeTypeFontFromFile(const std::string& key, const std::string& filePath, const int pixelSize) {
+
+	if (hasLoadedFont(key))
 	{
 		const auto msg = "FreeType font with key '" + key + "' already exists!";
 		throw std::runtime_error(msg.c_str());
@@ -27,55 +36,27 @@ void FreeTypeFontManager::loadFreeTypeFontFromFile(const std::string& key, const
 		throw std::runtime_error(msg);
 	}
 
-	_freeTypeFontCache[key] = std::move(freeTypeFont);
+	m_fontHolder[key] = std::move(freeTypeFont);
 }
 
 void FreeTypeFontManager::loadSystemFreeTypeFont(const std::string& key, const std::string& fontName, const int pixelSize)
 {
-#ifdef _WIN32
-	loadFreeTypeFontFromFile(key, getSystemFontDirectory() + fontName, pixelSize);
-#else
-	loadFreeTypeFontFromFile(key, "/usr/share/fonts/truetype/FreeMono.ttf");
-#endif
+	loadFreeTypeFontFromFile(key, getOSFont() + fontName, pixelSize);
 }
 
-FreeTypeFont& FreeTypeFontManager::getFreeTypeFont(const std::string& key) const
+
+bool FreeTypeFontManager::hasLoadedFont(const std::string& key) const
 {
-	if (!containsFreeTypeFont(key))
-	{
-		const auto msg = "Attempting to get non-existing FreeType font with key '" + key + "'!";
-		throw std::runtime_error(msg.c_str());
-	}
-
-	return *_freeTypeFontCache.at(key);
+	return m_fontHolder.count(key) > 0;
 }
 
-void FreeTypeFontManager::clearFreeTypeFontCache()
-{
-	_freeTypeFontCache.clear();
-}
-
-bool FreeTypeFontManager::containsFreeTypeFont(const std::string& key) const
-{
-	return _freeTypeFontCache.count(key) > 0;
-}
-
-const std::string& FreeTypeFontManager::getSystemFontDirectory()
+const std::string& FreeTypeFontManager::getOSFont()
 {
 	static std::string systemFontsDirectory;
 	static std::once_flag prepareOnceFlag;
-
-	std::call_once(prepareOnceFlag, []()
-		{
-#ifdef _WIN64
-			char buffer[512]; GetWindowsDirectory(buffer, 512);
-			systemFontsDirectory = buffer;
-			systemFontsDirectory += "\\Fonts\\";
-#else
-			// TODO: check if this works
-			systemFontsDirectory = "/usr/share/fonts/";
-#endif
-		});
+	char buffer[512]; GetWindowsDirectory(buffer, 512);
+	systemFontsDirectory = buffer;
+	systemFontsDirectory += "\\Fonts\\";
 
 	return systemFontsDirectory;
 }

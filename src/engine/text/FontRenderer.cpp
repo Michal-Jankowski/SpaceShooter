@@ -91,8 +91,8 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
 
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
-    m_vbo.createVBO();
-    m_vbo.bindVBO();
+    m_vbo.create();
+    m_vbo.bind();
 
     auto finalizeTexture = [this, &texture, &textureData](bool createNext)
     {
@@ -197,7 +197,7 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
         finalizeTexture(false);
     }
 
-    m_vbo.uploadDataToGPU(GL_STATIC_DRAW);
+    m_vbo.upload(GL_STATIC_DRAW);
     // Setup vertex positions pointers
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2) * 2, reinterpret_cast<void*>(0));
@@ -343,7 +343,7 @@ void FreeTypeFont::deleteFont()
     m_characterProperties.clear();
     m_characterRanges.clear();
 
-    m_vbo.deleteVBO();
+    m_vbo.deleteBuffer();
     glDeleteVertexArrays(1, &m_vao);
 
    m_isLoaded = false;
