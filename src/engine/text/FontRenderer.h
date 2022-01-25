@@ -11,16 +11,16 @@
 #include "../textures/Sampler.h"
 #include "../shaders/ShaderProgram.h"
 #include "../utils/string_utils.h"
-
-
+#include "CharacterProperties.h"
+#include "CharacterRange.h"
 
 
 class FreeTypeFont
 {
 public:
     static const int CHARACTERS_TEXTURE_SIZE; // Size of texture atlas (in pixels) that stores characters
-    static const std::string FREETYPE_FONT_PROGRAM_KEY; // Key for shader program for rendering fonts in 2D
-    static const std::string FREETYPE_FONT_SAMPLER_KEY; // Key for sampler used for rendering fonts
+    static const std::string FONT_PROGRAM_KEY; // Key for shader program for rendering fonts in 2D
+    static const std::string FONT_SAMPLER_KEY; // Key for sampler used for rendering fonts
 
     FreeTypeFont();
     ~FreeTypeFont();
@@ -49,32 +49,6 @@ private:
     void printInternal(int x, int y, const std::string& text, int pixelSize) const;
     ShaderProgram& getFreetypeFontShaderProgram() const;
     const Sampler& getFreetypeFontSampler() const;
-    struct CharacterProperties
-    {
-        int characterCode; 
-
-        int width;
-        int height;
-        int advanceX;
-        int bearingX;
-        int bearingY;
-
-        int renderIndex;
-        int textureIndex;
-    };
-
-    
-    struct CharacterRange
-    {
-        CharacterRange(unsigned int characterCodeFrom, unsigned int characterCodeTo)
-        {
-            m_characterCodeFrom = characterCodeFrom;
-            m_characterCodeTo = characterCodeTo;
-        }
-
-        unsigned int m_characterCodeFrom; 
-        unsigned int m_characterCodeTo; 
-    };
 
     bool m_isLoaded = false; 
     std::vector<CharacterRange> m_characterRanges; 

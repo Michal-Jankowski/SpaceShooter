@@ -9,26 +9,23 @@ std::ostream& operator<<(std::ostream& o, const glm::vec3& vec3)
     return o << std::setprecision(3) << "[" << vec3.x << ", " << vec3.y << ", " << vec3.z << "]";
 }
 
-
 GameHUD::GameHUD(const SetupWindow& window)
-    : HUD(window)
-{
-    FreeTypeFontManager::getInstance().loadSystemFreeTypeFont(DEFAULT_FONT_KEY, "arial.ttf", 24);
+    : HUD(window, "./res/fonts/TurretRoad-Bold.ttf", 22) {
+
 }
 
-void GameHUD::renderHUD(const AmbientLight& ambientLight) const
+void GameHUD::renderHUD(const AmbientLight& ambientLight)
 {
-    printBuilder().print(10, 10, "FPS: {}", m_window.getFPS());
-    printBuilder().print(10, 40, "VSync: {} (Press 0 to toggle)", m_window.isVerticalSynchronizationEnabled() ? "On" : "Off");
+    fromLeft().fromTop();
+    print(10, 10, "FPS: {}", m_window.getFPS());
+    print(10, 40, "VSync: {} (Press 0 to toggle)", m_window.isVerticalSynchronizationEnabled() ? "On" : "Off");
 
-    printBuilder()
-        .fromRight()
-        .fromBottom()
-        .print(10, 10, "SpaceShooter");
+    fromRight().fromBottom().print(10, 10, "SpaceShooter");
 }
 
 void GameHUD::addLines(const std::string &text, int lineCount) {
-    printBuilder().print(lineOffsetX, lineOffsetY + lineHeight * m_currentLines, text);
+    fromLeft().fromTop();
+    print(lineOffsetX, lineOffsetY + lineHeight * m_currentLines, text);
     m_currentLines += lineCount;
 }
 

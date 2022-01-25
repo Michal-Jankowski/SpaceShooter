@@ -21,9 +21,9 @@
 
 using namespace std;
 
-const int FreeTypeFont::CHARACTERS_TEXTURE_SIZE = 512;
-const std::string FreeTypeFont::FREETYPE_FONT_PROGRAM_KEY = "freetype_font";
-const std::string FreeTypeFont::FREETYPE_FONT_SAMPLER_KEY = "freetype_font";
+const int FreeTypeFont::CHARACTERS_TEXTURE_SIZE = 1024;
+const std::string FreeTypeFont::FONT_PROGRAM_KEY = "freetype_font";
+const std::string FreeTypeFont::FONT_SAMPLER_KEY = "freetype_font";
 
 FreeTypeFont::FreeTypeFont()
 {
@@ -31,17 +31,17 @@ FreeTypeFont::FreeTypeFont()
     std::call_once(prepareOnceFlag, []()
         {
             auto& sm = ShaderManager::getInstance();
-            sm.loadVertexShader(FREETYPE_FONT_PROGRAM_KEY, "../src/shaders/ortho.vert");
-            sm.loadFragmentShader(FREETYPE_FONT_PROGRAM_KEY, "../src/shaders/ortho.frag");
+            sm.loadVertexShader(FONT_PROGRAM_KEY, "../src/shaders/ortho.vert");
+            sm.loadFragmentShader(FONT_PROGRAM_KEY, "../src/shaders/ortho.frag");
 
             auto& spm = ShaderProgramManager::getInstance();
-            auto& shaderProgram = spm.createShaderProgram(FREETYPE_FONT_PROGRAM_KEY);
-            shaderProgram.addShaderToProgram(sm.getVertexShader(FREETYPE_FONT_PROGRAM_KEY));
-            shaderProgram.addShaderToProgram(sm.getFragmentShader(FREETYPE_FONT_PROGRAM_KEY));
+            auto& shaderProgram = spm.createShaderProgram(FONT_PROGRAM_KEY);
+            shaderProgram.addShaderToProgram(sm.getVertexShader(FONT_PROGRAM_KEY));
+            shaderProgram.addShaderToProgram(sm.getFragmentShader(FONT_PROGRAM_KEY));
             shaderProgram.linkProgram();
 
             auto& smm = SamplerManager::getInstance();
-            auto& sampler = smm.createSampler(FREETYPE_FONT_SAMPLER_KEY, FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_NEAREST);
+            auto& sampler = smm.createSampler(FONT_SAMPLER_KEY, FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_NEAREST);
             sampler.setRepeat(false);
         });
 
@@ -62,7 +62,6 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
 {
     if (pixelSize < 1 || pixelSize > CHARACTERS_TEXTURE_SIZE)
     {
-        //throw std::runtime_error(std::string("Cannot load font, because of invalid texture size (must be between 1 and {})", CHARACTERS_TEXTURE_SIZE));
         throw std::runtime_error("Cannot load font, because of invalid texture size");
     }
 
@@ -325,12 +324,12 @@ void FreeTypeFont::setTextColor(const glm::vec4& color)
 
 ShaderProgram& FreeTypeFont::getFreetypeFontShaderProgram() const
 {
-    return ShaderProgramManager::getInstance().getShaderProgram(FREETYPE_FONT_PROGRAM_KEY);
+    return ShaderProgramManager::getInstance().getShaderProgram(FONT_PROGRAM_KEY);
 }
 
 const Sampler& FreeTypeFont::getFreetypeFontSampler() const
 {
-    return SamplerManager::getInstance().getSampler(FREETYPE_FONT_SAMPLER_KEY);
+    return SamplerManager::getInstance().getSampler(FONT_SAMPLER_KEY);
 }
 
 void FreeTypeFont::deleteFont()

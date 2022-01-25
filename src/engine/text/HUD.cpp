@@ -5,9 +5,8 @@
 #include "../shaders/ShaderProgramManager.h"
 #include "../textures/SamplerManager.h"
 
-const std::string HUD::DEFAULT_FONT_KEY = "default";
 
-HUD::HUD(const SetupWindow& window)
+HUD::HUD(const SetupWindow& window, const std::string & fontPath, int fontSize)
     : m_window(window)
 {
     auto& sm = ShaderManager::getInstance();
@@ -17,6 +16,13 @@ HUD::HUD(const SetupWindow& window)
     auto& shaderProgram = spm.createShaderProgram(ORTHO_2D_PROGRAM_KEY);
     shaderProgram.addShaderToProgram(sm.getVertexShader(ORTHO_2D_PROGRAM_KEY));
     shaderProgram.addShaderToProgram(sm.getFragmentShader(ORTHO_2D_PROGRAM_KEY));
+
+    font = std::make_unique<FreeTypeFont>();
+    if (!font->loadFont(fontPath, fontSize))
+    {
+        const auto msg = "Could not load FreeType font'" + fontPath + "'!";
+        throw std::runtime_error(msg);
+    }
 
     auto& smm = SamplerManager::getInstance();
     smm.createSampler(HUD_SAMPLER_KEY, FilterOptions::MAG_FILTER_BILINEAR, FilterOptions::MIN_FILTER_BILINEAR);
@@ -35,3 +41,22 @@ int HUD::getHeight() const
     glfwGetFramebufferSize(m_window.getWindow(), &width, &height);
     return height;
 }
+
+void HUD::printInternal(int x, int y, const std::string &text) const {
+
+    {
+        const auto textWidth = font->getTextWidth(text, m_pixelSize);
+        const auto textHeight = font->getTextHeight(m_pixelSize);
+        if (m_fromRight) {
+            x = getWidth() - x - textWidth;
+        }
+        if (m_fromTop) {
+            y = getHeight() - y - textHeight;
+        }
+
+        font->setTextColor(m_color);
+        font->print(x, y, text);
+    }
+
+}
+

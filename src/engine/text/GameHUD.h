@@ -9,7 +9,7 @@ public:
     GameHUD(const SetupWindow& window);
 
     void renderHUD() const override {}
-    void renderHUD(const AmbientLight& ambientLight) const;
+    void renderHUD(const AmbientLight& ambientLight);
 
     void addLines(const std::string& text, int lineCount = 1);
     void clearLines();
