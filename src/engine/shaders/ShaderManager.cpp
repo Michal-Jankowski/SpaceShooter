@@ -6,7 +6,7 @@ ShaderManager& ShaderManager::getInstance() {
 }
 
 void ShaderManager::loadVertexShader(const std::string& key, const std::string& filePath) {
-    if (containsVertexShader(key)) {
+    if (hasVertexShader(key)) {
         auto msg = "Vertex shader with key '" + key + "' already exists!";
         throw std::runtime_error(msg.c_str());
     }
@@ -21,7 +21,7 @@ void ShaderManager::loadVertexShader(const std::string& key, const std::string& 
 }
 
 void ShaderManager::loadFragmentShader(const std::string& key, const std::string& filePath) {
-    if (containsFragmentShader(key)) {
+    if (haasFragmentShader(key)) {
         auto msg = "Fragment shader with key '" + key + "' already exists!";
         throw std::runtime_error(msg.c_str());
     }
@@ -36,7 +36,7 @@ void ShaderManager::loadFragmentShader(const std::string& key, const std::string
 }
 
 const Shader& ShaderManager::getVertexShader(const std::string& key) const {
-    if (!containsVertexShader(key)) {
+    if (!hasVertexShader(key)) {
         auto msg = "Attempting to get non-existing vertex shader with key '" + key + "'!";
         throw std::runtime_error(msg.c_str());
     }
@@ -45,7 +45,7 @@ const Shader& ShaderManager::getVertexShader(const std::string& key) const {
 }
 
 const Shader& ShaderManager::getFragmentShader(const std::string& key) const {
-    if (!containsFragmentShader(key)) {
+    if (!haasFragmentShader(key)) {
         auto msg = "Attempting to get non-existing fragment shader with key '" + key + "'!";
         throw std::runtime_error(msg.c_str());
     }
@@ -53,11 +53,11 @@ const Shader& ShaderManager::getFragmentShader(const std::string& key) const {
     return *m_fragmentShaderKeys.at(key);
 }
 
-bool ShaderManager::containsVertexShader(const std::string& key) const {
+bool ShaderManager::hasVertexShader(const std::string& key) const {
     return m_vertexShaderKeys.count(key) > 0;
 }
 
-bool ShaderManager::containsFragmentShader(const std::string& key) const {
+bool ShaderManager::haasFragmentShader(const std::string& key) const {
     return m_fragmentShaderKeys.count(key) > 0;
 }
 
