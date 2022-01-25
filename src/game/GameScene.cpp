@@ -146,8 +146,8 @@ void GameScene::updateLights(const std::string &shaderKey){
     auto& mainProgram = shaderProgramManager.getShaderProgram(shaderKey);
     mainProgram.useProgram();
 
-	m_ambientLight->setUniform(mainProgram, "ambientLight");
-	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
+	m_ambientLight->setUniform(mainProgram);
+	m_diffuseLight->setUniform(mainProgram);
 	m_pointLightOne->setUniform(mainProgram, "pointLightOne");
 	m_pointLightTwo->setUniform(mainProgram, "pointLightTwo");
 }
@@ -180,18 +180,11 @@ void GameScene::renderScene() {
     mainProgram.setUniform("matrices.modelMatrix",translated);
 
 
-	// Set Light properties for skybox, instead we would have illuminated sky
-	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
-	DiffuseLight::none().setUniform(mainProgram, "diffuseLight");
-	ambientSkybox.setUniform(mainProgram, "ambientLight");
-	Material::none().setUniform(mainProgram, "material");
-	//PointLight::none().setUniform(mainProgram, "pointLightOne");
-	//PointLight::none().setUniform(mainProgram, "pointLightTwo");
 
 
 	SamplerManager::getInstance().getSampler("main").bind();
-	m_ambientLight->setUniform(mainProgram, "ambientLight");
-	m_diffuseLight->setUniform(mainProgram, "diffuseLight");
+	m_ambientLight->setUniform(mainProgram);
+	m_diffuseLight->setUniform(mainProgram);
 	m_pointLightOne->setUniform(mainProgram, "pointLightOne");
 	m_pointLightTwo->setUniform(mainProgram, "pointLightTwo");
 
@@ -215,25 +208,24 @@ void GameScene::renderScene() {
     if(drawDebug) {
         collisionHandler->drawDebug();
     }
-
+	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
     m_HUD->renderHUD(ambientSkybox);
     drawGameObjectsHUD();
 	glEnable(GL_DEPTH_TEST);
 }
-void GameScene::onWindowSizeChanged(int width, int height)
-{
-	if (width == 0 || height == 0) {
-		return;
-	}
+void GameScene::onWindowSizeChanged(int width, int height) {
 }
 
 void GameScene::onMouseButtonPressed(int button, int action) {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-	{
-		const auto cursorPosition = getOpenGLCursorPosition();
-	}
+
 }
 
+void GameScene::onKeyboardButtonPressed(int button, int action) {
+	if (action == GLFW_PRESS) {
+		m_actionKey.store(action, std::memory_order_relaxed);
+		m_buttonKey.store(button, std::memory_order_relaxed);
+	}
+}
 void GameScene::updateScene() {
 	
 	std::string title = "SpaceShooter FPS count: " + std::to_string(getFPS()) + " VSync: " + (isVerticalSynchronizationEnabled() ? "On" : "Off");
@@ -257,15 +249,17 @@ void GameScene::updateScene() {
 	}
 	/* Update camera state*/
 	if (isCameraUpdateEnabled()) {
-		m_camera->update([this](int keyCode) {return this->keyPressed(keyCode); }, [this]() {double curPosX, curPosY; glfwGetCursorPos(this->getWindow(), &curPosX, &curPosY); return glm::u32vec2(curPosX, curPosY); },
-		[this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y); }, [this](float value) { return this->getValueByTime(value); });
+		double cursorPosX, cursorPosY;
+		glfwGetCursorPos(this->getWindow(), &cursorPosX, &cursorPosY);
+		glm::i32vec2 cursorPos{ cursorPosX, cursorPosY };
+		m_camera->update([this](int keyCode) {return this->keyPressed(keyCode); }, cursorPos, [this](const glm::i32vec2& pos) {glfwSetCursorPos(this->getWindow(), pos.x, pos.y); }, [this](float value) { return this->getValueByTime(value); });
 	}
 	/* Switch Ambient Light*/
 	if (keyPressedOnce(GLFW_KEY_4)) {
 		auto& shaderProgramManager = ShaderProgramManager::getInstance();
 		auto& mainProgram = shaderProgramManager.getShaderProgram("main");
 		mainProgram.useProgram();
-		m_ambientLight->switchLight(mainProgram, !m_ambientLight->getLightState());
+		m_ambientLight->switchLight(mainProgram, !m_ambientLight->isLightEnabled());
 
 	}
 	if (keyPressedOnce(GLFW_KEY_5)) {

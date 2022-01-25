@@ -2,6 +2,13 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+constexpr auto forwardKeyCode = GLFW_KEY_W;
+constexpr auto backwarKeyCode = GLFW_KEY_S;
+constexpr auto strafeLeftKeyCode = GLFW_KEY_A;
+constexpr auto strafeRightKeyCode = GLFW_KEY_D;
+constexpr auto accelerateKeyCode = GLFW_KEY_LEFT_SHIFT;
+constexpr auto accelerateSpeed = 5.0f;
+constexpr auto maxRotationAngle = 85.0f;
 Camera::Camera(const glm::vec3& pos, const glm::vec3& viewPoint, const glm::vec3& up, glm::i32vec2 windowPosition, float moveSpeed, float mouseSensitivity)
   :  m_position(pos)
   ,  init_pos(pos)
@@ -21,35 +28,25 @@ void Camera::returnToInitPosition() {
     m_upVector = init_upVector;
 }
 
-void Camera::setKeyboardControls(int forwardKeyCode, int backwardKeyCode, int strafeLeftKeyCode, int strafeRightKeyCode) {
-	m_forwardKeyCode = forwardKeyCode;
-	m_backwarKeyCode = backwardKeyCode;
-	m_strafeLeftKeyCode = strafeLeftKeyCode;
-	m_strafeRightKeyCode = strafeRightKeyCode;
-}
-
-void Camera::update(const std::function<bool(int)>& keyInputFunc,
-	const std::function<glm::i32vec2()>& getCursorPosFunc,
-	const std::function<void(const glm::i32vec2&)>& setCursorPosFunc,
+void Camera::update(const std::function<bool(int)>& keyInputFunc, const glm::i32vec2& getCursorPos, const std::function<void(const glm::i32vec2&)>& setCursorPosFunc,
 	const std::function<float(float)>& speedCorrectionFunc)
 {
-	//if (keyInputFunc(m_forwardKeyCode)) {
-		moveBy(speedCorrectionFunc(m_moveSpeed));
-	//}
-	if (keyInputFunc(m_accelerateKeyCode)) {
-		moveBy(speedCorrectionFunc(5.0f * m_moveSpeed));
+	flyBy(speedCorrectionFunc(m_moveSpeed));
+
+	if (keyInputFunc(accelerateKeyCode)) {
+		flyBy(speedCorrectionFunc(accelerateSpeed * m_moveSpeed));
 	}
-	if (keyInputFunc(m_backwarKeyCode)) {
-		moveBy(speedCorrectionFunc(-m_moveSpeed));
+	if (keyInputFunc(backwarKeyCode)) {
+		flyBy(speedCorrectionFunc(-m_moveSpeed));
 	}
-	if (keyInputFunc(m_strafeLeftKeyCode)) {
-		strafeBy(speedCorrectionFunc (-m_moveSpeed));
+	if (keyInputFunc(strafeLeftKeyCode)) {
+		strafeBy(speedCorrectionFunc(-m_moveSpeed));
 	}
-	if (keyInputFunc(m_strafeRightKeyCode)) {
+	if (keyInputFunc(strafeRightKeyCode)) {
 		strafeBy(speedCorrectionFunc(m_moveSpeed));
 	}
-	const auto currentMousePosition = getCursorPosFunc();
-	const auto delta = m_windowCenterPosition - currentMousePosition;
+	const auto& currentMousePosition = getCursorPos;
+	const auto& delta = m_windowCenterPosition - currentMousePosition;
 
 	if (delta.x != 0) {
 		rotateLeftRight(static_cast<float>(delta.x) * m_mouseSensitivity);
@@ -58,10 +55,6 @@ void Camera::update(const std::function<bool(int)>& keyInputFunc,
 		rotateUpDown(static_cast<float>(delta.y) * m_mouseSensitivity);
 	}
 	setCursorPosFunc(m_windowCenterPosition);
-}
-
-void Camera::setWindowCenterPosition(const glm::i32vec2& windowCenterPosition) {
-	m_windowCenterPosition = windowCenterPosition;
 }
 
 glm::vec3 Camera::getNormalizedViewVector() const {
@@ -76,12 +69,7 @@ glm::vec3 Camera::getEye() const {
 	return m_position;
 }
 
-
-glm::vec3 Camera::getViewPoint() const {
-	return m_viewPoint;
-}
-
-void Camera::moveBy(float distance) {
+void Camera::flyBy(float distance) {
 	glm::vec3 offset = getNormalizedViewVector();
 	offset *= distance;
 	m_position += offset;
@@ -90,34 +78,31 @@ void Camera::moveBy(float distance) {
 
 void Camera::strafeBy(float distance) {
 	glm::vec3 strafeVector = glm::normalize(glm::cross(getNormalizedViewVector(), m_upVector));
-	strafeVector = glm::normalize(strafeVector);
-	strafeVector *= distance;
-
+	strafeVector = glm::normalize(strafeVector) * distance;
 	m_position += strafeVector;
 	m_viewPoint += strafeVector;
 }
 
-void Camera::rotateLeftRight(float angleInDegrees) {
-	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(angleInDegrees), glm::vec3(0.0f, 1.0f, 0.0f));
+void Camera::rotateLeftRight(float degrees) {
+	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(degrees), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::vec4 rotatedViewVector = rotationMatrix * glm::vec4(getNormalizedViewVector(), 0.0f);
 	m_viewPoint = m_position + glm::vec3(rotatedViewVector);
 }
 
-void Camera::rotateUpDown(float angleInDegrees) {
-	const glm::vec3 viewVector = getNormalizedViewVector();
-	const glm::vec3 viewVectorWithoutY = glm::normalize(glm::vec3(viewVector.x, 0.0f, viewVector.z));
+void Camera::rotateUpDown(float degrees) {
+	const auto& viewVec = getNormalizedViewVector();
+	const auto& viewVecXZ = glm::normalize(glm::vec3(viewVec.x, 0.0f, viewVec.z));
 
-	float currentAngleDegrees = glm::degrees(acos(glm::dot(viewVectorWithoutY, viewVector)));
-	if (viewVector.y < 0.0f) {
+	auto currentAngleDegrees = glm::degrees(acos(glm::dot(viewVecXZ, viewVec)));
+	if (viewVec.y < 0.0f) {
 		currentAngleDegrees = -currentAngleDegrees;
 	}
 
-	float newAngleDegrees = currentAngleDegrees + angleInDegrees;
-	if (newAngleDegrees > -85.0f && newAngleDegrees < 85.0f) {
-		glm::vec3 rotationAxis = glm::cross(getNormalizedViewVector(), m_upVector);
-		rotationAxis = glm::normalize(rotationAxis);
+	auto newAngleDegrees = currentAngleDegrees + degrees;
+	if (newAngleDegrees > -maxRotationAngle && newAngleDegrees < maxRotationAngle) {
+		glm::vec3 rotationAxis = glm::normalize(glm::cross(getNormalizedViewVector(), m_upVector));
 
-		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(angleInDegrees), rotationAxis);
+		glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(degrees), rotationAxis);
 		glm::vec4 rotatedViewVector = rotationMatrix * glm::vec4(getNormalizedViewVector(), 0.0f);
 
 		m_viewPoint = m_position + glm::vec3(rotatedViewVector);

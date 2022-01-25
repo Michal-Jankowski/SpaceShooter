@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "../../utils/Buffer.h"
+#include "GLAD/glad.h"
 
 class Cube
 {
@@ -10,16 +10,14 @@ public:
     void render() const;
 
 private:
-    void initializeData();
+    void initData();
     void setVertexAttributesPointers() const;
     void renderInternal() const;
-    void deleteMesh();
-    int getVertexByteSize() const;
-
+    void deleteCube();
     bool m_isInitialized = false;
-    GLuint m_vao = 0; 
-    Buffer m_vbo, m_ebo; 
-    unsigned int VBO, VAO, EBO;
+    GLuint m_VAO{ 0 };
+    GLuint m_VBO{ 0 };
+    GLuint m_EBO{ 0 };
 
 };
 

@@ -15,6 +15,7 @@
 #include "../engine/collisions/CollisionHandler.h"
 #include "models/Ship.h"
 #include <queue>
+#include <atomic>
 
 class GameScene : public SetupWindow
 {
@@ -25,6 +26,7 @@ public:
     void releaseScene() override;
     void onWindowSizeChanged(int width, int height) override;
     void onMouseButtonPressed(int button, int action) override;
+    void onKeyboardButtonPressed(int button, int action) override;
     void addObject(std::unique_ptr<GameObject> gameObjet);
     const CollisionHandler& getCollisionHandler();
     Ship* getPlayer();
@@ -49,6 +51,7 @@ private:
     std::unique_ptr<Material> m_material;
     std::unique_ptr<GameHUD> m_HUD;
     std::unique_ptr<CollisionHandler> collisionHandler;
+    std::atomic<int> m_actionKey = 0, m_buttonKey = 0;
     Ship* shipRef;
     float m_rotationAngleRad = 0.0f;
     bool drawDebug = false;

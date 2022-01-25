@@ -3,30 +3,30 @@
 #include <iostream>
 
 constexpr GLfloat vertices[] = {
-    -0.5f, 0.5f, 0.5f,      0, 1,       0, 0, 1,  // 0
-    0.5f, 0.5f, 0.5f,       1, 1,       0, 0, 1,  // 1
-    0.5f, -0.5f, 0.5f,      1, 0,       0, 0, 1,  // 2
-    -0.5f, -0.5f, 0.5f,     0, 0,       0, 0, 1,  // 3
-    0.5f, 0.5f, -0.5f,      0, 1,       0, 0, -1, // 4
-    -0.5f, 0.5f, -0.5f,     1, 1,       0, 0, -1, // 5
-    -0.5f, -0.5f, -0.5f,    1, 0,       0, 0, -1, // 6
-    0.5f, -0.5f, -0.5f,     0, 0,       0, 0, -1, // 7
-    -0.5f, 0.5f, -0.5f,     0, 1,       -1, 0, 0, // 8
-    -0.5f, 0.5f, 0.5f,      1, 1,       -1, 0, 0, // 9
-    -0.5f, -0.5f, 0.5f,     1, 0,       -1, 0, 0, // 10
-    -0.5f, -0.5f, -0.5f,    0, 0,       -1, 0, 0, // 11
-     0.5f, 0.5f, 0.5f,      0, 1,        1, 0, 0, // 12
-     0.5f, 0.5f, -0.5f,     1, 1,        1, 0, 0, // 13
-     0.5f, -0.5f, -0.5f,    1, 0,        1, 0, 0, // 14
-     0.5f, -0.5f,  0.5f,    0, 0,        1, 0, 0, // 15
-     -0.5f, 0.5f, -0.5f,    0, 1,        0, 1, 0, // 16
-     0.5f,  0.5f, -0.5f,    1, 1,        0, 1, 0, // 17
-     0.5f, 0.5f, 0.5f,      1, 0,        0, 1, 0, // 18
-    -0.5f, 0.5f, 0.5f,      0, 0,        0, 1, 0, // 19
-    -0.5f, -0.5f, 0.5f,     0, 1,        0, -1, 0,// 20
-     0.5f, -0.5f, 0.5f,     1, 1,        0, -1, 0,// 21
-     0.5f, -0.5f, -0.5f,    1, 0,        0, -1, 0,// 22
-    -0.5f, -0.5f, -0.5f,    0, 0,        0, -1, 0 // 23
+   -0.5f, 0.5f, 0.5f,      0, 1,       0, 0, 1,     // 0
+    0.5f, 0.5f, 0.5f,      1, 1,       0, 0, 1,     // 1
+    0.5f, -0.5f, 0.5f,     1, 0,       0, 0, 1,     // 2
+   -0.5f, -0.5f, 0.5f,     0, 0,       0, 0, 1,     // 3
+    0.5f, 0.5f, -0.5f,     0, 1,       0, 0, -1,    // 4
+   -0.5f, 0.5f, -0.5f,     1, 1,       0, 0, -1,    // 5
+   -0.5f, -0.5f, -0.5f,    1, 0,       0, 0, -1,    // 6
+    0.5f, -0.5f, -0.5f,    0, 0,       0, 0, -1,    // 7
+   -0.5f, 0.5f, -0.5f,     0, 1,      -1, 0, 0,     // 8
+   -0.5f, 0.5f, 0.5f,      1, 1,      -1, 0, 0,     // 9
+   -0.5f, -0.5f, 0.5f,     1, 0,      -1, 0, 0,     // 10
+   -0.5f, -0.5f, -0.5f,    0, 0,      -1, 0, 0,     // 11
+    0.5f, 0.5f, 0.5f,      0, 1,       1, 0, 0,     // 12
+    0.5f, 0.5f, -0.5f,     1, 1,       1, 0, 0,     // 13
+    0.5f, -0.5f, -0.5f,    1, 0,       1, 0, 0,     // 14
+    0.5f, -0.5f,  0.5f,    0, 0,       1, 0, 0,     // 15
+   -0.5f, 0.5f, -0.5f,     0, 1,       0, 1, 0,     // 16
+    0.5f,  0.5f, -0.5f,    1, 1,       0, 1, 0,     // 17
+    0.5f, 0.5f, 0.5f,      1, 0,       0, 1, 0,     // 18
+   -0.5f, 0.5f, 0.5f,      0, 0,       0, 1, 0,     // 19
+   -0.5f, -0.5f, 0.5f,     0, 1,       0, -1, 0,    // 20
+    0.5f, -0.5f, 0.5f,     1, 1,       0, -1, 0,    // 21
+    0.5f, -0.5f, -0.5f,    1, 0,       0, -1, 0,    // 22
+   -0.5f, -0.5f, -0.5f,    0, 0,       0, -1, 0     // 23
 };
 
 constexpr GLushort verticesIndices[] = {
@@ -44,23 +44,19 @@ constexpr GLushort verticesIndices[] = {
     22, 23, 20
 };
 
-Cube::Cube()
-
-{
-    initializeData();
+Cube::Cube() {
+    initData();
 }
 
 Cube::~Cube() {
-    deleteMesh();
+    deleteCube();
 }
 
-void Cube::render() const
-{
+void Cube::render() const {
     if (!m_isInitialized) {
         return;
     }
-
-    glBindVertexArray(VAO);
+    glBindVertexArray(m_VAO);
     renderInternal();
 }
 
@@ -71,36 +67,34 @@ void Cube::renderInternal() const {
     glDrawElements(GL_TRIANGLES, drawSize, GL_UNSIGNED_SHORT, 0);
 }
 
-void Cube::initializeData()
-{
+void Cube::initData() {
     if (m_isInitialized) {
         return;
     }
 
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
+    glGenBuffers(1, &m_EBO);
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    glBindVertexArray(m_VAO);
 
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(verticesIndices), verticesIndices, GL_STATIC_DRAW);
     setVertexAttributesPointers();
     m_isInitialized = true;
 }
 
-void Cube::deleteMesh() {
+void Cube::deleteCube() {
     if (!m_isInitialized) {
         std::cout << "Trying to delete unitialized mesh!";
         return;
     }
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &m_VAO);
+    glDeleteBuffers(1, &m_VBO);
+    glDeleteBuffers(1, &m_EBO);
     m_isInitialized = false;
 }
 
