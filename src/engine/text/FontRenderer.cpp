@@ -21,7 +21,7 @@
 
 using namespace std;
 
-const int FreeTypeFont::CHARACTERS_TEXTURE_SIZE = 1024;
+const int FreeTypeFont::CHARACTERS_TEXTURE_SIZE = 256;
 const std::string FreeTypeFont::FONT_PROGRAM_KEY = "freetype_font";
 const std::string FreeTypeFont::FONT_SAMPLER_KEY = "freetype_font";
 
@@ -162,20 +162,20 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
             // Setup vertices according to FreeType glyph metrics
             // You can find it here: https://www.freetype.org/freetype2/docs/glyphs/glyphs-3.html
             glm::vec2 vertices[] =
-            {
-                glm::vec2(static_cast<float>(charProps.bearingX), static_cast<float>(charProps.bearingY)),
-                glm::vec2(static_cast<float>(charProps.bearingX), static_cast<float>(charProps.bearingY - charProps.height)),
-                glm::vec2(static_cast<float>(bmpWidth + charProps.bearingX), static_cast<float>(charProps.bearingY)),
-                glm::vec2(static_cast<float>(bmpWidth + charProps.bearingX), static_cast<float>(charProps.bearingY - charProps.height))
-            };
+                    {
+                            glm::vec2(static_cast<float>(charProps.bearingX), static_cast<float>(charProps.bearingY)),
+                            glm::vec2(static_cast<float>(charProps.bearingX), static_cast<float>(charProps.bearingY - charProps.height)),
+                            glm::vec2(static_cast<float>(bmpWidth + charProps.bearingX), static_cast<float>(charProps.bearingY)),
+                            glm::vec2(static_cast<float>(bmpWidth + charProps.bearingX), static_cast<float>(charProps.bearingY - charProps.height))
+                    };
 
             glm::vec2 textureCoordinates[] =
-            {
-                glm::vec2(static_cast<float>(currentPixelPositionCol) / static_cast<float>(CHARACTERS_TEXTURE_SIZE), static_cast<float>(currentPixelPositionRow + bmpHeight) / static_cast<float>(CHARACTERS_TEXTURE_SIZE)),
-                glm::vec2(static_cast<float>(currentPixelPositionCol) / static_cast<float>(CHARACTERS_TEXTURE_SIZE), static_cast<float>(currentPixelPositionRow) / static_cast<float>(CHARACTERS_TEXTURE_SIZE)),
-                glm::vec2(static_cast<float>(currentPixelPositionCol + bmpWidth) / static_cast<float>(CHARACTERS_TEXTURE_SIZE), static_cast<float>(currentPixelPositionRow + bmpHeight) / static_cast<float>(CHARACTERS_TEXTURE_SIZE)),
-                glm::vec2(static_cast<float>(currentPixelPositionCol + bmpWidth) / static_cast<float>(CHARACTERS_TEXTURE_SIZE), static_cast<float>(currentPixelPositionRow) / static_cast<float>(CHARACTERS_TEXTURE_SIZE))
-            };
+                    {
+                            glm::vec2(static_cast<float>(currentPixelPositionCol) / static_cast<float>(CHARACTERS_TEXTURE_SIZE), static_cast<float>(currentPixelPositionRow + bmpHeight) / static_cast<float>(CHARACTERS_TEXTURE_SIZE)),
+                            glm::vec2(static_cast<float>(currentPixelPositionCol) / static_cast<float>(CHARACTERS_TEXTURE_SIZE), static_cast<float>(currentPixelPositionRow) / static_cast<float>(CHARACTERS_TEXTURE_SIZE)),
+                            glm::vec2(static_cast<float>(currentPixelPositionCol + bmpWidth) / static_cast<float>(CHARACTERS_TEXTURE_SIZE), static_cast<float>(currentPixelPositionRow + bmpHeight) / static_cast<float>(CHARACTERS_TEXTURE_SIZE)),
+                            glm::vec2(static_cast<float>(currentPixelPositionCol + bmpWidth) / static_cast<float>(CHARACTERS_TEXTURE_SIZE), static_cast<float>(currentPixelPositionRow) / static_cast<float>(CHARACTERS_TEXTURE_SIZE))
+                    };
 
             for (int i = 0; i < 4; i++)
             {
@@ -347,3 +347,5 @@ void FreeTypeFont::deleteFont()
 
    m_isLoaded = false;
 }
+
+

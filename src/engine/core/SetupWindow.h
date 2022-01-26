@@ -41,6 +41,7 @@ public:
 	glm::mat4 getOrthoProjectionMatrix() const;
 	int getFPS() const;
 	double getDeltaTime() const;
+    double getTimeElapsed() const;
 	double getValueByTime(double value) const;
 	int getScreenWidth() const;
 	int getScreenHeight() const;
@@ -59,7 +60,8 @@ private:
 	bool m_isCameraUpdateEnabled = true;
 	double m_lastFrameTime = 0.0;
 	double m_lastFrameTimeFPS = 0.0; 
-	double m_timeDelta = 0.0; 
+	double m_timeDelta = 0.0;
+    double m_timeElapsed = 0.0;
 	int m_FPS = 0; 
 	int m_nextFPS = 0; 
 	double m_deltaTime = 0.0;

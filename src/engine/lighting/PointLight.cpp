@@ -24,3 +24,7 @@
         shaderProgram.setUniform(concatenateUniformStruct(uniformName, "linearAttenuation"), m_linearAttenuation);
         shaderProgram.setUniform(concatenateUniformStruct(uniformName, "exponentialAttenuation"), m_exponentialAttenuation);
     }
+
+void PointLight::setPosition(const glm::vec3 &pos) {
+    position = pos;
+}

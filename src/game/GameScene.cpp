@@ -13,6 +13,7 @@
 #include "models/Enemy.h"
 #include "models/Planet.h"
 #include "../engine/utils/ErrorCallback.h"
+#include "models/Sun.h"
 
 bool visualizeColorFrameBuffer = false;
 
@@ -93,12 +94,10 @@ void GameScene::initScene() {
         auto planet2 = std::make_unique<Planet>(this, 30.0f, true, glm::vec3(50.0f, 50.0f, -50.0f));
         addObject(std::move(planet2));
 
-		auto sourceLightOne = std::make_unique<Planet>(this, 10, false,
-                                                          "../res/models/sun.obj",
-                                                          glm::vec3(-60.0f, 20.0f, 0.0f));
-        auto sourceLightTwo = std::make_unique<Planet>(this, 10, false,
-                                                          "../res/models/sun.obj",
-                                                          glm::vec3(60.0f, 20.0f, 0.0f));
+		auto sourceLightOne = std::make_unique<Sun>(this, 10, glm::vec3(-60.0f, 20.0f, 0.0f),
+                                                    m_pointLightOne.get(), 15.0f, 0.5f);
+        auto sourceLightTwo = std::make_unique<Sun>(this, 10, glm::vec3(60.0f, 20.0f, 0.0f),
+                                                    m_pointLightTwo.get(), 80.0f, 2.0f);
 
         addObject(std::move(sourceLightOne));
         addObject(std::move(sourceLightTwo));

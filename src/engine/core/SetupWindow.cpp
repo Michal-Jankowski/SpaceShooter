@@ -73,6 +73,7 @@ void SetupWindow::updateDeltaTimeAndFPS() {
 	const auto currentTime = glfwGetTime();
 	m_timeDelta = currentTime - m_lastFrameTime;
 	m_lastFrameTime = currentTime;
+    m_timeElapsed += m_timeDelta;
 	m_nextFPS++;
 
 	if (currentTime - m_lastFrameTimeFPS > 1.0)
@@ -132,6 +133,11 @@ int SetupWindow::getFPS() const {
 double SetupWindow::getDeltaTime() const {
 	return m_timeDelta;
 }
+
+double SetupWindow::getTimeElapsed() const {
+    return m_timeElapsed;
+}
+
 
 double SetupWindow::getValueByTime(double value) const {
 	return getDeltaTime() * value;
