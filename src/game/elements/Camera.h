@@ -7,8 +7,8 @@ class Camera
 {
 public:
 	Camera(const glm::vec3& pos, const glm::vec3& viewPoint, const glm::vec3& up, glm::i32vec2 windowPosition, float moveSpeed = 5.0f, float mouseSensitivity = 0.1f);
-	void update(const std::function<bool(int)>& keyInputFunc, const glm::i32vec2& getCursorPos, const std::function<void(const glm::i32vec2&)>& setCursorPosFunc,
-		const std::function<float(float)>& speedCorrectionFunc);
+	void update(std::function<bool(int)> input,  glm::i32vec2 getCursorPos,  std::function<void(glm::i32vec2&)> setCursor,
+		std::function<float(float)> speedOffset);
 	[[nodiscard]] glm::vec3 getNormalizedViewVector() const;
 	[[nodiscard]] glm::mat4 getViewMatrix() const;
 	[[nodiscard]] glm::vec3 getEye() const;
@@ -16,8 +16,8 @@ public:
 private:
 	void flyBy(float distance);
 	void strafeBy(float distance);
-	void rotateLeftRight(float angleInDegrees);
-	void rotateUpDown(float angleInDegrees);
+	void moveVertical(float angleInDegrees);
+	void moveHorizontal(float angleInDegrees);
 
 	glm::vec3 m_position;
 	glm::vec3 m_viewPoint;

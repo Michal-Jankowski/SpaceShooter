@@ -29,12 +29,11 @@ bool Shader::loadShaderFromFile(const std::string& file, GLenum shaderType) {
     int compilationStatus;
     glGetShaderiv(m_shaderID, GL_COMPILE_STATUS, &compilationStatus);
 
-    if (compilationStatus == GL_FALSE)
-    {
+    if (compilationStatus == GL_FALSE) {
         char shaderLogBuffer[2048];
         int logLength;
         glGetShaderInfoLog(m_shaderID, 2048, &logLength, shaderLogBuffer);
-        std::cout << "Error! Shader file " << file << " wasn't compiled! The compiler returned:\n\n" << shaderLogBuffer << std::endl;
+        std::cout << "Error! Shader file " << file << "failed to compile! Info from shader: " << shaderLogBuffer << std::endl;
         return false;
     }
     this->m_shaderType = shaderType;
@@ -84,19 +83,21 @@ inline std::vector<std::string> split(std::string s, char t)
     return res;
 }
 
-inline std::string upOneDirectory(const std::string& originalPath, char slashCharacter)
+inline std::string moveOneDirectory(const std::string& originalPath, char slashCharacter)
 {
     bool isTrailingSlash = originalPath.back() == slashCharacter;
     std::vector<std::string> subPaths = split(originalPath, slashCharacter);
     std::string result = "";
     for (size_t i = 0; i < subPaths.size() - 1; i++)
     {
-        if (i > 0)
+        if (i > 0) {
             result += slashCharacter;
+        }
         result += subPaths[i];
     }
-    if (isTrailingSlash && result.size() > 0)
+    if (isTrailingSlash && result.size() > 0) {
         result += slashCharacter;
+    }
 
     return result;
 }
@@ -105,7 +106,7 @@ bool Shader::getLinesFromFile(const std::string& fileName, std::vector<std::stri
     std::ifstream file(fileName);
 
     if (!file.good()) {
-        std::cout << "File " << fileName << " not loaded! Set the working directory of the application to $(SolutionDir)res/)" << std::endl;
+        std::cout << "File " << fileName << " ERROR" << std::endl;
         return false;
     }
 
@@ -147,7 +148,7 @@ bool Shader::getLinesFromFile(const std::string& fileName, std::vector<std::stri
                 for (const std::string& subPath : subPaths)
                 {
                     if (subPath == "..")
-                        directory = upOneDirectory(directory, slashCharacter);
+                        directory = moveOneDirectory(directory, slashCharacter);
                     else
                     {
                         if (sFinalFileName.size() > 0)
@@ -159,11 +160,7 @@ bool Shader::getLinesFromFile(const std::string& fileName, std::vector<std::stri
                 getLinesFromFile(startDirectory + includeFileName, result, true);
             }
         }
-        else if (firstLine == "#include_part")
-            isInsideIncludePart = true;
-        else if (firstLine == "#definition_part")
-            isInsideIncludePart = false;
-        else if (!isReadingIncludedFile || (isReadingIncludedFile && isInsideIncludePart))
+        else if (!isReadingIncludedFile || (isReadingIncludedFile))
             result.push_back(line);
     }
 
