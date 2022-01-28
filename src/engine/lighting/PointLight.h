@@ -11,7 +11,7 @@
        std::string concatenateUniformStruct(const std::string& uniformName, const std::string& attributeName);
         void setPosition(const glm::vec3 & pos);
     private:
-        glm::vec3 position; 
+        glm::vec3 m_position; 
         glm::vec3 m_color; 
         float m_ambientFactor;
         float m_constantAttenuation; 

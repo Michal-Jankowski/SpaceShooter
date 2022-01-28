@@ -4,7 +4,7 @@ GameHUD::GameHUD(const SetupWindow& window)
     : HUD(window, "./res/fonts/TurretRoad-Bold.ttf", 22) {
 }
 
-void GameHUD::renderHUD(const AmbientLight& ambientLight)
+void GameHUD::renderHUD()
 {
     m_fromRight = false;
     m_fromTop = true;

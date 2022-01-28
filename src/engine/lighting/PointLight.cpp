@@ -2,7 +2,7 @@
 
     PointLight::PointLight(const glm::vec3& position, const glm::vec3& color, const float ambientFactor,
         const float constantAttenuation, const float linearAttenuation, const float exponentialAttenuation)
-        : position(position)
+        : m_position(position)
         , m_color(color)
         , m_ambientFactor(ambientFactor)
         , m_constantAttenuation(constantAttenuation)
@@ -17,7 +17,7 @@
 
     void PointLight::setUniform(ShaderProgram& shaderProgram, const std::string& uniformName)
     {
-        shaderProgram.setUniform(concatenateUniformStruct(uniformName, "position"), position);
+        shaderProgram.setUniform(concatenateUniformStruct(uniformName, "position"), m_position);
         shaderProgram.setUniform(concatenateUniformStruct(uniformName, "color"), m_color);
         shaderProgram.setUniform(concatenateUniformStruct(uniformName, "ambientFactor"), m_ambientFactor);
         shaderProgram.setUniform(concatenateUniformStruct(uniformName, "constantAttenuation"), m_constantAttenuation);
@@ -25,6 +25,6 @@
         shaderProgram.setUniform(concatenateUniformStruct(uniformName, "exponentialAttenuation"), m_exponentialAttenuation);
     }
 
-void PointLight::setPosition(const glm::vec3 &pos) {
-    position = pos;
+void PointLight::setPosition(const glm::vec3 &position) {
+    m_position = position;
 }

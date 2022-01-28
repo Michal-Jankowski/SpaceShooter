@@ -82,7 +82,7 @@ std::string Material::loadMaterialTexture(const std::string &textureFileName) {
     const auto fullTexturePath = PathHelper::GetFullTexturePath(textureFileName);
     const auto newTextureKey = "assimp_" + fullTexturePath;
 
-    const auto contains = TextureManager::getInstance().containsTexture(newTextureKey);
+    const auto contains = TextureManager::getInstance().hasTexture(newTextureKey);
     if (!contains) {
         TextureManager::getInstance().loadTexture2D(newTextureKey, fullTexturePath);
     }

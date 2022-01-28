@@ -23,8 +23,6 @@ void Collectible::render() {
 
 void Collectible::onCollision(GameObject *other) {
     GameModel::onCollision(other);
-    //std::cout << "colliding" << std::endl;
-    //std::cout << col->debugEnable << std::endl;
     if(auto* ship = dynamic_cast<Ship*>(other)) {
         ship->addPoint(Ship::collectiblePoint);
         awaitingDestroy = true;

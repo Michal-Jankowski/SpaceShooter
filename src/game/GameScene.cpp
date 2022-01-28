@@ -177,9 +177,6 @@ void GameScene::renderScene() {
     mainProgram.SetModelAndNormalMatrix("matrices.modelMatrix", "matrices.normalMatrix", glm::mat4(1.0f));
     mainProgram.setUniform("matrices.modelMatrix",translated);
 
-
-
-
 	SamplerManager::getInstance().getSampler("main").bind();
 	m_ambientLight->setUniform(mainProgram);
 	m_diffuseLight->setUniform(mainProgram);
@@ -207,7 +204,7 @@ void GameScene::renderScene() {
         collisionHandler->drawDebug();
     }
 	AmbientLight  ambientSkybox(glm::vec3(0.9f, 0.9f, 0.9f));
-    m_HUD->renderHUD(ambientSkybox);
+    m_HUD->renderHUD();
     drawGameObjectsHUD();
 	glEnable(GL_DEPTH_TEST);
 }
@@ -228,11 +225,11 @@ void GameScene::updateScene() {
 	
 	std::string title = "SpaceShooter FPS count: " + std::to_string(getFPS()) + " VSync: " + (isVerticalSynchronizationEnabled() ? "On" : "Off");
 	glfwSetWindowTitle(getWindow(), title.c_str());
-	/* Should close window*/
+	/* Window closing*/
 	if (keyPressedOnce(GLFW_KEY_ESCAPE)) {
 		closeWindow();
 	}
-	/* Vertical Synchronization*/
+	/* VSync*/
 	if (keyPressedOnce(GLFW_KEY_0)) {
 		setVerticalSynchronization(!isVerticalSynchronizationEnabled());
 	}

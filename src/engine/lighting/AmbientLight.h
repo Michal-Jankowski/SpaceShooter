@@ -9,9 +9,9 @@ public:
 	void setUniform(ShaderProgram& shaderProgram);
 	void switchLight(ShaderProgram& shaderProgram, const bool enable);
 	bool isLightEnabled() const;
+private:
 	glm::vec3 m_color;
 	bool m_isOn;
-private:	
 
 };
 

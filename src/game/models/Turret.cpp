@@ -28,7 +28,6 @@ void Turret::update() {
 }
 
 void Turret::tryShoot(GameScene *gScene) {
-    //std::cout << "SHOOTING" << std::endl;
     auto shipPos = gScene->getPlayer()->transform->getPosition();
     glm::vec3 pos = RandomGenerator::getInstance().onSurfaceOfUnitSphere();
     pos = pos * shootRandomSize;

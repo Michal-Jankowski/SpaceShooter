@@ -1,6 +1,3 @@
-//
-// Created by aklin on 01.11.2021.
-//
 
 #ifndef SPACESHOOTER_PATHHELPER_H
 #define SPACESHOOTER_PATHHELPER_H

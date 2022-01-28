@@ -1,5 +1,3 @@
-
-
 #ifndef SPACESHOOTER_PLANET_H
 #define SPACESHOOTER_PLANET_H
 

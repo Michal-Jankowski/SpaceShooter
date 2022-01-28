@@ -10,7 +10,7 @@ void Buffer::create(size_t reserveBytes) {
 	}
 
 	glGenBuffers(1, &m_bufferID);
-	m_rawData.reserve(reserveBytes > 0 ? reserveBytes : 1024);
+	m_rawData.reserve(reserveBytes > 0 ? reserveBytes : 512 * 4);
 	m_isReady = true;
 }
 
@@ -23,32 +23,36 @@ void Buffer::bind(GLenum bufferType) {
 	glBindBuffer(m_bufferType, m_bufferID);
 }
 
-void Buffer::addRawData(const void* data, size_t dataSize, int repeat) {
-
-    const auto bytesToAdd = dataSize * repeat;
+void Buffer::addData(const void* data, size_t size, int repeat) {
+    const auto bytesToAdd = size * repeat;
     const auto requiredCapacity = m_bytesAdded + bytesToAdd;
-    // resize the rawData vector, default to two times the default capacity
+    const auto resizeStep = 3;
     if (requiredCapacity > m_rawData.capacity()) {
-        auto newCapacity = m_rawData.capacity() * 2;
+        auto newCapacity = m_rawData.capacity() * resizeStep;
 
         while (newCapacity < requiredCapacity) {
-            newCapacity *= 2;
+            newCapacity *= resizeStep;
         }
-        std::vector<unsigned char> newRawData;
-        newRawData.reserve(newCapacity);
-        memcpy(newRawData.data(), m_rawData.data(), m_bytesAdded);
-        m_rawData = std::move(newRawData);
+        std::vector<unsigned char> tmpNewData;
+        tmpNewData.reserve(newCapacity);
+        auto dataPtr = std::data(tmpNewData);
+        auto tmpDataPtr = std::data(m_rawData);
+        //mecpy do: m_rawData.data() z: data, o: dataSize
+        memcpy(dataPtr, tmpDataPtr, m_bytesAdded);
+        m_rawData = std::move(tmpNewData);
     }
     for (int i = 0; i < repeat; i++) {
-        memcpy(m_rawData.data() + m_bytesAdded, data, dataSize);
-        m_bytesAdded += dataSize;
+        auto dataPtr = std::data(m_rawData);
+        auto ptrOffset = dataPtr + m_bytesAdded;
+        //mecpy do: m_rawData.data() + m_bytesAdded z: data, o: dataSize
+        memcpy(ptrOffset, data, size);
+        m_bytesAdded += size;
     }
 }
 
 void Buffer::upload(GLenum usageHint) {
-    if (!m_isReady)
-    {
-        std::cerr << "This buffer is not initialized yet! You shall call createVBO before sending to GPU!" << std::endl;
+    if (!m_isReady) {
+        std::cerr << "ERROR: Create buffer first" << std::endl;
         return;
     }
     glBufferData(m_bufferType, m_bytesAdded, m_rawData.data(), usageHint);

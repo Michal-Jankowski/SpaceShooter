@@ -58,7 +58,7 @@ void Sampler::setFilterOptions(FilterOptions filterOption, GLenum pname) const {
         param = GL_LINEAR;
         break;
     default:
-        throw std::runtime_error("Invalid texture filtering option!");
+        throw std::runtime_error("ERROR: Invalid texture filtering option!");
     }
         
     glSamplerParameteri(m_samplerID, pname, param);

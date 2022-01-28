@@ -36,11 +36,11 @@ bool ModelMesh::loadModelFromFile(const std::string &path) {
         return false;
     }
 
-    glGenVertexArrays(1, &vao_ind);
-    glBindVertexArray(vao_ind);
+    glGenVertexArrays(1, &m_vao_ind);
+    glBindVertexArray(m_vao_ind);
 
-    vbo.create();
-    vbo.bind(GL_ARRAY_BUFFER);
+    m_vbo.create();
+    m_vbo.bind(GL_ARRAY_BUFFER);
 
     //vert pos, vert normal, uv coord
     const int vertSize = sizeof(aiVector3D) * 2 + sizeof(aiVector2D);
@@ -50,7 +50,7 @@ bool ModelMesh::loadModelFromFile(const std::string &path) {
     ReadMeshNormals(scene);
     ReadMeshMaterials(scene);
 
-    vbo.upload(GL_STATIC_DRAW);
+    m_vbo.upload(GL_STATIC_DRAW);
     setVertexAttributesPointers(vertexCount);
     isInitialized = true;
 
@@ -72,27 +72,28 @@ int ModelMesh::ReadMeshPositions(const aiScene *scene) {
     {
         const auto meshPtr = scene->mMeshes[i];
         auto vertexCountMesh = 0;
-        _meshStartIndices.push_back(vertexCount);
-        _meshMaterialIndices.push_back(meshPtr->mMaterialIndex);
+        m_meshStartIndices.push_back(vertexCount);
+        m_meshMaterialIndices.push_back(meshPtr->mMaterialIndex);
 
         for (size_t j = 0; j < meshPtr->mNumFaces; j++)
         {
             const auto& face = meshPtr->mFaces[j];
             if (face.mNumIndices != 3) {
-                continue; // Skip non-triangle faces for now
+                continue; 
             }
 
             for (size_t k = 0; k < face.mNumIndices; k++)
             {
                 const auto& position = meshPtr->mVertices[face.mIndices[k]];
-                vbo.addData(glm::vec3(position.x, position.y, position.z));
+                const auto data = glm::vec3(position.x, position.y, position.z);
+                m_vbo.addData(&data, sizeof(data));
             }
 
             vertexCountMesh += face.mNumIndices;
         }
 
         vertexCount += vertexCountMesh;
-        _meshVerticesCount.push_back(vertexCountMesh);
+        m_meshVerticesCount.push_back(vertexCountMesh);
     }
     return vertexCount;
 }
@@ -105,13 +106,13 @@ void ModelMesh::ReadMeshUVs(const aiScene *scene) {
         {
             const auto& face = meshPtr->mFaces[j];
             if (face.mNumIndices != 3) {
-                continue; // Skip non-triangle faces for now
+                continue; 
             }
 
             for (size_t k = 0; k < face.mNumIndices; k++)
             {
                 const auto& textureCoord = meshPtr->mTextureCoords[0][face.mIndices[k]];
-                vbo.addRawData(&textureCoord, sizeof(aiVector2D));
+                m_vbo.addData(&textureCoord, sizeof(aiVector2D));
             }
         }
     }
@@ -125,7 +126,7 @@ void ModelMesh::ReadMeshNormals(const aiScene *scene) {
         {
             const auto& face = meshPtr->mFaces[j];
             if (face.mNumIndices != 3) {
-                continue; // Skip non-triangle faces for now
+                continue; 
             }
 
             for (size_t k = 0; k < face.mNumIndices; k++)
@@ -133,7 +134,8 @@ void ModelMesh::ReadMeshNormals(const aiScene *scene) {
                 const auto& normal = meshPtr->HasNormals() ? meshPtr->mNormals[face.mIndices[k]] : aiVector3D(0.0f, 1.0f, 0.0f);
                 const auto& tangent = meshPtr->HasTangentsAndBitangents() ? meshPtr->mTangents[face.mIndices[k]] : aiVector3D(1.0f, 0.0f, 0.0f);
                 const auto& bitangent = meshPtr->HasTangentsAndBitangents() ? meshPtr->mBitangents[face.mIndices[k]] : aiVector3D(0.0f, 0.0f, 1.0f);
-                vbo.addData(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
+                const auto data = glm::normalize(glm::vec3(normal.x, normal.y, normal.z));
+                m_vbo.addData(&data, sizeof(data));
             }
         }
     }
@@ -144,13 +146,14 @@ void ModelMesh::ReadMeshNormals(const aiScene *scene) {
         {
             const auto& face = meshPtr->mFaces[j];
             if (face.mNumIndices != 3) {
-                continue; // Skip non-triangle faces for now
+                continue;
             }
 
             for (size_t k = 0; k < face.mNumIndices; k++)
             {
                 const auto& tangent = meshPtr->HasTangentsAndBitangents() ? meshPtr->mTangents[face.mIndices[k]] : aiVector3D(1.0f, 0.0f, 0.0f);
-                vbo.addData(glm::normalize(glm::vec3(tangent.x, tangent.y, tangent.z)));
+                const auto data = glm::normalize(glm::vec3(tangent.x, tangent.y, tangent.z));
+                m_vbo.addData(&data, sizeof(data));
             }
         }
     }
@@ -167,14 +170,15 @@ void ModelMesh::ReadMeshNormals(const aiScene *scene) {
             for (size_t k = 0; k < face.mNumIndices; k++)
             {
                 const auto& bitangent = meshPtr->HasTangentsAndBitangents() ? meshPtr->mBitangents[face.mIndices[k]] : aiVector3D(0.0f, 0.0f, 1.0f);
-                vbo.addData(glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z)));
+                const auto data = glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z));
+                m_vbo.addData(&data, sizeof(data));
             }
         }
     }
 }
 
 void ModelMesh::clearData() {
-    vbo.deleteBuffer();
+    m_vbo.deleteBuffer();
 }
 
 
@@ -218,16 +222,16 @@ void ModelMesh::render(const glm::mat4 model) const
         return;
     }
 
-    glBindVertexArray(vao_ind);
+    glBindVertexArray(m_vao_ind);
 
-    for(auto i = 0; i < _meshStartIndices.size(); i++)
+    for(auto i = 0; i < m_meshStartIndices.size(); i++)
     {
-        const auto usedMaterialIndex = _meshMaterialIndices[i];
+        const auto usedMaterialIndex = m_meshMaterialIndices[i];
         if (materials.count(usedMaterialIndex) > 0)
         {
             auto mat = *materials.at(usedMaterialIndex);
             mat.setup(model);
-            glDrawArrays(GL_TRIANGLES, _meshStartIndices[i], _meshVerticesCount[i]);
+            glDrawArrays(GL_TRIANGLES, m_meshStartIndices[i], m_meshVerticesCount[i]);
             if(mat.isTransparent()) {
                 glDisable(GL_BLEND);
             }

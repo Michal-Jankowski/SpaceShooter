@@ -11,7 +11,6 @@ public:
   Skybox(const std::string& path);
   ~Skybox();
   void render(const glm::vec3& position, ShaderProgram& shader) const;
-
 private:
 	void start();
 	unsigned int skyboxVAO, skyboxVBO, skyboxEBO;

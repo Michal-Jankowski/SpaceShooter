@@ -3,15 +3,12 @@
 #include <mutex>
 #include <cmath>
 
-// GLM
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLAD/glad.h>
 
-// FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-// Project
 #include "FontRenderer.h"
 #include "../shaders/ShaderManager.h"
 #include "../shaders/ShaderProgramManager.h"
@@ -45,7 +42,7 @@ FreeTypeFont::FreeTypeFont()
             sampler.setRepeat(false);
         });
 
-    addCharacterRange(32, 127); // Add ASCII characters always
+    addCharacterRange(32, 127);
 }
 
 FreeTypeFont::~FreeTypeFont()
@@ -136,7 +133,7 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
                 continue;
             }
 
-            auto& charProps = m_characterProperties[c]; // This also creates entry, if it does not exist
+            auto& charProps = m_characterProperties[c];
             charProps.characterCode = c;
             charProps.width = freeTypeFace->glyph->metrics.width >> 6;
             charProps.bearingX = freeTypeFace->glyph->metrics.horiBearingX >> 6;
@@ -144,7 +141,6 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
             charProps.height = freeTypeFace->glyph->metrics.height >> 6;
             charProps.bearingY = freeTypeFace->glyph->metrics.horiBearingY >> 6;
 
-            // If character is not renderable, e.g. space, then don't prepare rendering data for it
             if (bmpWidth == 0 && bmpHeight == 0) {
                 charProps.renderIndex = -1;
                 charProps.textureIndex = -1;
@@ -159,8 +155,6 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
                 memcpy(textureData.data() + globalRow * CHARACTERS_TEXTURE_SIZE + currentPixelPositionCol, ptrBitmap->buffer + reversedRow * bmpWidth, bmpWidth);
             }
 
-            // Setup vertices according to FreeType glyph metrics
-            // You can find it here: https://www.freetype.org/freetype2/docs/glyphs/glyphs-3.html
             glm::vec2 vertices[] =
                     {
                             glm::vec2(static_cast<float>(charProps.bearingX), static_cast<float>(charProps.bearingY)),
@@ -179,8 +173,8 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
 
             for (int i = 0; i < 4; i++)
             {
-                m_vbo.addRawData(&vertices[i], sizeof(glm::vec2));
-                m_vbo.addRawData(&textureCoordinates[i], sizeof(glm::vec2));
+                m_vbo.addData(&vertices[i], sizeof(vertices[i]));
+                m_vbo.addData(&textureCoordinates[i], sizeof(textureCoordinates[i]));
             }
 
             charProps.renderIndex = currentRenderIndex;
@@ -191,21 +185,17 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
         }
     }
 
-    // If there is a leftover texture after preparing the characters, add it to the list of textures
     if (currentPixelPositionRow > 0 || currentPixelPositionCol > 0) {
         finalizeTexture(false);
     }
 
     m_vbo.upload(GL_STATIC_DRAW);
-    // Setup vertex positions pointers
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2) * 2, reinterpret_cast<void*>(0));
 
-    // Setup texture coordinates pointers
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2) * 2, reinterpret_cast<void*>(sizeof(glm::vec2)));
 
-    // Now we're done with loading, release FreeType structures
     FT_Done_Face(freeTypeFace);
     FT_Done_FreeType(freeTypeLibrary);
 
@@ -215,7 +205,6 @@ bool FreeTypeFont::loadFont(const std::string& fontFilePath, int pixelSize)
 
 void FreeTypeFont::printInternal(int x, int y, const std::string& text, int pixelSize) const
 {
-    // Don't print, if the font hasn't been loaded successfully
     if (!m_isLoaded) {
         return;
     }
@@ -232,7 +221,6 @@ void FreeTypeFont::printInternal(int x, int y, const std::string& text, int pixe
 
     getFreetypeFontSampler().bind();
     shaderProgram.setUniform("sampler", 0);
-    //shaderProgram[ShaderConstants::sampler()] = 0;
 
     glm::vec2 currentPos(x, y);
     const auto usedPixelSize = pixelSize == -1 ? m_pixelSize : pixelSize;
@@ -249,7 +237,6 @@ void FreeTypeFont::printInternal(int x, int y, const std::string& text, int pixe
             continue;
         }
 
-        // If we somehow stumble upon unknown character, ignore it
         if (m_characterProperties.count(c) == 0) {
             continue;
         }
@@ -284,7 +271,6 @@ int FreeTypeFont::getTextWidth(const std::string& text, int pixelSize) const
     const auto usedPixelSize = pixelSize == -1 ? m_pixelSize : pixelSize;
     const auto scale = static_cast<float>(usedPixelSize) / static_cast<float>(m_pixelSize);
 
-    // TODO: would be nice to handle invalid characters here as well
     for (auto i = 0; i < static_cast<int>(text.length()); i++)
     {
         if (text[i] == '\n' || text[i] == '\r') {
@@ -299,13 +285,11 @@ int FreeTypeFont::getTextWidth(const std::string& text, int pixelSize) const
             continue;
         }
 
-        // Handle last character in a row in a special way + update the result
         rowWidth += (props.bearingX + props.width) * scale;
         result = std::max(result, rowWidth);
         rowWidth = 0.0f;
     }
 
-    // Return ceiling of result
     return static_cast<int>(ceil(result));
 }
 

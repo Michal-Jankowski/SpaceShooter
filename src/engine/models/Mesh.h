@@ -14,18 +14,15 @@ public:
 	virtual void render() const = 0;
 	virtual void renderPoints() const {}
 	virtual void deleteMesh();
-	bool hasPositions() const;
-	bool hasTextureCoordinates() const;
-	bool hasNormals() const;
-	int getVertexByteSize() const;
-protected:
-	bool _hasPositions = false; 
-	bool _hasTextureCoordinates = false; 
-	bool _hasNormals = false; 
 
-	bool _isInitialized = false; 
-	GLuint _vao = 0; 
-	Buffer _vbo; 
+protected:
+	bool m_hasPositions = false; 
+	bool m_hasTextureCoordinates = false; 
+	bool m_hasNormals = false; 
+
+	bool m_isInitialized = false; 
+	GLuint m_vao = 0; 
+	Buffer m_vbo; 
 
 	virtual void initializeData() {}
 	void setVertexAttributesPointers(int numVertices);

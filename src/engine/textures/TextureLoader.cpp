@@ -14,7 +14,7 @@ bool TextureLoader::loadTexture2D(const std::string& filePath, bool generateMipm
     int BPP;
     const auto data = stbi_load(filePath.c_str(), &m_width, &m_height, &BPP, 0);
     if (data == nullptr) {
-        std::cerr << "Failed to load image " << filePath << std::endl;
+        std::cerr << "ERROR: Failed to load image " << filePath << std::endl;
         return false;
     }
 
@@ -41,15 +41,15 @@ bool TextureLoader::loadTexture2D(const std::string& filePath, bool generateMipm
 /// <param name="directorPath"></param>
 /// <returns></returns>
 bool TextureLoader::loadCubemap(const std::string directorPath) {
+
     constexpr auto skyboxSize = 6;
     std::vector<std::string> skyboxFaces;
     for (const auto& entry : std::filesystem::directory_iterator(directorPath)) {
         std::string  path_string{ entry.path().string() };
         skyboxFaces.emplace_back(path_string);
     }
-        //skyboxFaces.emplace_back(path);
     if (skyboxFaces.size() != skyboxSize) {
-        std::cerr << "Cubemap is of inccorrect size " << skyboxFaces.size() << std::endl;
+        std::cerr << "ERROR: Cubemap is of inccorrect size " << skyboxFaces.size() << std::endl;
         return false;
     }
     auto index = [&skyboxFaces](auto const& it) {
@@ -65,7 +65,7 @@ bool TextureLoader::loadCubemap(const std::string directorPath) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + index(face), 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
         } else {
-            std::cerr << "Failed to load texture from cubemap faces " << *face << std::endl;
+            std::cerr << "ERROR: Failed to load texture from cubemap faces " << *face << std::endl;
             return false;
         }
         
@@ -104,7 +104,6 @@ bool TextureLoader::createFromData(const unsigned char* data, GLsizei width, GLs
 
 void TextureLoader::bind(const int textureNumber) const {
     if (!m_isLoaded) {
-        std::cerr << "Texture was not loaded !!!" << std::endl;
         return;
     }
     glActiveTexture(GL_TEXTURE0 + textureNumber);
@@ -113,7 +112,6 @@ void TextureLoader::bind(const int textureNumber) const {
 
 void TextureLoader::bindCubemap(const int textureNumber) const {
     if (!m_isLoaded) {
-        std::cerr << "Texture was not loaded !!!" << std::endl;
         return;
     }
     glActiveTexture(GL_TEXTURE0 + textureNumber);
@@ -134,11 +132,9 @@ bool TextureLoader::resize(GLsizei width, GLsizei height)
     if (!m_isLoaded) {
         return false;
     }
-
-    const auto oldFormat = m_format;
+    const auto format = m_format;
     deleteTexture();
-
-    return createFromData(nullptr, m_width, m_height, oldFormat, false);
+    return createFromData(nullptr, m_width, m_height, format, false);
 }
 
 void TextureLoader::deleteTexture() {
